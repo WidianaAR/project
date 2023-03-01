@@ -1,0 +1,149 @@
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+#content {
+    width: calc(100% - 250px);
+    transition: all 0.3s;
+    position: absolute;
+    z-index: -1;
+    top: 60px;
+    right: 0;
+    height: 100%;
+}
+
+#content.active {
+    width: 100%;
+}
+
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #212A39;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px 20px;
+    background: #0D64AC;
+}
+
+#sidebar ul li a {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    color: #808080;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: #0D64AC;
+    text-decoration: none;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #303D53;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #303D53;
+}
+
+a.article,
+a.article:hover {
+    background: #6d7fcc !important;
+    color: #fff !important;
+}
+
+/* ---------------------------------------------------
+    TOP-NAVBAR STYLE
+----------------------------------------------------- */
+#navbar {
+    padding: 0;
+    background: #fff;
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#top-navbar {
+    padding: 0;
+    width: calc(100% - 250px);
+    transition: all 0.3s;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+#top-navbar.active {
+    width: 100%;
+}
+
+#top-navbar ul {
+    margin: 0;
+}
+
+#left-menu li {
+    border-right: 1px solid #808080;
+}
+
+#dropdownMenuLink:focus {
+    background-color: transparent;
+    animation: none;
+}
+
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+@media (max-width: 700px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #top-navbar {
+        width: 100%;
+    }
+    #top-navbar.active {
+        width: calc(100% - 250px);
+    }
+    #content {
+        width: 100%;
+    }
+    #content.active {
+        width: calc(100% - 250px);
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}

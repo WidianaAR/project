@@ -1,0 +1,118 @@
+#wrapper {
+    display: flex;
+    width: 100%;
+    background: linear-gradient(63.18deg, #0D64AC 58.33%, rgba(13, 100, 172, 0.7) 100%);
+    font-family: Helvetica;
+    height: 100vh;
+}
+
+.login-box {
+    margin: 0 auto;
+    background: #FFFFFF; 
+    box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.25); 
+    border-radius: 40px;
+    width: 100vh;
+    height: 53vh;
+    padding-left: 1vh;
+}
+
+.bold {
+    font-weight: bold;
+    margin: 0;
+    font-size: small;
+}
+
+.login-left {
+    float: left;
+    width: 55%;
+    height: 100%;
+    padding: 3% 0 3% 3%;
+}
+
+.login-right {
+    float: right;
+    width: 35%;
+    height: 100%;
+}
+
+.login-right img {
+    border-radius: 0px 40px 40px 0px;
+}
+
+.login-form {
+    padding: 3%;
+    width: 100%;
+    height: 12%;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    margin-top: 6%;
+}
+
+.blue-button {
+    width: 30%;
+    height: 12%;
+}
+
+@media (max-width: 700px) {
+    .login-right{
+        display: none;
+    }
+
+    .login-box{
+        width: 65vh;
+    }
+
+    .login-left{
+        width: 100%;
+        padding-right: 5%;
+    }
+}
+
+table {
+    text-align: center;
+}
+
+thead {
+    background-color: #0D64AC;
+    color: #FFFFFF;
+}
+
+.floating-action-button {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    z-index: 9999;
+}
+
+.add-form {
+    align-items: center;
+    border: none;
+    padding: 0 50px;
+}
+
+.add-form .form-control {
+    margin-bottom: 15px;
+}
+
+#msg-box {
+    margin: 0;
+}
+
+.closebtn {
+    margin-left: 15px;
+    color: black;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.time {
+    width: fit-content;
+    padding: 0 10px;
+    border: 2px solid #FF9797;
+    border-radius: 7px;
+    color: #CE4848;
+}
