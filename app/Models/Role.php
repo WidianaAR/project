@@ -10,8 +10,8 @@ class Role extends Model
     use HasFactory;
     public $timestamps = false;
 
-    protected $table = 'roles';
-    protected $primaryKey = 'id_role';
+    // protected $table = 'roles';
+    // protected $primaryKey = 'id_role';
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +19,11 @@ class Role extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'id_role',
+        'id',
         'role_name',
     ];
+
+    public function user() {
+        return $this->hasMany(User::class);
+    }
 }

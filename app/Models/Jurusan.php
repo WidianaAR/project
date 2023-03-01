@@ -10,8 +10,8 @@ class Jurusan extends Model
     use HasFactory;
     public $timestamps = false;
     
-    protected $table = 'jurusan';
-    protected $primaryKey = 'id_jurusan';
+    // protected $table = 'jurusan';
+    // protected $primaryKey = 'id_jurusan';
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +19,16 @@ class Jurusan extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'id_jurusan',
+        'id',
         'nama_jurusan',
         'keterangan',
     ];
+
+    public function prodi() {
+        return $this->hasMany(Prodi::class);
+    }
+
+    public function user() {
+        return $this->hasMany(User::class);
+    }
 }

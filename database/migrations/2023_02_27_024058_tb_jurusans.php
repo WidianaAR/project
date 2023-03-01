@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('prodi', function (Blueprint $table) {
-            $table->tinyInteger('id_prodi')->primary();
-            $table->index('id_jurusan');
-            $table->tinyInteger('id_jurusan')->nullable();
-            $table->foreign('id_jurusan')->references('id_jurusan')->on('jurusan');
-            $table->string('nama_prodi');
+        Schema::create('jurusans', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_jurusan', 100);
+            $table->string('keterangan');
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('prodi');
+        Schema::dropIfExists('jurusans');
     }
 };
