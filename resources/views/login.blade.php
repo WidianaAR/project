@@ -13,7 +13,7 @@
                 {{ $message }}
             </div>
         @enderror
-        <div class="d-flex align-items-center flex-wrap" id="wrapper">
+        <div class="d-flex align-items-center flex-wrap" id="login-bg">
             <div class="container-fluid">
                 <div class="login-box">
                     <div class="login-left">

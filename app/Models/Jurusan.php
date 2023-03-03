@@ -9,9 +9,6 @@ class Jurusan extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    
-    // protected $table = 'jurusan';
-    // protected $primaryKey = 'id_jurusan';
 
     /**
      * The attributes that are mass assignable.

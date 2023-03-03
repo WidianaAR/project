@@ -10,9 +10,6 @@ class Prodi extends Model
     use HasFactory;
     public $timestamps = false;
 
-    // protected $table = 'prodi';
-    // protected $primaryKey = 'id_prodi';
-
     /**
      * The attributes that are mass assignable.
      *

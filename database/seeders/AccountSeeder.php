@@ -45,6 +45,8 @@ class AccountSeeder extends Seeder
             ],
             [
                 'role_id'=>3,
+                'jurusan_id' => 1,
+                'prodi_id' => 10,
                 'name'=>'ini akun Testing',
                 'email'=>'widia.war@gmail.com',
                 'password'=> bcrypt('12345'),
