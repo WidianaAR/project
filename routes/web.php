@@ -25,6 +25,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('user/filter/kajur', 'App\Http\Controllers\UserController@user_kajur')->name('user_kajur');
         Route::get('user/filter/koorprodi', 'App\Http\Controllers\UserController@user_koorprodi')->name('user_koorprodi');
         Route::get('user/filter/auditor', 'App\Http\Controllers\UserController@user_auditor')->name('user_auditor');
+
+        // Kelola Evaluasi Diri
+        Route::get('evaluasi/set_waktu', 'App\Http\Controllers\EDController@set_waktu')->name('ed_set_waktu');
+        Route::post('evaluasi/set_waktu', 'App\Http\Controllers\EDController@set_waktu_action')->name('ed_set_waktu_action');
+
+        // Kelola Ketercapaian Standar
+        Route::get('standar/set_waktu', 'App\Http\Controllers\KSController@set_waktu')->name('ks_set_waktu');
+        Route::post('standar/set_waktu', 'App\Http\Controllers\KSController@set_waktu_action')->name('ks_set_waktu_action');
     });
 
     Route::group(['middleware' => ['cek_login:2']], function () {
@@ -36,4 +44,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['cek_login:4']], function () {
         Route::get('auditor', function () {return view('home');});
     });
+
+    // Evaluasi Diri
+    Route::get('evaluasi', 'App\Http\Controllers\EDController@home')->name('ed_home');
+    Route::get('evaluasi/set_waktu/{id}', 'App\Http\Controllers\EDController@set_waktu_action_end')->name('ed_set_waktu_action_end');
+
+    // Ketercapaian Standar
+    Route::get('standar', 'App\Http\Controllers\KSController@home')->name('ks_home');
+    Route::get('standar/set_waktu/{id}', 'App\Http\Controllers\KSController@set_waktu_action_end')->name('ks_set_waktu_action_end');
 });

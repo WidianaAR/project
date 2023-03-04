@@ -28,4 +28,12 @@ class Prodi extends Model
     public function user() {
         return $this->hasMany(User::class);
     }
+
+    public function evaluasi_diri() {
+        return $this->hasMany(EvaluasiDiri::class);
+    }
+
+    public function ketercapaian_standar() {
+        return $this->hasMany(KetercapaianStandar::class);
+    }
 }
