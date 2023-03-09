@@ -38,13 +38,13 @@ class ManageUserTest extends TestCase
     public function test_add_new_user() {
         $this->pjm_login();
         $user = [
-            'id_role' => $this->faker->numberBetween(1, 4),
+            'role_id' => $this->faker->numberBetween(1, 4),
             'name' => $this->faker->name,
             'email' => 'test@gmail.com',
             'password' => '12345',
             'password_confirm' => '12345',
         ];
-        $this->post('add_user', $user)->assertRedirect('user')->assertStatus(302);
+        $this->post('add_user', $user)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
     }
 
     public function test_edit_user_page_rendered() {
@@ -55,12 +55,12 @@ class ManageUserTest extends TestCase
     public function test_edit_user() {
         $this->pjm_login();
         $data = [
-            'id_user' => $this->faker->numberBetween(1, 4),
-            'id_role' => $this->faker->numberBetween(1, 4),
+            'id' => 1,
+            'role_id' => $this->faker->numberBetween(1, 4),
             'name' => $this->faker->name,
             'email' => 'test@gmail.com',
         ];
-        $this->post('change_user', $data)->assertRedirect('user')->assertStatus(302);
+        $this->post('change_user', $data)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
     }
 
     public function test_delete_user() {

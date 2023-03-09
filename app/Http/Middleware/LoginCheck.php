@@ -26,6 +26,6 @@ class LoginCheck
         if($user->role_id == $role)
             return $next($request);
 
-        return redirect('login')->withErrors(['login_gagal' => 'Dont Have Access!']);
+        return redirect('login')->withErrors(['login_gagal' => 'Akun tidak memiliki akses!']);
     }
 }

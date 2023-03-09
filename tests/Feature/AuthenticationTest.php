@@ -21,6 +21,8 @@ class AuthenticationTest extends TestCase
         ]);
         $this->assertAuthenticated();
         $response->assertRedirect('pjm')->assertStatus(302);
+        $response = $this->get('pjm');
+        $response->assertStatus(200)->assertSee('PJM');
     }
 
     public function test_login_as_kajur() {
@@ -31,6 +33,8 @@ class AuthenticationTest extends TestCase
         ]);
         $this->assertAuthenticated();
         $response->assertRedirect('kajur')->assertStatus(302);
+        $response = $this->get('kajur');
+        $response->assertStatus(200)->assertSee('Kajur');
     }
 
     public function test_login_as_koorprodi() {
@@ -41,6 +45,8 @@ class AuthenticationTest extends TestCase
         ]);
         $this->assertAuthenticated();
         $response->assertRedirect('koorprodi')->assertStatus(302);
+        $response = $this->get('koorprodi');
+        $response->assertStatus(200)->assertSee('Koorprodi');
     }
 
     public function test_login_as_auditor() {
@@ -51,6 +57,17 @@ class AuthenticationTest extends TestCase
         ]);
         $this->assertAuthenticated();
         $response->assertRedirect('auditor')->assertStatus(302);
+        $response = $this->get('auditor');
+        $response->assertStatus(200)->assertSee('Auditor');
+    }
+
+    public function test_login_failed() {
+        $this->withoutExceptionHandling();
+        $response = $this->post('login', [
+            'email' => 'wardas@gmail.com',
+            'password' => '12345',
+        ]);
+        $response->assertSessionHasErrors('login_gagal');
     }
 
     public function test_user_can_logout() {

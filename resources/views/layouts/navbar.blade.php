@@ -80,7 +80,7 @@
                         </li>
                         <li class="nav-item dropdown" style="padding-right: 5vh">
                             <a class="dropdown-toggle nav-link" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
-                                User Name
+                                {{ Auth::user()->name }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                 <a class="dropdown-item" href="#">Ubah Password</a>

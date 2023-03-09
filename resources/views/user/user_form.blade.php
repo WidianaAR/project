@@ -16,6 +16,15 @@
         @endsection
             
         @section('isi')
+        @if ($errors->any())
+            <div class="alert alert-danger" role="alert" id="msg-box">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                @foreach ($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
+            </div>
+        @endif
+        
         <div class="add-form">
             <form action="{{ route('add_user_action') }}" method="POST">
             @csrf

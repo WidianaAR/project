@@ -7,12 +7,14 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     </head>
     <body>
-        @error('login_gagal')
+        @if ($errors->any())
             <div class="alert alert-danger" role="alert" id="msg-box">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-                {{ $message }}
+                @foreach ($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
             </div>
-        @enderror
+        @endif
         <div class="d-flex align-items-center flex-wrap" id="login-bg">
             <div class="container-fluid">
                 <div class="login-box">

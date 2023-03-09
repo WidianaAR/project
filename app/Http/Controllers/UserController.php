@@ -21,6 +21,9 @@ class UserController extends Controller
         $request->validate([
             'email' => 'required',
             'password' => 'required',
+        ], [
+            'email.required' => 'Email harus diisi.',
+            'password.required' => 'Kata sandi harus diisi.',
         ]);
         
         $credential = $request->only('email', 'password');
@@ -38,7 +41,7 @@ class UserController extends Controller
             }
             return redirect('login');
         }
-        return redirect('login')->withErrors(['login_gagal' => 'These credentials do not match our records']);
+        return redirect('login')->withErrors(['login_gagal' => 'Akun tidak terdaftar di dalam sistem']);
     }
 
     public function logout(Request $request) 
