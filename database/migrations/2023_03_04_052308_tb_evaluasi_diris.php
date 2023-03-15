@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('evaluasi_diris', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prodi_id')->constrained();
+            $table->foreignId('jurusan_id')->constrained();
             $table->string('file_data');
             $table->string('size');
             $table->integer('tahun');

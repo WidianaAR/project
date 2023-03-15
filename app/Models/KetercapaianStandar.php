@@ -11,6 +11,7 @@ class KetercapaianStandar extends Model
 
     protected $fillable = [
         'prodi_id',
+        'jurusan_id',
         'file_data',
         'size',
         'tahun',
@@ -23,6 +24,6 @@ class KetercapaianStandar extends Model
     }
 
     public function jurusan() {
-        return $this->hasOneThrough(Jurusan::class, Prodi::class);
+        return $this->belongsTo(Jurusan::class);
     }
 }

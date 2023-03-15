@@ -21,7 +21,7 @@
 
             if (distance < 0) {
                 clearInterval(x);
-                var url = "{{ route('ed_set_waktu_action_end', ':id') }}";
+                var url = "{{ route('ed_set_time_action_end', ':id') }}";
                 url = url.replace(':id', id);
                 location.href = url;
             }

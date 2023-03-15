@@ -36,10 +36,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="{{ Request::is(['standar', 'standar/set_waktu']) ? 'active' : '' }}">
+                <li class="{{ Request::is(['standar', 'standar/set_time']) ? 'active' : '' }}">
                     <a href="{{ URL('standar') }}">Ketercapaian Standar</a>
                 </li>
-                <li class="{{ Request::is(['evaluasi', 'evaluasi/set_waktu']) ? 'active' : '' }}">
+                <li class="{{ Request::is(['evaluasi', 'evaluasi/set_time']) ? 'active' : '' }}">
                     <a href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
                 </li>
                 <li class="{{ Request::is('') ? 'active' : '' }}">

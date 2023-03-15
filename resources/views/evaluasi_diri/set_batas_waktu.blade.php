@@ -31,7 +31,7 @@
             
             @include('evaluasi_diri/countdown')
 
-            <form action="{{ route('ed_set_waktu_action') }}" method="POST">
+            <form action="{{ route('ed_set_time_action') }}" method="POST">
                 @csrf
                 <div class="col align-self-center shadow p-3 bg-body-tertiary rounded">
                     <div class="row mb-3">
