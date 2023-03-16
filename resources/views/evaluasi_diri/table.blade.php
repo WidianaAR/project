@@ -18,7 +18,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         @foreach ($years as $year)
-                            <a class="dropdown-item" href="{!! route('ed_filter_year', $year) !!}">{{$year}}</a>
+                            <a class="dropdown-item" href="{{ route('ed_filter_year', $year) }}">{{$year}}</a>
                         @endforeach
                     </div>
                 </li>
@@ -26,7 +26,7 @@
             @endif
             @if (Auth::user()->role_id == 1)
             <li class="nav-item">
-                <a class="nav-link" href="{{ URL('evaluasi/set_time') }}">Set Batas Waktu Pengisian</a>
+                <a class="nav-link" href="{{ route('ed_set_time') }}">Set Batas Waktu Pengisian</a>
             </li>
             @endif
         @endsection
@@ -53,7 +53,7 @@
                 </div>
 
                 @if (Auth::user()->role_id == 1)
-                <div class="col text-right">
+                <div class="col text-right p-0">
                     <form action="{{ route('ed_export_file') }}" method="POST">
                         @csrf
                         <input name="filename" type="hidden" value="{{ $data->file_data }}">
@@ -67,7 +67,7 @@
                     @if (!!$deadline[0])
                     <div class="col text-right">
                         @if (!!$id_evaluasi)
-                            <a type="button" class="btn btn-danger" href="{!! route('ed_delete', $id_evaluasi) !!}" onclick="return confirm('Apakah Anda yakin menghapus file?');"><i class="fas fa-trash"></i> Hapus File Excel</a>
+                            <a type="button" class="btn btn-danger" href="{{ route('ed_delete', $id_evaluasi) }}" onclick="return confirm('Apakah Anda yakin menghapus file?');"><i class="fas fa-trash"></i> Hapus File Excel</a>
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @else
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
@@ -77,14 +77,15 @@
                 @endif
                 @if (Auth::user()->role_id != 3)
                     <div class="col-auto text-left">
-                        @if (Auth::user()->role_id == 4 and $data->status == 'ditinjau')
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#feedbackModal"> Perlu Perbaikan</a>
-                            <a type="button" class="btn btn-success" href="{!! route('ed_confirm', $id_evaluasi) !!}" onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');"> Konfirmasi</a>
+                        @if (Auth::user()->role_id == 4)
+                            @if ($data->status == 'ditinjau')
+                                <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#feedbackModal"> Perlu Perbaikan</a>
+                                <a type="button" class="btn btn-success" href="{{ route('ed_confirm', $id_evaluasi) }}" onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');"> Konfirmasi</a>
+                            @elseif ($data->status == 'disetujui')
+                                <a type="button" class="btn btn-primary" href="{{ route('ed_cancel_confirm', $id_evaluasi) }}" onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');"> Batal Setujui</a>
+                            @endif
+                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @endif
-                        @if (Auth::user()->role_id == 4 and $data->status == 'disetujui')
-                            <a type="button" class="btn btn-primary" href="{!! route('ed_cancel_confirm', $id_evaluasi) !!}" onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');"> Batal Setujui</a>
-                        @endif
-                        <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         <a type="button" class="btn btn-danger" href="{{route('ed_home')}}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Kembali</a>
                     </div>
                 @endif
@@ -128,8 +129,13 @@
                         <div class="modal-body">
                             <h2 >Pilih File</h2>
                             <input type="file" name="file">
-                            <input type="text" name="prodi" value="{{Auth::user()->prodi_id}}" hidden>
-                            <input type="text" name="jurusan" value="{{Auth::user()->jurusan_id}}" hidden>
+                            @if (!!Auth::user()->prodi_id)
+                                <input type="text" name="prodi" value="{{Auth::user()->prodi_id}}" hidden>
+                                <input type="text" name="jurusan" value="{{Auth::user()->jurusan_id}}" hidden>
+                            @else
+                                <input type="text" name="prodi" value="{{$data->prodi_id}}" hidden>
+                                <input type="text" name="jurusan" value="{{$data->jurusan_id}}" hidden>
+                            @endif
                             <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
                         </div>
                         <div class="modal-footer">
@@ -145,7 +151,7 @@
         <div class="modal fade" id="feedbackModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    {{-- <form action="{{ route('ed_feedback') }}" method="POST" enctype="multipart/form-data"> --}}
+                    <form action="{{ route('ed_feedback') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <input type="text" name="id_evaluasi" value="{{$id_evaluasi}}" hidden>

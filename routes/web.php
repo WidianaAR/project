@@ -35,27 +35,66 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('standar/set_time', 'App\Http\Controllers\KSController@set_time_action')->name('ks_set_time_action');
     });
 
+
     Route::group(['middleware' => ['cek_login:2']], function () {
         Route::get('kajur', function () {return view('home');});
+        Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
+        Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
     });
+
+
     Route::group(['middleware' => ['cek_login:3']], function () {
         Route::get('koorprodi', function () {return view('home');});
-        
-        Route::get('evaluasi/delete/{id_evaluasi}', 'App\Http\Controllers\EDController@delete')->name('ed_delete');
-        Route::post('evaluasi', 'App\Http\Controllers\EDController@add')->name('ed_import_action');
-
-        Route::get('standar/delete/{id_standar}', 'App\Http\Controllers\KSController@delete')->name('ks_delete');
-        Route::post('standar', 'App\Http\Controllers\KSController@add')->name('ks_import_action');
     });
+
+
     Route::group(['middleware' => ['cek_login:4']], function () {
         Route::get('auditor', function () {return view('home');});
+
+        Route::get('evaluasi/confirm/{id_evaluasi}', 'App\Http\Controllers\EDController@confirm')->name('ed_confirm');
+        Route::get('evaluasi/cancel_confirm/{id_evaluasi}', 'App\Http\Controllers\EDController@cancel_confirm')->name('ed_cancel_confirm');
+        Route::post('evaluasi/feedback', 'App\Http\Controllers\EDController@feedback')->name('ed_feedback');
+
+        Route::get('standar/confirm/{id_standar}', 'App\Http\Controllers\KSController@confirm')->name('ks_confirm');
+        Route::get('standar/cancel_confirm/{id_standar}', 'App\Http\Controllers\KSController@cancel_confirm')->name('ks_cancel_confirm');
+        Route::post('standar/feedback', 'App\Http\Controllers\KSController@feedback')->name('ks_feedback');
     });
+
+
+    Route::group([['middleware' => ['cek_login:2']] or ['middleware' => ['cek_login:3']]], function () {
+        Route::get('evaluasi/delete/{id_evaluasi}', 'App\Http\Controllers\EDController@delete')->name('ed_delete');
+        Route::get('evaluasi/add', 'App\Http\Controllers\EDController@add')->name('ed_import');
+        Route::post('evaluasi', 'App\Http\Controllers\EDController@add_action')->name('ed_import_action');
+        Route::get('evaluasi/change/{id_evaluasi}', 'App\Http\Controllers\EDController@change')->name('ed_change');
+        Route::post('evaluasi/change', 'App\Http\Controllers\EDController@change_action')->name('ed_change_action');
+        
+        Route::get('standar/delete/{id_standar}', 'App\Http\Controllers\KSController@delete')->name('ks_delete');
+        Route::get('standar/add', 'App\Http\Controllers\KSController@add')->name('ks_import');
+        Route::post('standar', 'App\Http\Controllers\KSController@add_action')->name('ks_import_action');
+        Route::get('standar/change/{id_standar}', 'App\Http\Controllers\KSController@change')->name('ks_change');
+        Route::post('standar/change', 'App\Http\Controllers\KSController@change_action')->name('ks_change_action');
+    });
+
+
+    Route::group([['middleware' => ['cek_login:1']] or ['middleware' => ['cek_login:4']]], function () {
+        Route::post('evaluasi/export', 'App\Http\Controllers\EDController@export_all')->name('ed_export_all');
+        Route::post('evaluasi/export/file', 'App\Http\Controllers\EDController@export_file')->name('ed_export_file');
+        Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
+        Route::get('evaluasi/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\EDController@filter_jurusan')->name('ed_filter_jurusan');
+        
+        Route::post('standar/export', 'App\Http\Controllers\KSController@export_all')->name('ks_export_all');
+        Route::post('standar/export/file', 'App\Http\Controllers\KSController@export_file')->name('ks_export_file');
+        Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
+        Route::get('standar/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\KSController@filter_jurusan')->name('ks_filter_jurusan');
+    });
+
 
     // Evaluasi Diri
     Route::get('evaluasi', 'App\Http\Controllers\EDController@home')->name('ed_home');
     Route::get('evaluasi/set_time/{id}', 'App\Http\Controllers\EDController@set_time_action_end')->name('ed_set_time_action_end');
     Route::get('evaluasi/table/{id_evaluasi}', 'App\Http\Controllers\EDController@table')->name('ed_table');
     Route::get('evaluasi/filter/year/{year}', 'App\Http\Controllers\EDController@filter_year')->name('ed_filter_year');
+
 
     // Ketercapaian Standar
     Route::get('standar', 'App\Http\Controllers\KSController@home')->name('ks_home');

@@ -13,7 +13,6 @@ class KetercapaianStandar extends Model
         'prodi_id',
         'jurusan_id',
         'file_data',
-        'size',
         'tahun',
         'status',
         'keterangan'

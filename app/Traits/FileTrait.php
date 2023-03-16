@@ -18,7 +18,7 @@ trait FileTrait
         );
     }
 
-    public function deleteFile($path)
+    public function DeleteFile($path)
     {
         Storage::disk('public')->delete($path);
     }

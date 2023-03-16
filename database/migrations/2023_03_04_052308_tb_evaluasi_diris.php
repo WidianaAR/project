@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('prodi_id')->constrained();
             $table->foreignId('jurusan_id')->constrained();
             $table->string('file_data');
-            $table->string('size');
             $table->integer('tahun');
             $table->string('status', 100);
             $table->text('keterangan')->nullable(TRUE);

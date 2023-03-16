@@ -56,7 +56,7 @@
                 <div class="coltext-right">
                     <form action="{{ route('ks_export_file') }}" method="POST">
                         @csrf
-                        <input name="filename" type="hidden" value="{{ $file->file_data }}">
+                        <input name="filename" type="hidden" value="{{ $data->file_data }}">
                         <input type="submit" class="btn btn-primary" value="Export File">
                     </form>
                 </div>
@@ -68,9 +68,9 @@
                     <div class="col text-right">
                         @if (!!$id_standar)
                             <a type="button" class="btn btn-danger" href="{{ route('ks_delete', $id_standar) }}" onclick="return confirm('Apakah Anda Yakin Menghapus File?');"><i class="fas fa-trash"></i> Hapus File Excel</a>
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#contohModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
+                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @else
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#contohModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
+                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
                         @endif
                     </div>
                     @endif
@@ -78,8 +78,13 @@
                 @if (Auth::user()->role_id != 3)
                     <div class="col-auto text-left">
                         @if (Auth::user()->role_id == 4)
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#feedbackModal"> Perlu Perbaikan</a>
-                            <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"> Konfirmasi</a>
+                            @if ($data->status == 'ditinjau')
+                                <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#feedbackModal"> Perlu Perbaikan</a>
+                                <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}" onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');"> Konfirmasi</a>
+                            @elseif ($data->status == 'disetujui')
+                                <a type="button" class="btn btn-primary" href="{{ route('ks_cancel_confirm', $id_standar) }}" onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');"> Batal Setujui</a>
+                            @endif
+                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @endif
                         <a type="button" class="btn btn-danger" href="{{route('ks_home')}}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Kembali</a>
                     </div>
@@ -132,7 +137,7 @@
             </div>
         @endsection
 
-        <div class="modal fade" id="contohModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
+        <div class="modal fade" id="importModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form action="{{ route('ks_import_action') }}" method="POST" enctype="multipart/form-data">
@@ -140,8 +145,13 @@
                         <div class="modal-body">
                             <h2 >Pilih File</h2>
                             <input type="file" name="file">
-                            <input type="text" name="prodi" value="{{Auth::user()->prodi_id}}" hidden>
-                            <input type="text" name="jurusan" value="{{Auth::user()->jurusan_id}}" hidden>
+                            @if (!!Auth::user()->prodi_id)
+                                <input type="text" name="prodi" value="{{Auth::user()->prodi_id}}" hidden>
+                                <input type="text" name="jurusan" value="{{Auth::user()->jurusan_id}}" hidden>
+                            @else
+                                <input type="text" name="prodi" value="{{$data->prodi_id}}" hidden>
+                                <input type="text" name="jurusan" value="{{$data->jurusan_id}}" hidden>
+                            @endif
                             <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
                         </div>
                         <div class="modal-footer">
@@ -157,7 +167,7 @@
         <div class="modal fade" id="feedbackModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    {{-- <form action="{{ route('ks_feedback') }}" method="POST" enctype="multipart/form-data"> --}}
+                    <form action="{{ route('ks_feedback') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
                             <input type="text" name="id_standar" value="{{$id_standar}}" hidden>

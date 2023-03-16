@@ -18,7 +18,7 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <a class="dropdown-item" href="{{route('ed_home')}}">All</a>
                     @foreach ($years as $year)
-                        <a class="dropdown-item" href="{{ route('ed_filter_tahun', $year) }}">{{$year}}</a>
+                        <a class="dropdown-item" href="{{ route('ed_filter_year', $year) }}">{{$year}}</a>
                     @endforeach
                 </div>
             </li>
@@ -63,7 +63,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="moduleDropDown">
                             @foreach ($jurusans as $jurusan)
-                                <a class="dropdown-item" href="{{ route('ed_filter_jurusan', $jurusan->id_jurusan) }}">{{$jurusan->nama_jurusan}}</a>
+                                <a class="dropdown-item" href="{{ route('ed_filter_jurusan', $jurusan->id) }}">{{$jurusan->nama_jurusan}}</a>
                             @endforeach
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="moduleDropDown">
                             @foreach ($prodis as $prodi)
-                                <a class="dropdown-item" href="{{ route('ed_filter_prodi', $prodi->id_prodi) }}">{{$prodi->nama_prodi}}</a>
+                                <a class="dropdown-item" href="{{ route('ed_filter_prodi', $prodi->id) }}">{{$prodi->nama_prodi}}</a>
                             @endforeach
                         </div>
                     </div>
@@ -113,7 +113,6 @@
                             <th>Jurusan</th>
                         @endif
                         <th>Program Studi</th>
-                        <th>Size</th>
                         <th>Tahun</th>
                         <th>Status</th>
                         @if (Auth::user()->role_id == 2)
@@ -122,18 +121,17 @@
                     </tr>
                     @foreach ($data as $file)
                         <tr>
-                            <td><a href="{{ route('ed_table', $file->id_evaluasi) }}">{{$file->file_data}}</a></td>
+                            <td><a href="{{ route('ed_table', $file->id) }}">{{$file->file_data}}</a></td>
                             @if (Auth::user()->role_id != 2)
-                                <td>{{$file->nama_jurusan}}</td>
+                                <td>{{$file->jurusan->nama_jurusan}}</td>
                             @endif
-                            <td>{{$file->nama_prodi}}</td>
-                            <td>{{$file->size}} byte</td>
+                            <td>{{$file->prodi->nama_prodi}}</td>
                             <td>{{$file->tahun}}</td>
                             <td>{{$file->status}}</td>
                             @if (Auth::user()->role_id == 2)
                             <td>
-                                <a type="button" class="btn btn-success" href="{{ route('ed_ubah', $file->id_evaluasi) }}"><i class="fa fa-edit"></i></a>
-                                <a type="button" href="{{ route('ed_hapus', $file->id_evaluasi) }}" onclick="return confirm('Apakah Anda Yakin Menghapus Data?');" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                <a type="button" class="btn btn-success" href="{{ route('ed_change', $file->id) }}"><i class="fa fa-edit"></i></a>
+                                <a type="button" href="{{ route('ed_delete', $file->id) }}" onclick="return confirm('Apakah Anda Yakin Menghapus Data?');" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                             </td>
                             @endif
                         </tr>

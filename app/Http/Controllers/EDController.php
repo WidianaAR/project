@@ -10,6 +10,7 @@ use App\Traits\CountdownTrait;
 use App\Traits\FileTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class EDController extends Controller
@@ -28,7 +29,7 @@ class EDController extends Controller
             $jurusanId = Auth::user()->jurusan_id;
             $data = EvaluasiDiri::where('jurusan_id', $jurusanId)->get();
             $jurusans = null;
-            $prodis = Prodi::where('jurusan_id', $jurusanId);
+            $prodis = Prodi::where('jurusan_id', $jurusanId)->get();
             $years = EvaluasiDiri::where('jurusan_id', $jurusanId)->distinct()->pluck('tahun')->toArray();
             return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
         } elseif (Auth::user()->role_id == 3) {
@@ -73,11 +74,11 @@ class EDController extends Controller
         return redirect()->route('ed_home');
     }
 
-    public function add(Request $request) {
+    public function add_action(Request $request) {
         if ($request->hasFile('file')) {
             $data = EvaluasiDiri::where([['prodi_id', '=', $request->prodi], ['tahun', '=', $request->tahun]])->first();
             if (!! $data) {
-                $this->deleteFile($data->file_data);
+                $this->DeleteFile($data->file_data);
             }
             $extension = $request->file('file')->extension();
             $prodi = Prodi::where('id', $request->prodi)->first();
@@ -86,9 +87,12 @@ class EDController extends Controller
                 ['prodi_id' => $request->prodi, 'tahun' => $request->tahun],
                 ['jurusan_id' => $request->jurusan,
                 'file_data' => $path,
-                'size' => $request->file->getSize(),
-                'status' => 'ditinjau']
+                'status' => 'ditinjau',
+                'keterangan' => null]
             );
+            if (Auth::user()->role_id == 4) {
+                return redirect()->route('ed_table', $data->id)->with('success', 'File Berhasil Diganti');
+            }
             return redirect()->route('ed_home')->with('success', 'File Berhasil Ditambahkan');
         }
         return redirect()->route('ed_home')->with('error', 'File Gagal Ditambahkan');
@@ -108,30 +112,29 @@ class EDController extends Controller
     public function delete($id_evaluasi) {
         if (!! $id_evaluasi) {
             $file = EvaluasiDiri::where('id', $id_evaluasi)->first();
-            $this->deleteFile($file->file_data);
+            $this->DeleteFile($file->file_data);
             $file->delete();
         }
         return redirect()->route('ed_home');
     }
 
-    // kenapa pake update or create padahal di fungsi add dah ada
-    // public function change_action(Request $request) {
-    //     if ($request->hasFile('file')) {
-    //         $data = EvaluasiDiri::where('id', $request->id_evaluasi)->first();
-    //         $this->deleteFile($data->file_data);
-    //         $extension = $request->file('file')->extension();
-    //         $prodi = Prodi::where('id', $request->prodi)->first();
-    //         $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_".$prodi->nama_prodi."_".$request->tahun.".".$extension);
-    //         EvaluasiDiri::updateOrCreate(
-    //             ['id' => $request->id_evaluasi],
-    //             ['prodi_id' => $request->prodi,
-    //             'file_data' => $path,
-    //             'size' => $request->file->getSize()]
-    //         );
-    //         return redirect()->route('ed_home')->with('success', 'File Berhasil Diubah');
-    //     }
-    //     return redirect()->route('ed_home')->with('error', 'File Gagal Diubah');
-    // }
+    // tetap harus pake walaupun fungsi add dah ada karena klo diubah berdasarkan id_prodi dan tahun kan bisa aja yang diubah malah id_prodinya jadi datanya malah ketambah bukan keubah
+    public function change_action(Request $request) {
+        if ($request->hasFile('file')) {
+            $data = EvaluasiDiri::where('id', $request->id_evaluasi)->first();
+            $this->DeleteFile($data->file_data);
+            $extension = $request->file('file')->extension();
+            $prodi = Prodi::where('id', $request->prodi)->first();
+            $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_".$prodi->nama_prodi."_".$request->tahun.".".$extension);
+            EvaluasiDiri::updateOrCreate(
+                ['id' => $request->id_evaluasi],
+                ['prodi_id' => $request->prodi,
+                'file_data' => $path]
+            );
+            return redirect()->route('ed_home')->with('success', 'File Berhasil Diubah');
+        }
+        return redirect()->route('ed_home')->with('error', 'File Gagal Diubah');
+    }
 
     public function filter_year($year)
     {
@@ -145,11 +148,97 @@ class EDController extends Controller
             $data = EvaluasiDiri::where([['prodi_id', '=', Auth::user()->prodi_id], ['tahun', '=', $year]])->first();
             return redirect()->route('ed_table', $data->id_evaluasi);
         } else {
-            $data = EvaluasiDiri::where('evaluasi_diri.tahun', $year)->get();;
+            $data = EvaluasiDiri::where('tahun', $year)->get();;
             $prodis = Prodi::all();
             $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
 
         }
         return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+    }
+
+    public function filter_prodi($prodi_id)
+    {
+        $jurusans = Jurusan::all();
+        $deadline = $this->EDCountdown();
+        if (Auth::user()->role_id == 2) {
+            $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
+            $years = EvaluasiDiri::where('jurusan_id', Auth::user()->jurusan_id)->distinct()->pluck('tahun')->toArray();
+            $data = EvaluasiDiri::where([['jurusan_id', '=', Auth::user()->jurusan_id], ['prodi_id', '=', $prodi_id]])->get();
+        } else {
+            $prodis = Prodi::all();
+            $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
+            // $data = EvaluasiDiri::join('prodi', 'prodi.prodi_id', '=', 'evaluasi_diri.prodi_id')->join('jurusan', 'jurusan.jurusan_id', '=', 'evaluasi_diri.jurusan_id')->where('evaluasi_diri.prodi_id', $prodi_id)->get();
+            $data = EvaluasiDiri::where('prodi_id', $prodi_id)->get(); //dipersingkat (join dihilangkan) karena menggunakan eloquent relationship
+        }
+        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+    }
+
+    public function filter_jurusan($jurusan_id)
+    {
+        $jurusans = Jurusan::all();
+        $deadline = $this->EDCountdown();
+        $prodis = Prodi::all();
+        $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
+        $data = EvaluasiDiri::where('jurusan_id', $jurusan_id)->get();
+        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+    }
+
+    public function add() {
+        $deadline = $this->EDCountdown();
+        $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
+        return view('evaluasi_diri.import_form', compact('deadline', 'prodis'));
+    }
+
+    public function change($id_evaluasi) {
+        $deadline = $this->EDCountdown();
+        $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
+        $data = EvaluasiDiri::where('id', $id_evaluasi)->first();
+        return view('evaluasi_diri.change_form', compact('deadline', 'prodis', 'data'));
+    }
+
+    public function export_all(Request $request) {
+        $zipname = 'Files/Evaluasi Diri.zip';
+        if (Storage::disk('public')->exists($zipname)) {
+            $this->DeleteZip($zipname);
+            $this->ExportZip($zipname, $request->data);
+        } else {
+            $this->ExportZip($zipname, $request->data);
+        }
+        return response()->download(storage_path('app/public/'.$zipname));
+    }
+
+    public function export_file(Request $request) {
+        return response()->download(storage_path('app/public/'.$request->filename));
+    }
+
+    public function confirm($id_evaluasi)
+    {
+        EvaluasiDiri::find($id_evaluasi)->update([
+            'status' => 'disetujui',
+            'keterangan' => null,
+        ]);
+        return redirect()->route('ed_home')->with('success', 'Data Evaluasi Diri Disetujui');
+    }
+
+    public function feedback(Request $request)
+    {
+        $request->validate([
+            'id_evaluasi' => 'required',
+            'feedback' => 'required',
+        ]);
+        EvaluasiDiri::find($request->id_evaluasi)->update([
+            'keterangan' => $request->feedback,
+            'status' => 'perlu perbaikan',
+        ]);
+        return redirect()->route('ed_table', $request->id_evaluasi)->with('success', 'Feedback Berhasil Disimpan');
+    }
+
+    public function cancel_confirm($id_evaluasi)
+    {
+        EvaluasiDiri::find($id_evaluasi)->update([
+            'status' => 'ditinjau',
+            'keterangan' => null,
+        ]);
+        return redirect()->route('ed_home');
     }
 }
