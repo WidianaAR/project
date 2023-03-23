@@ -9,12 +9,12 @@ $(document).ready(function () {
         $('a[aria-expanded=true]').attr('aria-expanded', 'false');
     });
 
-    $( '#sidebar .list-unstyled a' ).on( 'click', function () {
+    $('#sidebar .list-unstyled a').on('click', function () {
         $('#sidebar .list-unstyled').find('li.active').removeClass('active');
         $(this).parent('li').addClass('active');
     });
 
-    $("select.select-role").click (function () {  
+    $("select.select-role").click(function () {
         var selected = $(this).children("option:selected").val();
         if (selected == 2) {
             $('#jurusan_option').removeAttr('hidden');

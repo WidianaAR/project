@@ -23,9 +23,9 @@ class LoginCheck
         }
         $user = Auth::user();
 
-        if($user->role_id == $role)
+        if ($user->role_id == $role)
             return $next($request);
 
-        return redirect('login')->withErrors(['login_gagal' => 'Akun tidak memiliki akses!']);
+        return redirect('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
     }
 }

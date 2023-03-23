@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ManageKSTest extends TestCase
@@ -14,16 +15,8 @@ class ManageKSTest extends TestCase
      */
     use RefreshDatabase;
 
-    public function kajur_login() {
-        $this->withoutExceptionHandling();
-        $this->post('login', [
-            'email' => 'kajur@gmail.com',
-            'password' => '12345',
-        ]);
-        $this->assertAuthenticated();
-    }
-
-    public function pjm_login() {
+    public function pjm_login()
+    {
         $this->withoutExceptionHandling();
         $this->post('login', [
             'email' => 'pjm@gmail.com',
@@ -32,17 +25,53 @@ class ManageKSTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_ks_page_rendered() {
+    public function kajur_login()
+    {
+        $this->withoutExceptionHandling();
+        $this->post('login', [
+            'email' => 'kajur@gmail.com',
+            'password' => '12345',
+        ]);
+        $this->assertAuthenticated();
+    }
+
+    public function auditor_login()
+    {
+        $this->withoutExceptionHandling();
+        $this->post('login', [
+            'email' => 'auditor@gmail.com',
+            'password' => '12345',
+        ]);
+        $this->assertAuthenticated();
+    }
+
+    public function dummy_file()
+    {
+        $path = public_path('template/KS_Template.xlsx');
+        $file = new UploadedFile(
+            $path,
+            'test_file.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            null,
+            true
+        );
+        return $file;
+    }
+
+    public function test_ks_page_rendered()
+    {
         $this->kajur_login();
         $this->get('standar')->assertStatus(200);
     }
 
-    public function test_ks_set_time_page_rendered() {
+    public function test_ks_set_time_page_rendered()
+    {
         $this->pjm_login();
-        $this->get('standar/set_waktu')->assertStatus(200);
+        $this->get('standar/set_time')->assertStatus(200);
     }
 
-    public function test_ks_set_time() {
+    public function test_ks_set_time()
+    {
         $this->pjm_login();
         $data = [
             'id' => 1,
@@ -50,11 +79,154 @@ class ManageKSTest extends TestCase
             'time' => '13:00',
         ];
 
-        $this->post('standar/set_waktu', $data)->assertRedirect('standar')->assertStatus(302);
+        $this->post('standar/set_time', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
     }
 
-    public function test_ks_time_end() {
+    public function test_ks_time_end()
+    {
         $this->test_ks_set_time();
-        $this->get('standar/set_waktu/1')->assertStatus(302);
+        $this->get('standar/set_time/1')->assertStatus(302);
+        $this->assertDatabaseHas('k_s_deadlines', [
+            'id' => 1,
+            'status' => 'finish',
+        ]);
+    }
+
+    public function test_ks_add_page_rendered()
+    {
+        $this->kajur_login();
+        $this->get('standar/add')->assertStatus(200);
+    }
+
+    public function test_ks_import_file()
+    {
+        $this->kajur_login();
+        $file = $this->dummy_file();
+        $data = [
+            'file' => $file,
+            'prodi' => 11,
+            'jurusan' => 1,
+            'tahun' => 2023,
+        ];
+        $this->post('standar', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
+        $this->assertDatabaseHas('ketercapaian_standars', [
+            'file_data' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'
+        ]);
+    }
+
+    public function test_ks_table_page_rendered()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/table/6')->assertStatus(200);
+    }
+
+    public function test_ks_edit_page_rendered()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/change/7')->assertStatus(200);
+    }
+
+    public function test_ks_edit_file()
+    {
+        $this->test_ks_import_file();
+        $file = $this->dummy_file();
+        $data = [
+            'id_standar' => 8,
+            'file' => $file,
+            'prodi' => 10,
+            'tahun' => 2023,
+        ];
+        $this->post('standar/change', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
+        $this->assertDatabaseHas('ketercapaian_standars', [
+            'file_data' => 'Files/Ketercapaian Standar_Sistem Informasi_2023.xlsx'
+        ]);
+    }
+
+    public function test_ks_delete()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/delete/9')->assertRedirect('standar')->assertStatus(302);
+        $this->assertDatabaseEmpty('ketercapaian_standars');
+    }
+
+    public function test_ks_confirm()
+    {
+        $this->test_ks_import_file();
+        $this->auditor_login();
+        $this->get('standar/confirm/10')->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
+        $this->assertDatabaseHas('ketercapaian_standars', [
+            'id' => 10,
+            'status' => 'disetujui'
+        ]);
+    }
+
+    public function test_ks_cancel_confirm()
+    {
+        $this->test_ks_import_file();
+        $this->auditor_login();
+        $this->get('standar/confirm/11')->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
+        $this->get('standar/cancel_confirm/11')->assertRedirect('standar')->assertStatus(302);
+        $this->assertDatabaseHas('ketercapaian_standars', [
+            'id' => 11,
+            'status' => 'ditinjau'
+        ]);
+    }
+
+    public function test_ks_feedback()
+    {
+        $this->test_ks_import_file();
+        $this->auditor_login();
+        $data = [
+            'id_standar' => 12,
+            'feedback' => 'tes feedback'
+        ];
+        $this->post('standar/feedback', $data)->assertRedirect('standar/table/12')->assertStatus(302)->assertSessionHas('success');
+        $this->assertDatabaseHas('ketercapaian_standars', [
+            'id' => 12,
+            'keterangan' => 'tes feedback'
+        ]);
+    }
+
+    public function test_ks_export_file()
+    {
+        $this->test_ks_import_file();
+        $data = ['filename' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'];
+        $this->post('standar/export/file', $data)->assertStatus(200);
+    }
+
+    public function test_ks_export_all_file()
+    {
+        $this->test_ks_import_file();
+
+        $file = $this->dummy_file();
+        $data = [
+            'file' => $file,
+            'prodi' => 10,
+            'jurusan' => 1,
+            'tahun' => 2023,
+        ];
+        $this->post('standar', $data);
+
+        $files = ['Files/Ketercapaian Standar_Informatika_2023.xlsx', 'Files/Ketercapaian Standar_Sistem Informasi_2023.xlsx'];
+        $request = ['data' => $files];
+        $this->post('standar/export', $request)->assertStatus(200);
+    }
+
+    public function test_ks_filter_year()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/filter/year/2023')->assertStatus(200);
+    }
+
+    public function test_ks_filter_jurusan()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/filter/jurusan/1')->assertStatus(200);
+    }
+
+    public function test_ks_filter_prodi()
+    {
+        $this->test_ks_import_file();
+        $this->get('standar/filter/prodi/11')->assertStatus(200);
     }
 }

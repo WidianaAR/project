@@ -16,20 +16,20 @@ class RoleSeeder extends Seeder
     {
         $role = [
             [
-                'id'=>1,
-                'role_name'=>'pjm',
+                'id' => 1,
+                'role_name' => 'PJM',
             ],
             [
-                'id'=>2,
-                'role_name'=>'kajur',
+                'id' => 2,
+                'role_name' => 'Kajur',
             ],
             [
-                'id'=>3,
-                'role_name'=>'koorprodi',
+                'id' => 3,
+                'role_name' => 'Koorprodi',
             ],
             [
-                'id'=>4,
-                'role_name'=>'auditor',
+                'id' => 4,
+                'role_name' => 'Auditor',
             ],
         ];
 

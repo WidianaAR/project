@@ -1,3 +1,31 @@
+div.element {
+    background-color: white;
+    margin-top: 2vh;
+    padding: 2vh;
+    box-shadow: 2px 2px 5px #0000001a;
+    border-radius: 5px;
+}
+
+div.box {
+    background-color: white;
+    width: fit-content;
+    height: fit-content;
+    box-shadow: 1px 1px 3px #0000001a;
+    border-radius: 5px;
+    padding: 1vh;
+    margin: 0 1vh;
+}
+
+button.simple {
+    background-color: white;
+    border: 0px;
+    border-radius: 5px;
+}
+
+button.simple:focus {
+    outline: none;
+}
+
 #login-bg {
     display: flex;
     width: 100%;
@@ -7,13 +35,11 @@
 }
 
 .login-box {
-    margin: 0 auto;
-    background: #FFFFFF; 
-    box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.25); 
+    background: #FFFFFF;
+    box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.25);
     border-radius: 40px;
     width: 100vh;
     height: 53vh;
-    padding-left: 1vh;
 }
 
 .bold {
@@ -40,12 +66,10 @@
 }
 
 .login-form {
-    padding: 3%;
     width: 100%;
     height: 12%;
     border: 1px solid #000000;
     border-radius: 10px;
-    margin-top: 6%;
 }
 
 .blue-button {
@@ -54,15 +78,15 @@
 }
 
 @media (max-width: 700px) {
-    .login-right{
+    .login-right {
         display: none;
     }
 
-    .login-box{
+    .login-box {
         width: 65vh;
     }
 
-    .login-left{
+    .login-left {
         width: 100%;
         padding-right: 5%;
     }
@@ -87,7 +111,6 @@ thead {
 .add-form {
     align-items: center;
     border: none;
-    padding: 0 50px;
 }
 
 .add-form .form-control {
@@ -111,8 +134,5 @@ thead {
 
 .time {
     width: fit-content;
-    padding: 0 10px;
-    border: 2px solid #FF9797;
-    border-radius: 7px;
     color: #CE4848;
 }

@@ -18,15 +18,10 @@ class UserController extends Controller
 
     public function login_action(Request $request)
     {
-        $request->validate([
-            'email' => 'required',
+        $credential = $request->validate([
+            'email' => 'required|email:dns',
             'password' => 'required',
-        ], [
-            'email.required' => 'Email harus diisi.',
-            'password.required' => 'Kata sandi harus diisi.',
         ]);
-        
-        $credential = $request->only('email', 'password');
 
         if (Auth::attempt($credential)) {
             $user = Auth::user();
@@ -41,46 +36,47 @@ class UserController extends Controller
             }
             return redirect('login');
         }
-        return redirect('login')->withErrors(['login_gagal' => 'Akun tidak terdaftar di dalam sistem']);
+        return back()->withErrors(['login_gagal' => 'Akun tidak terdaftar di dalam sistem']);
     }
 
-    public function logout(Request $request) 
+    public function logout(Request $request)
     {
-        $request->session()->flush();
         Auth::logout();
-        return Redirect('login');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('login');
     }
 
-    public function user() 
+    public function user()
     {
-        $users = User::all();
+        $users = User::with(['role', 'jurusan', 'prodi'])->get();
         return view('user.user', compact('users'));
     }
 
-    public function delete_user($id) 
+    public function delete_user($id)
     {
         User::where('id', $id)->delete();
-        return redirect()->route('user')->with('success', 'Data User Berhasil Dihapus');
+        return redirect('user')->with('success', 'Data User Berhasil Dihapus');
     }
 
-    public function add_user() 
+    public function add_user()
     {
         $prodis = Prodi::all();
         $jurusans = Jurusan::all();
         return view('user.user_form', compact('prodis', 'jurusans'));
     }
 
-    public function add_user_action(Request $request) 
+    public function add_user_action(Request $request)
     {
         $request->validate([
             'role_id' => 'required',
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email:dns',
             'password' => 'required',
             'password_confirm' => 'required|same:password',
         ]);
 
-        $user = new User([
+        User::create([
             'role_id' => $request->role_id,
             'name' => $request->name,
             'email' => $request->email,
@@ -88,12 +84,11 @@ class UserController extends Controller
             'jurusan_id' => $request->jurusan_id,
             'prodi_id' => $request->prodi_id,
         ]);
-        $user->save();
 
-        return redirect()->route('user')->with('success', 'Data User Berhasil Ditambahkan');
+        return redirect('user')->with('success', 'Data User Berhasil Ditambahkan');
     }
 
-    public function change_user($id) 
+    public function change_user($id)
     {
         $prodis = Prodi::all();
         $jurusans = Jurusan::all();
@@ -101,7 +96,7 @@ class UserController extends Controller
         return view('user.user_edit', compact('user', 'prodis', 'jurusans'));
     }
 
-    public function change_user_action(Request $request) 
+    public function change_user_action(Request $request)
     {
         $request->validate([
             'role_id' => 'required',
@@ -112,30 +107,30 @@ class UserController extends Controller
         $selection = User::find($request->id);
         $selection->update($request->all());
 
-        return redirect()->route('user')->with('success', 'Data User Berhasil Diubah');
+        return redirect('user')->with('success', 'Data User Berhasil Diubah');
     }
 
     public function user_pjm()
     {
-        $users = User::where('role_id', 1)->get();
+        $users = User::where('role_id', 1)->get()->load('role');
         return view('user.user', compact('users'));
     }
 
     public function user_kajur()
     {
-        $users = User::where('role_id', 2)->get();
+        $users = User::where('role_id', 2)->get()->load('role', 'jurusan');
         return view('user.user', compact('users'));
     }
 
     public function user_koorprodi()
     {
-        $users = User::where('role_id', 3)->get();
+        $users = User::where('role_id', 3)->get()->load('role', 'jurusan', 'prodi');
         return view('user.user', compact('users'));
     }
 
     public function user_auditor()
     {
-        $users = User::where('role_id', 4)->get();
+        $users = User::where('role_id', 4)->get()->load('role');
         return view('user.user', compact('users'));
     }
 }

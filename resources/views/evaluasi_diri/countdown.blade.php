@@ -1,6 +1,4 @@
-@if (!!$deadline[0])
-    <div class="time mb-3" id="countdown"></div>
-@endif
+<div class="time" id="countdown"></div>
 
 <script>
     var date = {!! json_encode($deadline[0]) !!};
