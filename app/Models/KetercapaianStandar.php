@@ -10,19 +10,21 @@ class KetercapaianStandar extends Model
     use HasFactory;
 
     protected $fillable = [
-        'prodi_id',
         'jurusan_id',
+        'prodi_id',
         'file_data',
         'tahun',
         'status',
         'keterangan'
     ];
 
-    public function prodi() {
-        return $this->belongsTo(Prodi::class);
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class);
     }
 
-    public function jurusan() {
-        return $this->belongsTo(Jurusan::class);
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class);
     }
 }

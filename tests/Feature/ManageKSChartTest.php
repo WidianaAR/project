@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
-class KSChartTest extends TestCase
+class ManageKSChartTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -15,18 +15,18 @@ class KSChartTest extends TestCase
      */
     use RefreshDatabase;
 
-    public function login()
+    private function login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
-            'email' => 'pjm@gmail.com',
+            'email' => 'kajur@gmail.com',
             'password' => '12345',
         ]);
         $this->assertAuthenticated();
     }
 
 
-    public function auditor_login()
+    private function auditor_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -37,10 +37,10 @@ class KSChartTest extends TestCase
     }
 
 
-    public function import_file()
+    private function import_file()
     {
         $this->login();
-        $path = public_path('template/KS_Template.xlsx');
+        $path = public_path('files/KS_Template.xlsx');
         $file = new UploadedFile(
             $path,
             'test_file.xlsx',

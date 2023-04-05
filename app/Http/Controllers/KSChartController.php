@@ -51,8 +51,7 @@ class KSChartController extends Controller
         $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
         $prodis = KetercapaianStandar::where('status', 'disetujui')->join('prodis', 'prodis.id', '=', 'ketercapaian_standars.prodi_id')->select('prodis.nama_prodi', 'ketercapaian_standars.jurusan_id', 'ketercapaian_standars.prodi_id')->distinct()->get();
         $jurusans = KetercapaianStandar::where('status', 'disetujui')->select('jurusan_id')->distinct()->get();
-
-        if (!!$request->all()) {
+        if (!!$request->all() and !!$request->tahun) {
             if ($request->jurusan == 'all') {
                 $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
                 $keterangan = 'Ketercapaian standar semua jurusan tahun ' . $request->tahun;

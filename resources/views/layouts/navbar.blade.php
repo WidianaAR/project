@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <link rel="stylesheet" href="/css/menu_bar.css">
-    <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
         integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
@@ -18,8 +16,11 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+
+    <link rel="stylesheet" href="/css/menu_bar.css">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 
 <body>
@@ -29,6 +30,7 @@
             <div class="sidebar-header p-3">
                 <table>
                     <tr>
+
                         <td style="width: 15%; background-color: white; border-radius: 5px"> <img
                                 src="{{ URL::asset('images/Logo ITK_no teks.png') }}" width="100%" height="100%">
                         </td>
@@ -59,22 +61,25 @@
                 <li class="{{ Request::is('evaluasi*') ? 'active' : '' }}">
                     <a href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
                 </li>
-                <li class="{{ Request::is('') ? 'active' : '' }}">
-                    <a href="#">Panduan</a>
+                <li class="{{ Request::is(['panduans*', 'panduan*']) ? 'active' : '' }}">
+                    <a
+                        href="@if (Auth::user()->role_id == 1) {{ URL('panduans') }} @else {{ URL('panduan') }} @endif">Panduan</a>
                 </li>
                 @can('pjm')
                     <li class="{{ Request::is('user*') ? 'active' : '' }}">
                         <a href="{{ URL('user') }}">User</a>
                     </li>
-                    <li class="{{ Request::is('') ? 'active' : '' }}">
-                        <a href="#">Jurusan</a>
+                    <li class="{{ Request::is('jurusans*') ? 'active' : '' }}">
+                        <a href="{{ URL('jurusans') }}">Jurusan</a>
                     </li>
-                    <li class="{{ Request::is('') ? 'active' : '' }}">
-                        <a href="#">Program Studi</a>
+                    <li class="{{ Request::is('prodis*') ? 'active' : '' }}">
+                        <a href="{{ URL('prodis') }}">Program Studi</a>
                     </li>
                 @endcan
-                <li class="{{ Request::is('') ? 'active' : '' }}">
-                    <a href="#">Feedback Auditor</a>
+                <li class="{{ Request::is(['feedbacks*', 'feedback*']) ? 'active' : '' }}">
+                    <a
+                        href="@if (Auth::user()->role_id == 4) {{ URL('feedbacks') }} @else {{ URL('feedback') }} @endif">Feedback
+                        Auditor</a>
                 </li>
             </ul>
         </nav>
@@ -104,7 +109,8 @@
                                     width="40px" height="40px">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Ubah Password</a>
+                                <a class="dropdown-item" href="{{ route('change_password', Auth::user()->id) }}">Ubah
+                                    Password</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
                             </div>
                         </li>

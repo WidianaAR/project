@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evaluasi Diri</title>
-    <link rel="stylesheet" href="{{ URL::Asset('css/app.css') }}">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 
 <body>
@@ -46,17 +46,17 @@
                         @else
                             <div class="col-auto text-right box mr-3">
                     @endif
-                        <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
-                            Tahun <i class='fa fa-angle-down fa-sm'></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="moduleDropDown">
-                            @foreach ($years as $year)
-                                <a class="dropdown-item" href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
-                            @endforeach
-                        </div>
+                    <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Tahun <i class='fa fa-angle-down fa-sm'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="moduleDropDown">
+                        @foreach ($years as $year)
+                            <a class="dropdown-item" href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
+                        @endforeach
                     </div>
-                @endif
-            @endcan
+            </div>
+            @endif
+        @endcan
 
         @can('pjm')
             <div class="col text-right p-0">
@@ -89,18 +89,18 @@
             <div class="col-auto text-left">
                 @can('auditor')
                     @if ($data->status == 'ditinjau')
-                        <a type="button" class="btn btn-primary" href="" data-toggle="modal"
-                            data-target="#feedbackModal"> Perlu Perbaikan</a>
+                        <a type="button" class="btn btn-secondary" href="" data-toggle="modal" data-target="#feedbackModal">
+                            Perlu Perbaikan</a>
                         <a type="button" class="btn btn-success" href="{{ route('ed_confirm', $id_evaluasi) }}"
                             onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
                             Konfirmasi</a>
                     @elseif ($data->status == 'disetujui')
-                        <a type="button" class="btn btn-primary" href="{{ route('ed_cancel_confirm', $id_evaluasi) }}"
+                        <a type="button" class="btn btn-secondary" href="{{ route('ed_cancel_confirm', $id_evaluasi) }}"
                             onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
                             Batal Setujui</a>
                     @endif
-                    <a type="button" class="btn btn-primary" href="" data-toggle="modal"
-                        data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
+                    <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i
+                            class="fas fa-file-upload"></i> Ganti File Excel</a>
                 @endcan
                 <a type="button" class="btn btn-danger" href="{{ route('ed_home') }}"><i class="fa fa-arrow-left"
                         aria-hidden="true"></i> Kembali</a>

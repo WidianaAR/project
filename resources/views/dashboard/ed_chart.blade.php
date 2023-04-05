@@ -6,7 +6,15 @@
             @csrf
             <div class="row align-items-center mb-3">
                 <div class="col text-left">
-                    <span class="text-muted">Dashboard / <a href="">Grafik evaluasi diri</a></span>
+                    @if (!!$param)
+                        <span class="text-muted">
+                            {{ $keterangan }}
+                        </span>
+                    @else
+                        <span class="text-muted">Dashboard /
+                            <a href="">Grafik evaluasi diri</a>
+                        </span>
+                    @endif
                 </div>
                 <div class="col-auto text-right p-0 box">
                     <select class="form-control" id="tahun" name="tahun">
@@ -35,14 +43,14 @@
                     </select>
                 </div>
 
-                <div class="col-auto p-0 box">
+                <div class="col-auto p-0 mr-3 box">
                     <button type="submit" class="btn btn-primary">Tampilkan</button>
                 </div>
             </div>
         </form>
 
         @if (!!$param)
-            <div class="row">
+            <div class="row pb-2 justify-content-center">
                 <div class="col-6">
                     <div id="chart_radar"></div>
                 </div>
@@ -50,7 +58,19 @@
                     <div id="chart_line"></div>
                 </div>
             </div>
+
+            <div class="element text-left">
+                <h5 class="pb-2">Legend / keterangan</h5>
+                <small>
+                    <ul style="columns: 2">
+                        @for ($i = 0; $i < count($legend) - 1; $i++)
+                            <li>{{ $legend[$i] }}</li>
+                        @endfor
+                    </ul>
+                </small>
+            </div>
         @endif
+
     </div>
 
     <script>
@@ -71,6 +91,9 @@
                 title: {
                     text: 'Nilai Capaian'
                 }
+            },
+            legend: {
+                enabled: false
             },
             plotOptions: {
                 line: {
@@ -102,6 +125,9 @@
                 gridLineInterpolation: 'polygon',
                 lineWidth: 0,
                 min: 0
+            },
+            legend: {
+                enabled: false
             },
             plotOptions: {
                 line: {

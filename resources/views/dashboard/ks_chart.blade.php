@@ -1,12 +1,27 @@
 @extends('layouts.navbar')
 
 @section('isi')
+    @if (session('success'))
+        <div class="alert alert-success" role="alert" id="msg-box">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="container text-center p-0">
         <form method="POST" action="{{ route('ks_chart_post') }}">
             @csrf
             <div class="row align-items-center mb-3">
                 <div class="col text-left">
-                    <span class="text-muted">Dashboard / <a href="">Grafik ketercapaian standar</a></span>
+                    @if (!!$param)
+                        <span class="text-muted">
+                            {{ $keterangan }}
+                        </span>
+                    @else
+                        <span class="text-muted">Dashboard /
+                            <a href="">Grafik ketercapaian standar</a>
+                        </span>
+                    @endif
                 </div>
                 <div class="col-auto text-right p-0 box">
                     <select class="form-control" id="tahun" name="tahun">
@@ -35,20 +50,31 @@
                     </select>
                 </div>
 
-                <div class="col-auto p-0 box">
+                <div class="col-auto p-0 mr-3 box">
                     <button type="submit" class="btn btn-primary">Tampilkan</button>
                 </div>
             </div>
         </form>
 
         @if (!!$param)
-            <div class="row">
+            <div class="row pb-2">
                 <div class="col-6">
                     <div id="chart_column"></div>
                 </div>
                 <div class="col-6">
-                    <div id="chart_line"></div>
+                    <div id="chart_radar"></div>
                 </div>
+            </div>
+
+            <div class="element text-left">
+                <h5 class="pb-2">Legend / keterangan</h5>
+                <small>
+                    <ul style="columns: 2">
+                        @for ($i = 0; $i < count($param) - 1; $i++)
+                            <li>{{ $param[$i] }}</li>
+                        @endfor
+                    </ul>
+                </small>
             </div>
         @endif
     </div>
@@ -57,30 +83,36 @@
         var param = {!! json_encode($param) !!}
         var value = {!! json_encode($value) !!}
 
-        Highcharts.chart('chart_line', {
+        Highcharts.chart('chart_radar', {
             chart: {
-                type: 'line'
+                polar: true,
             },
             title: {
-                text: 'Line Chart'
+                text: 'Radar Chart'
             },
             xAxis: {
-                categories: param
+                categories: param,
+                tickmarkPlacement: 'on',
+                lineWidth: 0
             },
             yAxis: {
-                title: {
-                    text: 'Nilai Capaian'
-                }
+                gridLineInterpolation: 'polygon',
+                lineWidth: 0,
+                min: 0
+            },
+            legend: {
+                enabled: false
             },
             plotOptions: {
                 line: {
-                    lineWidth: 2,
                     marker: {
                         radius: 3
-                    }
+                    },
+                    lineWidth: 2
                 }
             },
             series: [{
+                type: 'line',
                 name: 'Persentase',
                 data: value
             }]
@@ -100,6 +132,9 @@
                 title: {
                     text: 'Nilai Capaian'
                 }
+            },
+            legend: {
+                enabled: false
             },
             series: [{
                 name: 'Persentase',

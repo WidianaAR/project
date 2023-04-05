@@ -16,28 +16,28 @@ class JurusanSeeder extends Seeder
     {
         $jurusan = [
             [
-                'id'=>1,
-                'nama_jurusan'=>'JMTI',
+                'kode_jurusan' => 1,
+                'nama_jurusan' => 'JMTI',
                 'keterangan' => 'Jurusan Matematika dan Teknologi Informasi',
             ],
             [
-                'id'=>2,
-                'nama_jurusan'=>'JSTPK',
+                'kode_jurusan' => 2,
+                'nama_jurusan' => 'JSTPK',
                 'keterangan' => 'Jurusan Sains, Teknologi Pangan, dan Kemaritiman',
             ],
             [
-                'id'=>3,
-                'nama_jurusan'=>'JTIP',
+                'kode_jurusan' => 3,
+                'nama_jurusan' => 'JTIP',
                 'keterangan' => 'Jurusan Teknologi Industri dan Proses',
             ],
             [
-                'id'=>4,
-                'nama_jurusan'=>'JTSP',
+                'kode_jurusan' => 4,
+                'nama_jurusan' => 'JTSP',
                 'keterangan' => 'Jurusan Teknik Sipil dan Perencanaan',
             ],
             [
-                'id'=>5,
-                'nama_jurusan'=>'JIKL',
+                'kode_jurusan' => 5,
+                'nama_jurusan' => 'JIKL',
                 'keterangan' => 'Jurusan Ilmu Kebumian dan Lingkungan',
             ],
         ];

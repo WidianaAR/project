@@ -31,9 +31,10 @@
                     </div>
                 @enderror
                 <select name='prodi' class="custom-select" required>
-                    <option value='' selected>.:: Pilih Program Studi ::.</option>
+                    <option value='' selected>Pilih program studi</option>
                     @foreach ($prodis as $prodi)
-                        <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                        <option value="{{ $prodi->id }}" {{ old('prodi') == $prodi->id ? 'selected' : '' }}>
+                            {{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
                 <input type="text" name="jurusan" value="{{ Auth::user()->jurusan_id }}" hidden>

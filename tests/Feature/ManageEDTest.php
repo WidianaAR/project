@@ -15,7 +15,7 @@ class ManageEDTest extends TestCase
      */
     use RefreshDatabase;
 
-    public function pjm_login()
+    private function pjm_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -25,7 +25,7 @@ class ManageEDTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function kajur_login()
+    private function kajur_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -35,7 +35,7 @@ class ManageEDTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function auditor_login()
+    private function auditor_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -45,9 +45,9 @@ class ManageEDTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function dummy_file()
+    private function dummy_file()
     {
-        $path = public_path('template/ED_Template.xlsx');
+        $path = public_path('files/ED_Template.xlsx');
         $file = new UploadedFile(
             $path,
             'test_file.xlsx',
@@ -190,6 +190,7 @@ class ManageEDTest extends TestCase
     public function test_ed_export_file()
     {
         $this->test_ed_import_file();
+        $this->pjm_login();
         $data = ['filename' => 'Files/Evaluasi Diri_Informatika_2023.xlsx'];
         $this->post('evaluasi/export/file', $data)->assertStatus(200);
     }
@@ -197,6 +198,7 @@ class ManageEDTest extends TestCase
     public function test_ed_export_all_file()
     {
         $this->test_ed_import_file();
+        $this->pjm_login();
 
         $file = $this->dummy_file();
         $data = [
@@ -221,12 +223,14 @@ class ManageEDTest extends TestCase
     public function test_ed_filter_jurusan()
     {
         $this->test_ed_import_file();
+        $this->pjm_login();
         $this->get('evaluasi/filter/jurusan/1')->assertStatus(200);
     }
 
     public function test_ed_filter_prodi()
     {
         $this->test_ed_import_file();
+        $this->pjm_login();
         $this->get('evaluasi/filter/prodi/11')->assertStatus(200);
     }
 }

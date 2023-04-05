@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Jurusan;
 use App\Models\KetercapaianStandar;
-use App\Models\KSDeadline;
 use App\Models\Prodi;
 use App\Traits\CountdownTrait;
 use App\Traits\FileTrait;
@@ -51,32 +50,6 @@ class KSController extends Controller
         return view('ketercapaian_standar.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans'));
     }
 
-    public function set_time()
-    {
-        $deadline = $this->KSCountdown();
-        return view('ketercapaian_standar.set_batas_waktu', compact('deadline'));
-    }
-
-    public function set_time_action(Request $request)
-    {
-        $request->validate([
-            'date' => 'required',
-            'time' => 'required',
-        ]);
-        $datetime = $request->date . ' ' . $request->time;
-        KSDeadline::updateOrCreate(
-            ['id' => $request->id],
-            ['batas_waktu' => $datetime, 'status' => 'on going']
-        );
-        return redirect()->route('ks_home')->with('success', 'Set Deadline Pengisian Ketercapaian Standar Berhasil');
-    }
-
-    public function set_time_action_end($id)
-    {
-        KSDeadline::find($id)->update(['status' => 'finish']);
-        return redirect()->route('ks_home');
-    }
-
     public function add_action(Request $request)
     {
         if ($request->hasFile('file')) {
@@ -91,7 +64,7 @@ class KSController extends Controller
                 $this->DeleteFile($data->file_data);
             }
             $extension = $request->file('file')->extension();
-            $prodi = Prodi::where('id', $request->prodi)->first();
+            $prodi = Prodi::find($request->prodi);
             $path = $this->UploadFile($request->file('file'), "Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             KetercapaianStandar::updateOrCreate(
                 ['prodi_id' => $request->prodi, 'tahun' => $request->tahun],
@@ -103,21 +76,21 @@ class KSController extends Controller
                 ]
             );
             if (Auth::user()->role_id == 4) {
-                return redirect()->route('ks_table', $data->id)->with('success', 'File Berhasil Diganti');
+                return redirect()->route('ks_table', $data->id)->with('success', 'File berhasil diganti');
             }
-            return redirect()->route('ks_home')->with('success', 'File Berhasil Ditambahkan');
+            return redirect()->route('ks_home')->with('success', 'File berhasil ditambahkan');
         }
-        return redirect()->route('ks_home')->with('error', 'File Gagal Ditambahkan');
+        return redirect()->route('ks_home')->with('error', 'File gagal ditambahkan');
     }
 
     public function delete($id_standar)
     {
         if (!!$id_standar) {
-            $file = KetercapaianStandar::where('id', $id_standar)->first();
+            $file = KetercapaianStandar::find($id_standar);
             $this->DeleteFile($file->file_data);
             $file->delete();
         }
-        return redirect()->route('ks_home');
+        return redirect()->route('ks_home')->with('success', 'File berhasil dihapus');
     }
 
     public function table($id_standar)
@@ -125,7 +98,14 @@ class KSController extends Controller
         $headers = array();
         $sheetData = array();
 
-        $data = KetercapaianStandar::where('id', $id_standar)->first();
+        $data = KetercapaianStandar::find($id_standar);
+
+        if (Auth::user()->role_id == 3 && $data->prodi_id != Auth::user()->prodi_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        } elseif (Auth::user()->role_id == 2 && $data->jurusan_id != Auth::user()->jurusan_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        }
+
         $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
         $sheetCount = $file->getSheetCount();
         $sheetName = $file->getSheetNames();
@@ -146,7 +126,7 @@ class KSController extends Controller
         $deadline = $this->KSCountdown();
         $jurusans = Jurusan::all();
         if (Auth::user()->role_id == 2) {
-            $prodis = Prodi::where('id', Auth::user()->jurusan_id)->get();
+            $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
             $years = KetercapaianStandar::where('jurusan_id', Auth::user()->jurusan_id)->distinct()->pluck('tahun')->toArray();
             $data = KetercapaianStandar::where([['jurusan_id', '=', Auth::user()->jurusan_id], ['tahun', '=', $year]])->get();
         } elseif (Auth::user()->role_id == 3) {
@@ -154,7 +134,6 @@ class KSController extends Controller
             return redirect()->route('ks_table', $data->id);
         } else {
             $data = KetercapaianStandar::where('tahun', $year)->get();
-            ;
             $prodis = Prodi::all();
             $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
 
@@ -199,7 +178,7 @@ class KSController extends Controller
     {
         $deadline = $this->KSCountdown();
         $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
-        $data = KetercapaianStandar::where('id', $id_standar)->first();
+        $data = KetercapaianStandar::find($id_standar);
         return view('ketercapaian_standar.change_form', compact('deadline', 'prodis', 'data'));
     }
 
@@ -212,10 +191,10 @@ class KSController extends Controller
                     'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
                 ]);
 
-            $data = KetercapaianStandar::where('id', $request->id_standar)->first();
+            $data = KetercapaianStandar::find($request->id_standar);
             $this->DeleteFile($data->file_data);
             $extension = $request->file('file')->extension();
-            $prodi = Prodi::where('id', $request->prodi)->first();
+            $prodi = Prodi::find($request->prodi);
             $path = $this->UploadFile($request->file('file'), "Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             KetercapaianStandar::updateOrCreate(
                 ['id' => $request->id_standar],
@@ -224,9 +203,9 @@ class KSController extends Controller
                     'file_data' => $path
                 ]
             );
-            return redirect()->route('ks_home')->with('success', 'File Berhasil Diubah');
+            return redirect()->route('ks_home')->with('success', 'File berhasil diubah');
         }
-        return redirect()->route('ks_home')->with('error', 'File Gagal Diubah');
+        return redirect()->route('ks_home')->with('error', 'File gagal diubah');
     }
 
     public function export_all(Request $request)
@@ -255,7 +234,7 @@ class KSController extends Controller
             'status' => 'disetujui',
             'keterangan' => null,
         ]);
-        return redirect()->route('ks_home')->with('success', 'Data Ketercapaian Standar Disetujui');
+        return redirect()->route('ks_home')->with('success', 'Data ketercapaian standar disetujui');
     }
 
     public function feedback(Request $request)
@@ -268,7 +247,7 @@ class KSController extends Controller
             'keterangan' => $request->feedback,
             'status' => 'perlu perbaikan',
         ]);
-        return redirect()->route('ks_table', $request->id_standar)->with('success', 'Feedback Berhasil Disimpan');
+        return redirect()->route('ks_table', $request->id_standar)->with('success', 'Feedback berhasil disimpan');
     }
 
     public function cancel_confirm($id_standar)

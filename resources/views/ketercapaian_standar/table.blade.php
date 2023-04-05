@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ketercapaian Standar</title>
-    <link rel="stylesheet" href="{{ URL::Asset('css/app.css') }}">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 
 <body>
@@ -54,8 +54,8 @@
                             <a class="dropdown-item" href="{{ route('ks_filter_year', $year) }}">{{ $year }}</a>
                         @endforeach
                     </div>
-        </div>
-        @endif
+            </div>
+            @endif
         @endcan
 
         @can('pjm')
@@ -89,8 +89,8 @@
             <div class="col-auto text-left">
                 @can('auditor')
                     @if ($data->status == 'ditinjau')
-                        <a type="button" class="btn btn-primary" href="" data-toggle="modal"
-                            data-target="#feedbackModal"> Perlu Perbaikan</a>
+                        <a type="button" class="btn btn-secondary" href="" data-toggle="modal" data-target="#feedbackModal">
+                            Perlu Perbaikan</a>
                         <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"
                             onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
                             Konfirmasi</a>
@@ -99,8 +99,8 @@
                             onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
                             Batal Setujui</a>
                     @endif
-                    <a type="button" class="btn btn-primary" href="" data-toggle="modal"
-                        data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
+                    <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal"><i
+                            class="fas fa-file-upload"></i> Ganti File Excel</a>
                 @endcan
                 <a type="button" class="btn btn-danger" href="{{ route('ks_home') }}"><i class="fa fa-arrow-left"
                         aria-hidden="true"></i> Kembali</a>

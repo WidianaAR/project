@@ -18,6 +18,16 @@ trait FileTrait
         );
     }
 
+    public function UploadFilePanduan(UploadedFile $file, $filename = null)
+    {
+        $FileName = !is_null($filename) ? $filename : Str::random(10);
+        return $file->storeAs(
+            'Panduans',
+            $FileName,
+            'public'
+        );
+    }
+
     public function DeleteFile($path)
     {
         Storage::disk('public')->delete($path);
@@ -26,10 +36,9 @@ trait FileTrait
     public function ExportZip($zipname, $data)
     {
         $zip = new \ZipArchive();
-        if ($zip->open(storage_path('app/public/'.$zipname), \ZipArchive::CREATE)== TRUE)
-        {
-            foreach ($data as $value){
-                $zip->addFile(storage_path('app/public/'.$value), $value);
+        if ($zip->open(storage_path('app/public/' . $zipname), \ZipArchive::CREATE) == TRUE) {
+            foreach ($data as $value) {
+                $zip->addFile(storage_path('app/public/' . $value), $value);
             }
             $zip->close();
         }

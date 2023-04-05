@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     public $timestamps = false;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -46,15 +46,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function role() {
+    public function role()
+    {
         return $this->belongsTo(Role::class);
     }
 
-    public function jurusan() {
+    public function jurusan()
+    {
         return $this->belongsTo(Jurusan::class);
     }
 
-    public function prodi() {
+    public function prodi()
+    {
         return $this->belongsTo(Prodi::class);
     }
+
+    public function name(): Attribute
+    {
+        return Attribute::make(
+        set: fn(string $value) => ucwords($value)
+        ); }
 }

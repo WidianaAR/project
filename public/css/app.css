@@ -1,3 +1,22 @@
+trix-toolbar .trix-button-group--file-tools {
+    display: none;
+}
+
+.feedback-list:hover {
+    box-shadow: 0px 3px 5px #0000001a;
+    border-radius: 5px;
+}
+
+.feedback-link {
+    text-decoration: none;
+    color: #000000;
+}
+
+.feedback-link:hover {
+    text-decoration: none;
+    color: #000000;
+}
+
 div.element {
     background-color: white;
     margin-top: 2vh;
@@ -133,6 +152,5 @@ thead {
 }
 
 .time {
-    width: fit-content;
     color: #CE4848;
 }

@@ -16,7 +16,7 @@ class ManageUserTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
-    public function pjm_login()
+    private function pjm_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -46,7 +46,7 @@ class ManageUserTest extends TestCase
             'name' => 'New user',
             'email' => 'new@gmail.com',
             'password' => '12345',
-            'password_confirm' => '12345',
+            'confirm' => '12345',
         ];
         $this->post('user/add', $user)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('users', [
@@ -65,12 +65,11 @@ class ManageUserTest extends TestCase
     {
         $this->pjm_login();
         $data = [
-            'id' => 1,
             'role_id' => $this->faker->numberBetween(1, 4),
             'name' => 'Edit User',
             'email' => 'edit@gmail.com',
         ];
-        $this->post('user/change', $data)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
+        $this->post('user/change/1', $data)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('users', [
             'name' => 'Edit User',
             'email' => 'edit@gmail.com',

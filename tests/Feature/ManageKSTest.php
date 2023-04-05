@@ -15,7 +15,7 @@ class ManageKSTest extends TestCase
      */
     use RefreshDatabase;
 
-    public function pjm_login()
+    private function pjm_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -25,7 +25,7 @@ class ManageKSTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function kajur_login()
+    private function kajur_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -35,7 +35,7 @@ class ManageKSTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function auditor_login()
+    private function auditor_login()
     {
         $this->withoutExceptionHandling();
         $this->post('login', [
@@ -45,9 +45,9 @@ class ManageKSTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function dummy_file()
+    private function dummy_file()
     {
-        $path = public_path('template/KS_Template.xlsx');
+        $path = public_path('files/KS_Template.xlsx');
         $file = new UploadedFile(
             $path,
             'test_file.xlsx',
@@ -190,6 +190,7 @@ class ManageKSTest extends TestCase
     public function test_ks_export_file()
     {
         $this->test_ks_import_file();
+        $this->pjm_login();
         $data = ['filename' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'];
         $this->post('standar/export/file', $data)->assertStatus(200);
     }
@@ -197,6 +198,7 @@ class ManageKSTest extends TestCase
     public function test_ks_export_all_file()
     {
         $this->test_ks_import_file();
+        $this->pjm_login();
 
         $file = $this->dummy_file();
         $data = [
@@ -221,12 +223,14 @@ class ManageKSTest extends TestCase
     public function test_ks_filter_jurusan()
     {
         $this->test_ks_import_file();
+        $this->pjm_login();
         $this->get('standar/filter/jurusan/1')->assertStatus(200);
     }
 
     public function test_ks_filter_prodi()
     {
         $this->test_ks_import_file();
+        $this->pjm_login();
         $this->get('standar/filter/prodi/11')->assertStatus(200);
     }
 }

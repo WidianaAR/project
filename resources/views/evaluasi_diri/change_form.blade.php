@@ -33,11 +33,8 @@
                 @enderror
                 <select name='prodi' class="custom-select" required>
                     @foreach ($prodis as $prodi)
-                        @if ($prodi->id == $data->prodi_id)
-                            <option value="{{ $prodi->id }}" selected>{{ $prodi->nama_prodi }}</option>
-                        @else
-                            <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
-                        @endif
+                        <option value="{{ $prodi->id }}" @if (old('prodi') == $prodi->id || $data->prodi_id == $prodi->id) selected @endif>
+                            {{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
                 <input type="text" name="tahun" value="{{ date('Y') }}" hidden>

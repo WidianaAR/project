@@ -13,11 +13,13 @@ class EDChartController extends Controller
         $param = [];
         $values = [];
         $value_param = [];
+        $legend = [];
 
         for ($i = 0; $i < count($data); $i++) {
             $value = [];
             $file = IOFactory::load(storage_path('app/public/' . $data[$i]->file_data));
             $maxCell = $file->getSheet(2)->getHighestRowAndColumn();
+            $legend = $file->getSheet(2)->rangeToArray('A1:' . 'A' . $maxCell['row'] - 1);
             $sheetData = $file->getSheet(2)->rangeToArray('B1:' . $maxCell['column'] . $maxCell['row'] - 1);
             for ($j = 0; $j < count($sheetData); $j++) {
                 array_push($param, $sheetData[$j]['0']);
@@ -42,8 +44,10 @@ class EDChartController extends Controller
             return $item / count($data);
         });
         $value_param = $value_param->toArray();
+        $legend = array_reduce($legend, 'array_merge', []);
+        $legend = array_values(array_filter($legend));
 
-        return ['param' => $param, 'value' => $value_param];
+        return ['param' => $param, 'value' => $value_param, 'legend' => $legend];
     }
 
     public function home(Request $request)
@@ -52,7 +56,7 @@ class EDChartController extends Controller
         $prodis = EvaluasiDiri::where('status', 'disetujui')->join('prodis', 'prodis.id', '=', 'evaluasi_diris.prodi_id')->select('prodis.nama_prodi', 'evaluasi_diris.jurusan_id', 'evaluasi_diris.prodi_id')->distinct()->get();
         $jurusans = EvaluasiDiri::where('status', 'disetujui')->select('jurusan_id')->distinct()->get();
 
-        if (!!$request->all()) {
+        if (!!$request->all() and !!$request->tahun) {
             if ($request->jurusan == 'all') {
                 $data = EvaluasiDiri::where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
                 $keterangan = 'Evaluasi diri semua jurusan tahun ' . $request->tahun;
@@ -77,7 +81,8 @@ class EDChartController extends Controller
         $param_value = $this->read_excel($data);
         $param = $param_value['param'];
         $value = $param_value['value'];
+        $legend = $param_value['legend'];
 
-        return view('dashboard.ed_chart', compact('years', 'jurusans', 'prodis', 'param', 'value', 'keterangan'));
+        return view('dashboard.ed_chart', compact('years', 'jurusans', 'prodis', 'param', 'value', 'keterangan', 'legend'));
     }
 }

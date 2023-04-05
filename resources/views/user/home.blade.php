@@ -15,9 +15,9 @@
         </div>
     @endif
 
-    <div class="row m-0 align-items-center">
+    <div class="row m-0">
         <div class="col pl-1">
-            <h4>User</h4>
+            <h5>User</h5>
         </div>
         <div class="box col-auto text-right">
             <button data-toggle="dropdown" aria-expanded="false" class="simple">
@@ -26,18 +26,18 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
                 <a class="dropdown-item {{ Request::is('user') ? 'active' : '' }}" href="{{ URL('user') }}">All</a>
                 <a class="dropdown-item {{ Request::is('user/filter/pjm') ? 'active' : '' }}"
-                    href="{{ URL('user/filter/pjm') }}">PJM</a>
+                    href="{{ route('user_pjm') }}">PJM</a>
                 <a class="dropdown-item {{ Request::is('user/filter/kajur') ? 'active' : '' }}"
-                    href="{{ URL('user/filter/kajur') }}">Kepala Jurusan</a>
+                    href="{{ route('user_kajur') }}">Kepala Jurusan</a>
                 <a class="dropdown-item {{ Request::is('user/filter/koorprodi') ? 'active' : '' }}"
-                    href="{{ URL('user/filter/koorprodi') }}">Koordinator Program Studi</a>
+                    href="{{ route('user_koorprodi') }}">Koordinator Program Studi</a>
                 <a class="dropdown-item {{ Request::is('user/filter/auditor') ? 'active' : '' }}"
-                    href="{{ URL('user/filter/auditor') }}">Auditor</a>
+                    href="{{ route('user_auditor') }}">Auditor</a>
             </div>
         </div>
     </div>
     <div class="element">
-        @if(!!$users->count())
+        @if (!!$users->count())
             <table class="table table-bordered">
                 <thead class="thead">
                     <tr>
@@ -71,8 +71,8 @@
                                 <a type="button" class="btn btn-success" href="{{ route('change_user', $user->id) }}"><i
                                         class="fa fa-edit"></i></a>
                                 <a type="button" href="{{ route('delete_user', $user->id) }}"
-                                    onclick="return confirm('Apakah Anda Yakin Menghapus Data?');" class="btn btn-danger"><i
-                                        class="fa fa-trash"></i></a>
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
+                                    class="btn btn-danger"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
                     @endforeach
