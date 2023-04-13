@@ -67,7 +67,7 @@ class JurusanController extends Controller
     public function destroy($id)
     {
         $data = Jurusan::find($id);
-        if ($data->prodi()->exists() || $data->evaluasi_diri()->exists() || $data->ketercapaian_standar()->exists()) {
+        if ($data->prodi()->exists()) {
             return back()->with('error', 'Data jurusan tidak dapat dihapus karena masih memiliki data lain yang terkait.');
         }
         $data->delete();

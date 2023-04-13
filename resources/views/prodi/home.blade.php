@@ -1,13 +1,13 @@
 @extends('layouts.navbar')
 @section('isi')
-    @if (!!session('success'))
+    @if (session('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             {{ session('success') }}
         </div>
     @endif
 
-    @if (!!session('error'))
+    @if (session('error'))
         <div class="alert alert-danger" role="alert" id="msg-box">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             {{ session('error') }}
@@ -22,7 +22,7 @@
     </div>
 
     <div class="element">
-        @if (!!$prodis->count())
+        @if ($prodis->count())
             <table class="table table-bordered">
                 <thead class="thead">
                     <tr>

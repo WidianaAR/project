@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kode_prodi')->unique();
             $table->foreignId('jurusan_id')->constrained();
             $table->string('nama_prodi');
+            $table->timestamps();
         });
     }
 

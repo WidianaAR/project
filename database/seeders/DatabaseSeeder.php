@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
             ProdiSeeder::class,
             RoleSeeder::class,
             AccountSeeder::class,
+            PanduanSeeder::class,
+            EDSeeder::class,
+            KSSeeder::class
         ]);
     }
 }

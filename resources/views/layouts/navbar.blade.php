@@ -76,10 +76,8 @@
                         <a href="{{ URL('prodis') }}">Program Studi</a>
                     </li>
                 @endcan
-                <li class="{{ Request::is(['feedbacks*', 'feedback*']) ? 'active' : '' }}">
-                    <a
-                        href="@if (Auth::user()->role_id == 4) {{ URL('feedbacks') }} @else {{ URL('feedback') }} @endif">Feedback
-                        Auditor</a>
+                <li class="{{ Request::is('feedbacks*') ? 'active' : '' }}">
+                    <a href="{{ URL('feedbacks') }}">Feedback Auditor</a>
                 </li>
             </ul>
         </nav>

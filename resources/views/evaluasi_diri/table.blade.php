@@ -26,7 +26,7 @@
         @endif
 
         <div class="row align-items-center">
-            @if (!!$deadline[0])
+            @if ($deadline[0])
                 <div class="col-auto pr-0">
                     Batas akhir upload file :
                 </div>
@@ -40,8 +40,8 @@
             @endif
 
             @can('koorprodi')
-                @if (!!$years)
-                    @if (!!$deadline[0])
+                @if ($years)
+                    @if ($deadline[0])
                         <div class="col-auto text-right box">
                         @else
                             <div class="col-auto text-right box mr-3">
@@ -70,9 +70,9 @@
 
         {{-- Data --}}
         @can('koorprodi')
-            @if (!!$deadline[0])
+            @if ($deadline[0])
                 <div class="col-auto text-left pl-0">
-                    @if (!!$id_evaluasi)
+                    @if ($id_evaluasi)
                         <a type="button" class="btn btn-danger" href="{{ route('ed_delete', $id_evaluasi) }}"
                             onclick="return confirm('Apakah Anda yakin menghapus file?');"><i class="fas fa-trash"></i>
                             Hapus File Excel</a>
@@ -107,7 +107,7 @@
             </div>
         @endcannot
 
-        @if (!!$data and !!$data->keterangan)
+        @if ($data and $data->keterangan)
             <div class="row m-3" style="width: 100%">
                 <span class="border border-danger p-2" style="display: inline-block; width: 100%">
                     <b>Yang perlu diperbaiki:</b>
@@ -118,17 +118,34 @@
         @endif
 
         {{-- Table --}}
-        @if (!!$sheetData)
+        @if ($sheetData)
             <div class="m-3 text-center element">
                 <table class="table table-bordered">
                     @foreach ($sheetData as $sheet)
                         <tr>
-                            @if (!!!$sheet[3])
-                                <td colspan="9"> {{ $sheet[0] }} </td>
+                            @if (!$sheet[3])
+                                <td id="title" colspan="@if ($temuan) 10 @else 9 @endif">
+                                    {{ $sheet[0] }} </td>
                             @else
-                                @foreach (range(0, 8) as $v)
+                                @foreach (range(0, 7) as $v)
                                     <td> {{ $sheet[$v] }} </td>
                                 @endforeach
+                                <td>
+                                    @if (\Illuminate\Support\Facades\URL::isValidUrl($sheet[8]))
+                                        <a href="{{ $sheet[8] }}">
+                                            {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 7, '...')) }}
+                                        </a>
+                                    @else
+                                        {{ $sheet[8] }}
+                                    @endif
+                                </td>
+                                @if ($temuan)
+                                    <td>
+                                        @if ($sheet[9])
+                                            {{ $sheet[9] }}
+                                        @endif
+                                    </td>
+                                @endif
                             @endif
                         </tr>
                     @endforeach
@@ -153,14 +170,16 @@
                     <div class="modal-body">
                         <h2>Pilih File</h2>
                         <input type="file" name="file">
-                        @if (!!Auth::user()->prodi_id)
+                        @if (Auth::user()->prodi_id)
                             <input type="text" name="prodi" value="{{ Auth::user()->prodi_id }}" hidden>
-                            <input type="text" name="jurusan" value="{{ Auth::user()->jurusan_id }}" hidden>
                         @else
                             <input type="text" name="prodi" value="{{ $data->prodi_id }}" hidden>
-                            <input type="text" name="jurusan" value="{{ $data->jurusan_id }}" hidden>
                         @endif
-                        <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
+                        @if ($data && $data->tahun)
+                            <input type="text" name="tahun" value="{{ $data->tahun }}" hidden>
+                        @else
+                            <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>

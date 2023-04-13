@@ -72,7 +72,7 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/2');
+        $this->get('standar/confirm/1');
 
         $data = [
             'prodi' => 'all',
@@ -87,7 +87,7 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/3');
+        $this->get('standar/confirm/1');
 
         $data = [
             'prodi' => 'all',
@@ -102,7 +102,7 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/4');
+        $this->get('standar/confirm/1');
 
         $data = [
             'prodi' => 11,

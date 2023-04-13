@@ -13,7 +13,7 @@
             <h5 class="mb-0">{{ $panduan->judul }}</h5>
         </div>
         <div class="mt-2">{!! $panduan->keterangan !!}</div>
-        <div class="mt-4">Download file panduan : <a
+        <div class="mt-4">Download file : <a
                 href="{{ route('panduan_download', $panduan->id) }}">{{ basename($panduan->file_data) }}</a></div>
     </div>
 @endsection

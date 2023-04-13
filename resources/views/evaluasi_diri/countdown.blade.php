@@ -3,7 +3,7 @@
 <script>
     var date = {!! json_encode($deadline[0]) !!};
     var id = {!! json_encode($deadline[1]) !!};
-    if (!!date) {
+    if (date) {
         var countDownDate = new Date(date).getTime();
         var x = setInterval(function() {
             var now = new Date().getTime();

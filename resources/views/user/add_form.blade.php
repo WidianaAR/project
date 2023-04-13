@@ -30,8 +30,7 @@
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="inputGroupSelect02">Pilih</label>
                     </div>
-                    <select name='jurusan_id' onChange="update()" class="custom-select select-jurusan"
-                        id="inputGroupSelect02">
+                    <select name='jurusan_id' class="custom-select select-jurusan" id="inputGroupSelect02">
                         <option value='' selected>Jurusan</option>
                         @foreach ($jurusans as $jurusan)
                             <option value={{ $jurusan->id }}>{{ $jurusan->nama_jurusan }}</option>
@@ -44,6 +43,9 @@
                     </div>
                     <select name='prodi_id' class="custom-select select-prodi" id="inputGroupSelect03">
                         <option value='' selected>Program studi</option>
+                        @foreach ($prodis as $prodi)
+                            <option value={{ $prodi->id }}>{{ $prodi->nama_prodi }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -88,21 +90,4 @@
             </form>
         </div>
     </div>
-
-    <script type="text/javascript">
-        function update() {
-            $('select.select-prodi').find('option').remove().end().append(
-                '<option value="">Program studi</option>');
-            var selected = $('select.select-jurusan').children("option:selected").val();
-            var prodis = {!! json_encode($prodis) !!}
-            $.each(prodis, function(i, prodi) {
-                if (prodi.jurusan_id == selected) {
-                    $('select.select-prodi').append($('<option>', {
-                        value: prodi.id,
-                        text: prodi.nama_prodi
-                    }))
-                }
-            })
-        }
-    </script>
 @endsection

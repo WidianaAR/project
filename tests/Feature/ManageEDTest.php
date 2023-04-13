@@ -117,13 +117,13 @@ class ManageEDTest extends TestCase
     public function test_ed_table_page_rendered()
     {
         $this->test_ed_import_file();
-        $this->get('evaluasi/table/6')->assertStatus(200);
+        $this->get('evaluasi/table/1')->assertStatus(200);
     }
 
     public function test_ed_edit_page_rendered()
     {
         $this->test_ed_import_file();
-        $this->get('evaluasi/change/7')->assertStatus(200);
+        $this->get('evaluasi/change/1')->assertStatus(200);
     }
 
     public function test_ed_edit_file()
@@ -131,31 +131,35 @@ class ManageEDTest extends TestCase
         $this->test_ed_import_file();
         $file = $this->dummy_file();
         $data = [
-            'id_evaluasi' => 8,
+            'id_evaluasi' => 1,
             'file' => $file,
-            'prodi' => 10,
+            'prodi' => 18,
             'tahun' => 2023,
         ];
         $this->post('evaluasi/change', $data)->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('evaluasi_diris', [
-            'file_data' => 'Files/Evaluasi Diri_Sistem Informasi_2023.xlsx'
+            'file_data' => 'Files/Evaluasi Diri_Bisnis Digital_2023.xlsx'
         ]);
     }
 
     public function test_ed_delete()
     {
         $this->test_ed_import_file();
-        $this->get('evaluasi/delete/9')->assertRedirect('evaluasi')->assertStatus(302);
-        $this->assertDatabaseEmpty('evaluasi_diris');
+        $this->get('evaluasi/delete/1')->assertRedirect('evaluasi')->assertStatus(302);
+        $data = [
+            'prodi_id' => 11,
+            'tahun' => 2023,
+        ];
+        $this->assertDatabaseMissing('evaluasi_diris', $data);
     }
 
     public function test_ed_confirm()
     {
         $this->test_ed_import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/10')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
+        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('evaluasi_diris', [
-            'id' => 10,
+            'id' => 1,
             'status' => 'disetujui'
         ]);
     }
@@ -164,10 +168,10 @@ class ManageEDTest extends TestCase
     {
         $this->test_ed_import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/11')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
-        $this->get('evaluasi/cancel_confirm/11')->assertRedirect('evaluasi')->assertStatus(302);
+        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
+        $this->get('evaluasi/cancel_confirm/1')->assertRedirect('evaluasi')->assertStatus(302);
         $this->assertDatabaseHas('evaluasi_diris', [
-            'id' => 11,
+            'id' => 1,
             'status' => 'ditinjau'
         ]);
     }
@@ -177,12 +181,12 @@ class ManageEDTest extends TestCase
         $this->test_ed_import_file();
         $this->auditor_login();
         $data = [
-            'id_evaluasi' => 12,
+            'id_evaluasi' => 1,
             'feedback' => 'tes feedback'
         ];
-        $this->post('evaluasi/feedback', $data)->assertRedirect('evaluasi/table/12')->assertStatus(302)->assertSessionHas('success');
+        $this->post('evaluasi/feedback', $data)->assertRedirect('evaluasi/table/1')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('evaluasi_diris', [
-            'id' => 12,
+            'id' => 1,
             'keterangan' => 'tes feedback'
         ]);
     }
@@ -200,16 +204,7 @@ class ManageEDTest extends TestCase
         $this->test_ed_import_file();
         $this->pjm_login();
 
-        $file = $this->dummy_file();
-        $data = [
-            'file' => $file,
-            'prodi' => 10,
-            'jurusan' => 1,
-            'tahun' => 2023,
-        ];
-        $this->post('evaluasi', $data);
-
-        $files = ['Files/Evaluasi Diri_Informatika_2023.xlsx', 'Files/Evaluasi Diri_Sistem Informasi_2023.xlsx'];
+        $files = ['Files/Evaluasi Diri_Informatika_2023.xlsx', 'Files/Evaluasi Diri_Sistem Informasi_2022.xlsx'];
         $request = ['data' => $files];
         $this->post('evaluasi/export', $request)->assertStatus(200);
     }

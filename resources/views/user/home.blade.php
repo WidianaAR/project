@@ -24,7 +24,7 @@
                 Jenis User <i class='fa fa-chevron-down fa-sm'></i>
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
-                <a class="dropdown-item {{ Request::is('user') ? 'active' : '' }}" href="{{ URL('user') }}">All</a>
+                <a class="dropdown-item {{ Request::is('user') ? 'active' : '' }}" href="{{ URL('user') }}">Semua</a>
                 <a class="dropdown-item {{ Request::is('user/filter/pjm') ? 'active' : '' }}"
                     href="{{ route('user_pjm') }}">PJM</a>
                 <a class="dropdown-item {{ Request::is('user/filter/kajur') ? 'active' : '' }}"
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="element">
-        @if (!!$users->count())
+        @if ($users->count())
             <table class="table table-bordered">
                 <thead class="thead">
                     <tr>
@@ -62,6 +62,9 @@
                                 <td>-</td>
                             @elseif ($user->role_id == 3)
                                 <td>{{ $user->jurusan->nama_jurusan }}</td>
+                                <td>{{ $user->prodi->nama_prodi }}</td>
+                            @elseif ($user->role_id == 4)
+                                <td>-</td>
                                 <td>{{ $user->prodi->nama_prodi }}</td>
                             @else
                                 <td>-</td>

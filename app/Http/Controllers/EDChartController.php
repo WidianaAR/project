@@ -52,26 +52,40 @@ class EDChartController extends Controller
 
     public function home(Request $request)
     {
-        $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
-        $prodis = EvaluasiDiri::where('status', 'disetujui')->join('prodis', 'prodis.id', '=', 'evaluasi_diris.prodi_id')->select('prodis.nama_prodi', 'evaluasi_diris.jurusan_id', 'evaluasi_diris.prodi_id')->distinct()->get();
-        $jurusans = EvaluasiDiri::where('status', 'disetujui')->select('jurusan_id')->distinct()->get();
+        $years = EvaluasiDiri::where('status', 'disetujui')->distinct()->pluck('tahun')->toArray();
+        $prodis = EvaluasiDiri::where('status', 'disetujui')->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
+            return $item->unique('prodi.id');
+        });
+        $jurusans = EvaluasiDiri::where('status', 'disetujui')->with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
+            return $item->unique('prodi.jurusan.id');
+        });
 
-        if (!!$request->all() and !!$request->tahun) {
+        if ($request->all() and $request->tahun) {
             if ($request->jurusan == 'all') {
                 $data = EvaluasiDiri::where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
                 $keterangan = 'Evaluasi diri semua jurusan tahun ' . $request->tahun;
             } elseif ($request->jurusan != 'all') {
                 if ($request->prodi == 'all') {
-                    $data = EvaluasiDiri::where(['tahun' => $request->tahun, 'jurusan_id' => $request->jurusan, 'status' => 'disetujui'])->get();
-                    $keterangan = 'Evaluasi diri ' . $data[0]->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
+                    $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($request) {
+                        $query->where('id', $request->jurusan);
+                    })->where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
+                    if (!$data->isEmpty()) {
+                        $keterangan = 'Evaluasi diri ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
+                    } else {
+                        $keterangan = 'Data kosong';
+                    }
                 } else {
                     $data = EvaluasiDiri::where(['tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status' => 'disetujui'])->get();
-                    $keterangan = 'Evaluasi diri program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
+                    if (!$data->isEmpty()) {
+                        $keterangan = 'Evaluasi diri program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
+                    } else {
+                        $keterangan = 'Data kosong';
+                    }
                 }
             }
         } else {
             $data = EvaluasiDiri::where(['status' => 'disetujui'])->latest()->get();
-            if (!!$data->count()) {
+            if ($data->count()) {
                 $keterangan = 'Evaluasi diri program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
             } else {
                 $keterangan = 'Data kosong';

@@ -6,7 +6,7 @@
             @csrf
             <div class="row align-items-center mb-3">
                 <div class="col text-left">
-                    @if (!!$param)
+                    @if ($param)
                         <span class="text-muted">
                             {{ $keterangan }}
                         </span>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="col-auto text-right p-0 box">
                     <select class="form-control" id="tahun" name="tahun">
-                        @if (!!$param)
+                        @if ($param)
                             @foreach ($years as $year)
                                 <option value="{{ $year }}">{{ $year }}</option>
                             @endforeach
@@ -31,8 +31,12 @@
                 <div class="col-auto p-0 box">
                     <select class="form-control select-jurusan" id="jurusan" name="jurusan" onchange="update()">
                         <option value="all">Semua jurusan</option>
-                        @foreach ($jurusans as $jurusan)
-                            <option value="{{ $jurusan->jurusan->id }}">{{ $jurusan->jurusan->nama_jurusan }}</option>
+                        @foreach ($jurusans as $data)
+                            @foreach ($data as $jurusan)
+                                <option value="{{ $jurusan->prodi->jurusan->id }}">
+                                    {{ $jurusan->prodi->jurusan->nama_jurusan }}
+                                </option>
+                            @endforeach
                         @endforeach
                     </select>
                 </div>
@@ -49,7 +53,7 @@
             </div>
         </form>
 
-        @if (!!$param)
+        @if ($param)
             <div class="row pb-2 justify-content-center">
                 <div class="col-6">
                     <div id="chart_radar"></div>
@@ -149,13 +153,15 @@
                 '<option value="all">Semua program studi</option>');
             var selected = $('select.select-jurusan').children("option:selected").val();
             var prodis = {!! json_encode($prodis) !!}
-            $.each(prodis, function(i, prodi) {
-                if (prodi.jurusan_id == selected) {
-                    $('select.select-prodi').append($('<option>', {
-                        value: prodi.prodi_id,
-                        text: prodi.nama_prodi
-                    }))
-                }
+            $.each(prodis, function(i, data) {
+                $.each(data, function(i, prodi) {
+                    if (prodi.prodi.jurusan_id == selected) {
+                        $('select.select-prodi').append($('<option>', {
+                            value: prodi.prodi.id,
+                            text: prodi.prodi.nama_prodi
+                        }))
+                    }
+                })
             })
         }
     </script>

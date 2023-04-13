@@ -19,34 +19,35 @@ class EDController extends Controller
 
     public function home()
     {
-        $data = EvaluasiDiri::with(['jurusan', 'prodi'])->get();
-        $jurusans = Jurusan::all();
-        $prodis = Prodi::all();
         $deadline = $this->EDCountdown();
-        $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
+        $keterangan = 'Semua data';
+        $user = Auth::user();
 
-        if (Auth::user()->role_id == 2) {
-            $jurusanId = Auth::user()->jurusan_id;
-            $data = EvaluasiDiri::where('jurusan_id', $jurusanId)->get();
+        if ($user->role_id == 2) {
+            $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->with('prodi')->get();
             $jurusans = null;
-            $prodis = Prodi::where('jurusan_id', $jurusanId)->get();
-            $years = EvaluasiDiri::where('jurusan_id', Auth::user()->jurusan_id)->distinct()->pluck('tahun')->toArray();
-            return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
-        } elseif (Auth::user()->role_id == 3) {
-            $evaluasi_diri = EvaluasiDiri::where('prodi_id', Auth::user()->prodi_id)->first();
-            if (!!$evaluasi_diri) {
+            $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
+            $years = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->distinct()->pluck('tahun')->toArray();
+        } elseif ($user->role_id == 3) {
+            $evaluasi_diri = EvaluasiDiri::where('prodi_id', $user->prodi_id)->first();
+            if ($evaluasi_diri) {
                 $id_ed = $evaluasi_diri->id;
+                return redirect()->route('ed_table', $id_ed);
             } else {
-                $id_evaluasi = null;
-                $sheetData = null;
-                $years = null;
-                $data = null;
+                [$id_evaluasi, $sheetData, $years, $data] = null;
                 return view('evaluasi_diri.table', compact('deadline', 'id_evaluasi', 'sheetData', 'years', 'data'));
             }
-            return redirect()->route('ed_table', $id_ed);
+        } else {
+            $data = EvaluasiDiri::with(['prodi.jurusan', 'prodi'])->get();
+            $jurusans = Jurusan::all();
+            $prodis = Prodi::all();
+            $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
         }
-        ;
-        return view('evaluasi_diri.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans'));
+        return view('evaluasi_diri.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans', 'keterangan'));
     }
 
     public function add_action(Request $request)
@@ -58,17 +59,16 @@ class EDController extends Controller
                     'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
                 ]);
 
-            $data = EvaluasiDiri::where([['prodi_id', '=', $request->prodi], ['tahun', '=', $request->tahun]])->first();
-            if (!!$data) {
+            $data = EvaluasiDiri::where([['prodi_id', '=', $request->prodi], ['tahun', '=', $request->tahun]])->first()->load('prodi');
+            if ($data) {
                 $this->DeleteFile($data->file_data);
             }
             $extension = $request->file('file')->extension();
-            $prodi = Prodi::find($request->prodi);
+            $prodi = $data->prodi;
             $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             EvaluasiDiri::updateOrCreate(
                 ['prodi_id' => $request->prodi, 'tahun' => $request->tahun],
                 [
-                    'jurusan_id' => $request->jurusan,
                     'file_data' => $path,
                     'status' => 'ditinjau',
                     'keterangan' => null
@@ -84,11 +84,12 @@ class EDController extends Controller
 
     public function table($id_evaluasi)
     {
-        $data = EvaluasiDiri::find($id_evaluasi);
+        $data = EvaluasiDiri::find($id_evaluasi)->load('prodi.jurusan');
+        $user = Auth::user();
 
-        if (Auth::user()->role_id == 3 && $data->prodi_id != Auth::user()->prodi_id) {
+        if ($user->role_id == 3 && $data->prodi_id != $user->prodi_id) {
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif (Auth::user()->role_id == 2 && $data->jurusan_id != Auth::user()->jurusan_id) {
+        } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->jurusan_id) {
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
@@ -97,12 +98,13 @@ class EDController extends Controller
         $sheetData = $file->getSheet(0)->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row'] - 1);
         $years = EvaluasiDiri::where('prodi_id', $data->prodi_id)->distinct()->pluck('tahun')->toArray();
         $deadline = $this->EDCountdown();
-        return view('evaluasi_diri.table', compact('deadline', 'id_evaluasi', 'sheetData', 'years', 'data'));
+        $temuan = (array_key_exists(9, $sheetData[0])) ? 'not null' : null;
+        return view('evaluasi_diri.table', compact('deadline', 'id_evaluasi', 'sheetData', 'years', 'data', 'temuan'));
     }
 
     public function delete($id_evaluasi)
     {
-        if (!!$id_evaluasi) {
+        if ($id_evaluasi) {
             $file = EvaluasiDiri::find($id_evaluasi);
             $this->DeleteFile($file->file_data);
             $file->delete();
@@ -141,12 +143,18 @@ class EDController extends Controller
     {
         $deadline = $this->EDCountdown();
         $jurusans = Jurusan::all();
-        if (Auth::user()->role_id == 2) {
-            $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
-            $years = EvaluasiDiri::where('jurusan_id', Auth::user()->jurusan_id)->distinct()->pluck('tahun')->toArray();
-            $data = EvaluasiDiri::where([['jurusan_id', '=', Auth::user()->jurusan_id], ['tahun', '=', $year]])->get();
-        } elseif (Auth::user()->role_id == 3) {
-            $data = EvaluasiDiri::where([['prodi_id', '=', Auth::user()->prodi_id], ['tahun', '=', $year]])->first();
+        $keterangan = $year;
+        $user = Auth::user();
+        if ($user->role_id == 2) {
+            $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
+            $years = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->distinct()->pluck('tahun')->toArray();
+            $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->where('tahun', '=', $year)->with('prodi')->get();
+        } elseif ($user->role_id == 3) {
+            $data = EvaluasiDiri::where([['prodi_id', '=', $user->prodi_id], ['tahun', '=', $year]])->first();
             return redirect()->route('ed_table', $data->id);
         } else {
             $data = EvaluasiDiri::where('tahun', $year)->get();
@@ -154,24 +162,30 @@ class EDController extends Controller
             $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
 
         }
-        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
     }
 
     public function filter_prodi($prodi_id)
     {
         $jurusans = Jurusan::all();
         $deadline = $this->EDCountdown();
-        if (Auth::user()->role_id == 2) {
-            $prodis = Prodi::where('jurusan_id', Auth::user()->jurusan_id)->get();
-            $years = EvaluasiDiri::where('jurusan_id', Auth::user()->jurusan_id)->distinct()->pluck('tahun')->toArray();
-            $data = EvaluasiDiri::where([['jurusan_id', '=', Auth::user()->jurusan_id], ['prodi_id', '=', $prodi_id]])->get();
+        $user = Auth::user();
+        if ($user->role_id == 2) {
+            $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
+            $years = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->distinct()->pluck('tahun')->toArray();
+            $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->jurusan_id);
+            })->where('prodi_id', '=', $prodi_id)->with('prodi')->get();
         } else {
             $prodis = Prodi::all();
             $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
             // $data = EvaluasiDiri::join('prodi', 'prodi.prodi_id', '=', 'evaluasi_diri.prodi_id')->join('jurusan', 'jurusan.jurusan_id', '=', 'evaluasi_diri.jurusan_id')->where('evaluasi_diri.prodi_id', $prodi_id)->get();
-            $data = EvaluasiDiri::where('prodi_id', $prodi_id)->get(); //dipersingkat (join dihilangkan) karena menggunakan eloquent relationship
+            $data = EvaluasiDiri::where('prodi_id', $prodi_id)->with('prodi')->get(); //dipersingkat (join dihilangkan) karena menggunakan eloquent relationship
         }
-        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+        $keterangan = ($data->count()) ? $data[0]->prodi->nama_prodi : 'Data kosong';
+        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
     }
 
     public function filter_jurusan($jurusan_id)
@@ -180,8 +194,11 @@ class EDController extends Controller
         $deadline = $this->EDCountdown();
         $prodis = Prodi::all();
         $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
-        $data = EvaluasiDiri::where('jurusan_id', $jurusan_id)->get();
-        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans'));
+        $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($jurusan_id) {
+            $query->where('id', $jurusan_id);
+        })->with('prodi')->get();
+        $keterangan = ($data->count()) ? $data[0]->prodi->jurusan->nama_jurusan : 'Data kosong';
+        return view('evaluasi_diri.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
     }
 
     public function add()
@@ -201,7 +218,7 @@ class EDController extends Controller
 
     public function export_all(Request $request)
     {
-        if (!!$request->data) {
+        if ($request->data) {
             $zipname = 'Files/Evaluasi Diri.zip';
             if (Storage::disk('public')->exists($zipname)) {
                 $this->DeleteZip($zipname);

@@ -15,11 +15,12 @@ return new class extends Migration {
         Schema::create('ketercapaian_standars', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prodi_id')->constrained();
-            $table->foreignId('jurusan_id')->constrained();
             $table->string('file_data');
             $table->integer('tahun');
             $table->string('status', 100);
             $table->text('keterangan')->nullable(TRUE);
+            $table->boolean('feedback')->nullable(TRUE);
+            $table->date('tanggal_audit')->nullable(TRUE);
             $table->timestamps();
         });
     }

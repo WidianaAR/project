@@ -42,7 +42,7 @@ class ManageUserTest extends TestCase
     {
         $this->pjm_login();
         $user = [
-            'role_id' => $this->faker->numberBetween(1, 4),
+            'role_id' => 1,
             'name' => 'New user',
             'email' => 'new@gmail.com',
             'password' => '12345',

@@ -55,6 +55,6 @@ class MiddlewareTest extends TestCase
     public function test_does_not_allow_non_auditor_to_access_page_only_for_auditor()
     {
         $user = User::find(2);
-        $this->actingAs($user)->get('feedbacks')->assertSessionHasErrors('login_gagal');
+        $this->actingAs($user)->get('auditor')->assertSessionHasErrors('login_gagal');
     }
 }

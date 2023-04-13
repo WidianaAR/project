@@ -23,14 +23,12 @@ class KSTest extends TestCase
         $data = KetercapaianStandar::create([
             'file_data' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx',
             'prodi_id' => 11,
-            'jurusan_id' => 1,
             'tahun' => 2023,
             'status' => 'ditinjau'
         ]);
 
         $this->assertEquals('Files/Ketercapaian Standar_Informatika_2023.xlsx', $data->file_data);
         $this->assertEquals(11, $data->prodi_id);
-        $this->assertEquals(1, $data->jurusan_id);
         $this->assertEquals(2023, $data->tahun);
         $this->assertEquals('ditinjau', $data->status);
     }
@@ -52,7 +50,9 @@ class KSTest extends TestCase
 
     public function test_page_displays_a_list_of_datas_by_jurusan()
     {
-        $data = KetercapaianStandar::where('jurusan_id', 1)->get();
+        $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) {
+            $query->where('id', 1);
+        })->with('prodi')->get();
         $this->pjm_login();
         $this->get(route('ks_filter_jurusan', 1))->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }

@@ -51,7 +51,9 @@ class ManageJurusanTest extends TestCase
     public function test_edit_jurusan_page_rendered()
     {
         $this->test_add_new_jurusan();
-        $this->get('jurusans/7/edit')->assertStatus(200);
+        $this->get('jurusans/8/edit')->assertStatus(200);
+        // jika yang dijalankan hanya kelas ManageJurusanTest maka id-nya dimulai dari 7
+        // jika yang dijalankan semua test maka id-nya dimulai dari 8
     }
 
     public function test_edit_jurusan()
@@ -62,7 +64,7 @@ class ManageJurusanTest extends TestCase
             'nama_jurusan' => 'JE',
             'keterangan' => 'Jurusan Edit'
         ];
-        $this->put('jurusans/8', $data)->assertRedirect('jurusans')->assertStatus(302)->assertSessionHas('success');
+        $this->put('jurusans/9', $data)->assertRedirect('jurusans')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('jurusans', $data);
     }
 
@@ -70,6 +72,6 @@ class ManageJurusanTest extends TestCase
     {
         $this->test_add_new_jurusan();
         $this->get('jurusans')->assertStatus(200);
-        $this->delete('jurusans/9')->assertRedirect('jurusans')->assertStatus(302)->assertSessionHas('success');
+        $this->delete('jurusans/10')->assertRedirect('jurusans')->assertStatus(302)->assertSessionHas('success');
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.navbar')
 @section('isi')
-    @if (!!session('success'))
+    @if (session('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
             {{ session('success') }}
@@ -15,7 +15,7 @@
     </div>
 
     <div class="element">
-        @if (!!$panduans->count())
+        @if ($panduans->count())
             <table class="table table-bordered">
                 <thead class="thead">
                     <th>No</th>
@@ -32,7 +32,7 @@
                             <td>{{ strip_tags(\Illuminate\Support\Str::limit($panduan->keterangan, 20, '...')) }}</td>
                             <td>
                                 <a
-                                    href="{{ route('panduan_download', $panduan->id) }}">{{ basename($panduan->file_data) }}</a>
+                                    href="{{ route('panduan_download', $panduan->id) }}">{{ strip_tags(\Illuminate\Support\Str::limit(basename($panduan->file_data), 15, '...')) }}</a>
                             </td>
                             <td class="wd-2">
                                 <a type="button" class="btn btn-secondary"

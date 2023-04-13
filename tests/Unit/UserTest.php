@@ -34,35 +34,35 @@ class UserTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_users()
     {
-        $users = User::all();
+        $users = User::latest()->get();
         $this->pjm_login();
         $this->get('user')->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
     public function test_page_displays_a_list_of_pjms()
     {
-        $users = User::where('role_id', 1)->get();
+        $users = User::where('role_id', 1)->latest()->get();
         $this->pjm_login();
         $this->get('user/filter/pjm')->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
     public function test_page_displays_a_list_of_kajurs()
     {
-        $users = User::where('role_id', 2)->get();
+        $users = User::where('role_id', 2)->latest()->get();
         $this->pjm_login();
         $this->get('user/filter/kajur')->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
     public function test_page_displays_a_list_of_koorprodis()
     {
-        $users = User::where('role_id', 3)->get();
+        $users = User::where('role_id', 3)->latest()->get();
         $this->pjm_login();
         $this->get('user/filter/koorprodi')->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
     public function test_page_displays_a_list_of_auditors()
     {
-        $users = User::where('role_id', 4)->get();
+        $users = User::where('role_id', 4)->latest()->get();
         $this->pjm_login();
         $this->get('user/filter/auditor')->assertViewIs('user.home')->assertViewHas('users', $users);
     }

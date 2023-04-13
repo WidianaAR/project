@@ -2,223 +2,247 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feedback;
-use App\Models\Jurusan;
-use App\Models\Prodi;
+use App\Models\EvaluasiDiri;
+use App\Models\KetercapaianStandar;
+use App\Traits\FileTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class FeedbackController extends Controller
 {
-    public function index()
+    use FileTrait;
+
+    public function index($kategori = null)
     {
-        $feedbacks = [];
-        $keterangan = 'Semua data';
-        $years = Feedback::selectRaw('YEAR(tanggal_audit) as year')->distinct()->groupBy('year')->pluck('year');
-        $jurusans = Feedback::with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
-            return $item->unique('prodi.jurusan.id');
-        });
-        $prodis = Feedback::with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
-            return $item->unique('prodi.id');
-        });
-
-        $datas = Feedback::with('prodi', 'prodi.jurusan')->get();
-        foreach ($datas as $feedback) {
-            array_push($feedbacks, $feedback);
-        }
-        return view('feedback.home_auditor', compact('keterangan', 'feedbacks', 'years', 'jurusans', 'prodis'));
-    }
-
-    public function create()
-    {
-        return view('feedback.add_form', ['prodis' => Prodi::all()]);
-    }
-
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'prodi_id' => 'required',
-            'tanggal_audit' => 'required',
-            'keterangan' => 'required'
-        ]);
-
-        if (Feedback::where([['prodi_id', $request->prodi_id], ['tanggal_audit', $request->tanggal_audit]])->exists()) {
-            return back()->with('error', 'Data sudah ada di dalam database');
-        }
-
-        Feedback::create($data);
-        return redirect()->route('feedbacks.index')->with('success', 'Data feedback berhasil disimpan.');
-    }
-
-    public function show($id)
-    {
-        return view('feedback.detail', ['feedback' => Feedback::with('prodi.jurusan')->find($id)]);
-    }
-
-    public function edit($id)
-    {
-        return view('feedback.change_form', ['feedback' => Feedback::find($id), 'prodis' => Prodi::all()]);
-    }
-
-    public function update(Request $request, Feedback $feedback)
-    {
-        $data = $request->validate([
-            'prodi_id' => 'required',
-            'tanggal_audit' => 'required',
-            'keterangan' => 'required'
-        ]);
-
-        if ($request->prodi_id != $feedback->prodi_id || $request->tanggal_adit != $feedback->tanggal_audit) {
-            if (Feedback::where([['prodi_id', $request->prodi_id], ['tanggal_audit', $request->tanggal_audit]])->exists()) {
-                return back()->with('error', 'Data sudah ada di dalam database');
-            }
-        }
-
-        Feedback::find($feedback->id)->update($data);
-        return redirect()->route('feedbacks.index')->with('success', 'Data feedback berhasil diubah');
-    }
-
-    public function destroy($id)
-    {
-        Feedback::destroy($id);
-        return back()->with('success', 'Data feedback berhasil dihapus');
-    }
-
-    public function home()
-    {
-        $feedbacks = [];
-        $keterangan = 'Semua data';
-        $role = Auth::user()->role_id;
-
-        if ($role == 3) {
-            $datas = Feedback::where('prodi_id', Auth::user()->prodi_id)->with('prodi', 'prodi.jurusan')->get();
-            foreach ($datas as $feedback) {
-                array_push($feedbacks, $feedback);
-            }
-            return view('feedback.home', compact('feedbacks'));
-        } elseif ($role == 2) {
-            $years = Feedback::withWhereHas('prodi.jurusan', function ($query) {
-                $query->where('id', Auth::user()->jurusan_id);
-            })->selectRaw('YEAR(tanggal_audit) as year')->distinct()->groupBy('year')->pluck('year');
-            $jurusans = [];
-            $prodis = Feedback::withWhereHas('prodi.jurusan', function ($query) {
-                $query->where('id', Auth::user()->jurusan_id);
-            })->get()->groupBy('prodi.id')->map(function ($item) {
-                return $item->unique('prodi.id');
-            });
-
-            $datas = Feedback::withWhereHas('prodi.jurusan', function ($query) {
-                $query->where('id', Auth::user()->jurusan_id);
-            })->with('prodi')->get();
-        } else {
-            $years = Feedback::selectRaw('YEAR(tanggal_audit) as year')->distinct()->groupBy('year')->pluck('year');
-            $jurusans = Feedback::with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
-                return $item->unique('prodi.jurusan.id');
-            });
-            $prodis = Feedback::with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
-                return $item->unique('prodi.id');
-            });
-
-            $datas = Feedback::with('prodi', 'prodi.jurusan')->get();
-        }
-
-        foreach ($datas as $feedback) {
-            array_push($feedbacks, $feedback);
-        }
-        return view('feedback.home', compact('keterangan', 'feedbacks', 'years', 'jurusans', 'prodis'));
-    }
-
-    public function filter(Request $request)
-    {
-        $feedbacks = [];
-        $keterangan = null;
-
-        if (Auth::user()->role_id == 2) {
-            $years = Feedback::withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                $query->where('id', Auth::user()->jurusan_id);
-            })->selectRaw('YEAR(tanggal_audit) as year')->distinct()->groupBy('year')->pluck('year');
-            $jurusans = [];
-            $prodis = Feedback::withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                $query->where('id', Auth::user()->jurusan_id);
-            })->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
-                return $item->unique('prodi.id');
-            });
-
-            if ($request->tahun == 'all' && $request->jurusan == 'all' && $request->prodi == 'all') {
-                return redirect()->route('feedback_home');
-            } elseif ($request->tahun == 'all' && $request->prodi != 'all') {
-                $datas = Feedback::withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                    $query->where('id', Auth::user()->jurusan_id);
-                })->where('prodi_id', $request->prodi)->with('prodi')->get();
-                $prodi = Prodi::find($request->prodi);
-                $keterangan = $prodi->nama_prodi;
-            } elseif ($request->tahun != 'all' && $request->prodi == 'all') {
-                $datas = Feedback::whereRaw('YEAR(tanggal_audit) = ?', $request->tahun)->withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                    $query->where('id', Auth::user()->jurusan_id);
+        $user = Auth::user();
+        if ($kategori == 'evaluasi' || $kategori == null) {
+            $data_standar = null;
+            $keterangan = 'Semua data evaluasi diri';
+            if ($user->role_id == 2) {
+                $data_evaluasi = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                    $query->where('id', $user->jurusan_id);
                 })->with('prodi')->get();
-                $keterangan = $request->tahun;
+                $years = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                    $query->where('id', $user->jurusan_id);
+                })->distinct()->pluck('tahun')->toArray();
+            } elseif ($user->role_id == 3 || $user->role_id == 4) {
+                $data_evaluasi = EvaluasiDiri::where('prodi_id', $user->prodi_id)->with(['prodi', 'prodi.jurusan'])->get();
+                $years = EvaluasiDiri::where('prodi_id', $user->prodi_id)->distinct()->pluck('tahun')->toArray();
             } else {
-                $datas = Feedback::whereRaw('YEAR(tanggal_audit) = ?', $request->tahun)->withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                    $query->where('id', Auth::user()->jurusan_id);
-                })->where('prodi_id', $request->prodi)->with('prodi')->get();
-                $prodi = Prodi::find($request->prodi);
-                $keterangan = $prodi->nama_prodi . ' ' . $request->tahun;
+                $data_evaluasi = EvaluasiDiri::with('prodi')->get();
+                $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
             }
         } else {
-            $years = Feedback::selectRaw('YEAR(tanggal_audit) as year')->distinct()->groupBy('year')->pluck('year');
-            $jurusans = Feedback::with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
-                return $item->unique('prodi.jurusan.id');
-            });
-            $prodis = Feedback::with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
-                return $item->unique('prodi.id');
-            });
-
-            if ($request->tahun == 'all' && $request->jurusan == 'all' && $request->prodi == 'all') {
-                $datas = Feedback::with('prodi', 'prodi.jurusan')->get();
-                $keterangan = 'Semua data';
-            } elseif ($request->tahun == 'all' && $request->jurusan != 'all' && $request->prodi == 'all') {
-                $datas = Feedback::withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                    $query->where('id', $request->jurusan);
+            $data_evaluasi = null;
+            $keterangan = 'Semua data ketercapaian standar';
+            if ($user->role_id == 2) {
+                $data_standar = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                    $query->where('id', $user->jurusan_id);
                 })->with('prodi')->get();
-                $jurusan = Jurusan::find($request->jurusan);
-                $keterangan = $jurusan->nama_jurusan;
-            } elseif ($request->tahun == 'all' && $request->jurusan != 'all' && $request->prodi != 'all') {
-                $datas = Feedback::withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                    $query->where('id', $request->jurusan);
-                })->withWhereHas('prodi', function ($query) use ($request) {
-                    $query->where('id', $request->prodi);
-                })->get();
-                $jurusan = Jurusan::find($request->jurusan);
-                $keterangan = $jurusan->nama_jurusan;
+                $years = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                    $query->where('id', $user->jurusan_id);
+                })->distinct()->pluck('tahun')->toArray();
+            } elseif ($user->role_id == 3 || $user->role_id == 4) {
+                $data_standar = KetercapaianStandar::where('prodi_id', $user->prodi_id)->with(['prodi', 'prodi.jurusan'])->get();
+                $years = KetercapaianStandar::where('prodi_id', $user->prodi_id)->distinct()->pluck('tahun')->toArray();
             } else {
-                if ($request->jurusan == 'all') {
-                    $datas = Feedback::whereRaw('YEAR(tanggal_audit) = ?', $request->tahun)->with('prodi', 'prodi.jurusan')->get();
-                    $keterangan = $request->tahun;
-                } elseif ($request->jurusan != 'all') {
-                    if ($request->prodi == 'all') {
-                        $datas = Feedback::whereRaw('YEAR(tanggal_audit) = ?', $request->tahun)->withWhereHas('prodi.jurusan', function ($query) use ($request) {
-                            $query->where('id', $request->jurusan);
-                        })->with('prodi')->get();
-                        $jurusan = Jurusan::find($request->jurusan);
-                        $keterangan = $jurusan->nama_jurusan . ' ' . $request->tahun;
-                    } else {
-                        $datas = Feedback::whereRaw('YEAR(tanggal_audit) = ?', $request->tahun)->withWhereHas('prodi', function ($query) use ($request) {
-                            $query->where('id', $request->prodi);
-                        })->with('prodi.jurusan')->get();
-                        $prodi = Prodi::find($request->prodi);
-                        $keterangan = $prodi->nama_prodi . ' ' . $request->tahun;
-                    }
+                $data_standar = KetercapaianStandar::with('prodi')->get();
+                $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+            }
+        }
+        return view('feedback.home', compact('data_evaluasi', 'data_standar', 'years', 'keterangan'));
+    }
+
+    public function filter_year($kategori = null, $year)
+    {
+        $user = Auth::user();
+        if ($year == 'all') {
+            return redirect()->route('feedback', $kategori);
+        } else {
+            if ($kategori == 'evaluasi' || $kategori == null) {
+                $data_standar = null;
+                $keterangan = 'Eevaluasi diri ' . $year;
+                if ($user->role_id == 2) {
+                    $data_evaluasi = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                        $query->where('id', $user->jurusan_id);
+                    })->where('tahun', $year)->with('prodi')->get();
+                    $years = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                        $query->where('id', $user->jurusan_id);
+                    })->distinct()->pluck('tahun')->toArray();
+                } elseif ($user->role_id == 3 || $user->role_id == 4) {
+                    $data_evaluasi = EvaluasiDiri::where(['prodi_id' => $user->prodi_id, 'tahun' => $year])->with(['prodi', 'prodi.jurusan'])->get();
+                    $years = EvaluasiDiri::where('prodi_id', $user->prodi_id)->distinct()->pluck('tahun')->toArray();
+                } else {
+                    $data_evaluasi = EvaluasiDiri::where('tahun', $year)->with('prodi')->get();
+                    $years = EvaluasiDiri::distinct()->pluck('tahun')->toArray();
+                }
+            } else {
+                $data_evaluasi = null;
+                $keterangan = 'Ketercapaian standar ' . $year;
+                if ($user->role_id == 2) {
+                    $data_standar = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                        $query->where('id', $user->jurusan_id);
+                    })->where('tahun', $year)->with('prodi')->get();
+                    $years = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                        $query->where('id', $user->jurusan_id);
+                    })->distinct()->pluck('tahun')->toArray();
+                } elseif ($user->role_id == 3 || $user->role_id == 4) {
+                    $data_standar = KetercapaianStandar::where(['prodi_id' => $user->prodi_id, 'tahun' => $year])->with(['prodi', 'prodi.jurusan'])->get();
+                    $years = KetercapaianStandar::where('prodi_id', $user->prodi_id)->distinct()->pluck('tahun')->toArray();
+                } else {
+                    $data_standar = KetercapaianStandar::where('tahun', $year)->with('prodi')->get();
+                    $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+                }
+            }
+            return view('feedback.home', compact('data_evaluasi', 'data_standar', 'years', 'keterangan'));
+        }
+    }
+
+    public function ed_table($id)
+    {
+        $data = EvaluasiDiri::find($id)->load('prodi');
+        $user = Auth::user();
+
+        if ($user->role_id == 3 || $user->role_id == 4 && $data->prodi_id != $user->prodi_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->jurusan_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        }
+
+        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
+        $maxCell = $file->getSheet(0)->getHighestRowAndColumn();
+        $sheetData = $file->getSheet(0)->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row'] - 1);
+        $temuan = (array_key_exists(9, $sheetData[0])) ? 'not null' : null;
+        return view('feedback.ed_detail', compact('sheetData', 'data', 'temuan'));
+    }
+
+    public function ed_table_save(Request $request)
+    {
+        $temuan = $request->input('temuan');
+        $data = EvaluasiDiri::find($request->id);
+        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
+        $worksheet = $file->getSheet(0);
+
+        $maxCell = $file->getSheet(0)->getHighestRowAndColumn();
+        $sheetData = $file->getSheet(0)->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row'] - 1);
+        $temuanKey = 0;
+
+        $boldCenter = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+        ];
+
+        foreach ($sheetData as $key => $sheet) {
+            if ($sheet[0] == 'No') {
+                $worksheet->setCellValue('J' . ($key + 1), 'Temuan');
+                $worksheet->getStyle('J' . ($key + 1))->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('CC9DFF');
+                $worksheet->getStyle('J' . ($key + 1))->applyFromArray($boldCenter);
+            } else {
+                if ($sheet[3] && $sheet[1]) {
+                    $worksheet->setCellValue('J' . ($key + 1), $temuan[$temuanKey]);
+                    $temuanKey++;
                 }
             }
         }
 
-        foreach ($datas as $feedback) {
-            array_push($feedbacks, $feedback);
+        $writer = IOFactory::createWriter($file, 'Xlsx');
+        $this->DeleteFile($data->file_data);
+        $writer->save(storage_path('app/public/' . $data->file_data));
+
+        return redirect()->route('fb_ed_table', $data->id)->with('success', 'Temuan berhasil disimpan');
+    }
+
+    public function ks_table($id)
+    {
+        $headers = array();
+        $sheetData = array();
+
+        $user = Auth::user();
+        $data = KetercapaianStandar::find($id)->load('prodi');
+
+        if ($user->role_id == 3 || $user->role_id == 4 && $data->prodi_id != $user->prodi_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->jurusan_id) {
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
-        if (Auth::user()->role_id == 4) {
-            return view('feedback.home_auditor', compact('keterangan', 'feedbacks', 'years', 'jurusans', 'prodis'));
-        } else {
-            return view('feedback.home', compact('keterangan', 'feedbacks', 'years', 'jurusans', 'prodis'));
+
+        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
+        $sheetCount = $file->getSheetCount();
+        $sheetName = $file->getSheetNames();
+        for ($i = 0; $i < $sheetCount; $i++) {
+            $sheet = $file->getSheet($i)->toArray(null, true, true, true);
+            $header = array_shift($sheet);
+
+            array_push($sheetData, $sheet);
+            array_push($headers, $header);
         }
+
+        $temuan = (array_key_exists('K', $sheetData[0][0])) ? 'not null' : null;
+        return view('feedback.ks_detail', compact('sheetData', 'headers', 'sheetName', 'data', 'temuan'));
+    }
+
+    public function ks_table_save(Request $request)
+    {
+        $temuan1 = $request->input('0temuan');
+        $temuan2 = $request->input('1temuan');
+        $temuan3 = $request->input('2temuan');
+        $temuan4 = $request->input('3temuan');
+
+        $data = KetercapaianStandar::find($request->id);
+        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
+
+        $boldCenter = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+        ];
+
+        $worksheet = $file->getSheet(0);
+        $rowIndex = 2;
+        $worksheet->setCellValue('K1', 'Temuan');
+        $worksheet->getStyle('K1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('CC9DFF');
+        $worksheet->getStyle('K1')->applyFromArray($boldCenter);
+        foreach ($temuan1 as $value) {
+            $worksheet->setCellValue('K' . $rowIndex, $value);
+            $rowIndex++;
+        }
+
+        $worksheet = $file->getSheet(1);
+        $rowIndex = 2;
+        $worksheet->setCellValue('K1', 'Temuan');
+        $worksheet->getStyle('K1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('CC9DFF');
+        $worksheet->getStyle('K1')->applyFromArray($boldCenter);
+        foreach ($temuan2 as $value) {
+            $worksheet->setCellValue('K' . $rowIndex, $value);
+            $rowIndex++;
+        }
+
+        $worksheet = $file->getSheet(2);
+        $rowIndex = 2;
+        $worksheet->setCellValue('K1', 'Temuan');
+        $worksheet->getStyle('K1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('CC9DFF');
+        $worksheet->getStyle('K1')->applyFromArray($boldCenter);
+        foreach ($temuan3 as $value) {
+            $worksheet->setCellValue('K' . $rowIndex, $value);
+            $rowIndex++;
+        }
+
+        $worksheet = $file->getSheet(3);
+        $rowIndex = 2;
+        $worksheet->setCellValue('K1', 'Temuan');
+        $worksheet->getStyle('K1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('CC9DFF');
+        $worksheet->getStyle('K1')->applyFromArray($boldCenter);
+        foreach ($temuan4 as $value) {
+            $worksheet->setCellValue('K' . $rowIndex, $value);
+            $rowIndex++;
+        }
+
+        $writer = IOFactory::createWriter($file, 'Xlsx');
+        $this->DeleteFile($data->file_data);
+        $writer->save(storage_path('app/public/' . $data->file_data));
+
+        return redirect()->route('fb_ks_table', $data->id)->with('success', 'Temuan berhasil disimpan');
     }
 }

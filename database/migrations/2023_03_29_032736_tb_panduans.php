@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('judul');
             $table->text('keterangan');
             $table->string('file_data');
+            $table->timestamps();
         });
     }
 

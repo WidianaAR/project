@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Jurusan extends Model
 {
     use HasFactory;
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -32,23 +31,16 @@ class Jurusan extends Model
         return $this->hasMany(User::class);
     }
 
-    public function evaluasi_diri()
-    {
-        return $this->hasMany(EvaluasiDiri::class);
-    }
-
-    public function ketercapaian_standar()
-    {
-        return $this->hasMany(KetercapaianStandar::class);
-    }
-
     protected function namaJurusan(): Attribute
     {
         return Attribute::make(
         set: fn(string $value) => strtoupper($value)
-        ); }
-    protected function keterangan(): Attribute {
+        );
+    }
+    protected function keterangan(): Attribute
+    {
         return Attribute::make(
         set: fn(string $value) => ucwords($value)
-        ); }
+        );
+    }
 }

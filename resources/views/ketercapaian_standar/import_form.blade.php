@@ -2,7 +2,7 @@
 
 @section('isi')
     <div class="row align-items-center">
-        @if (!!$deadline[0])
+        @if ($deadline[0])
             <div class="col-auto pr-0">
                 Batas akhir upload file :
             </div>
@@ -37,7 +37,6 @@
                             {{ $prodi->nama_prodi }}</option>
                     @endforeach
                 </select>
-                <input type="text" name="jurusan" value="{{ Auth::user()->jurusan_id }}" hidden>
                 <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
                 <div class="d-grid mt-3 gap-2 d-md-flex justify-content-md-end">
                     <a class="btn btn-danger mr-2" type="button" value="Batal" href="{{ route('ks_home') }}">Batal</a>

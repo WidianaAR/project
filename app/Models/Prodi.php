@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 class Prodi extends Model
 {
     use HasFactory;
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -43,14 +42,10 @@ class Prodi extends Model
         return $this->hasMany(KetercapaianStandar::class);
     }
 
-    public function feedback()
-    {
-        return $this->hasMany(Feedback::class);
-    }
-
     protected function namaProdi(): Attribute
     {
         return Attribute::make(
         set: fn(string $value) => ucwords($value),
-        ); }
+        );
+    }
 }

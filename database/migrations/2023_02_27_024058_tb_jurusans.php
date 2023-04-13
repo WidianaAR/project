@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kode_jurusan')->unique();
             $table->string('nama_jurusan', 100);
             $table->string('keterangan');
+            $table->timestamps();
         });
     }
 

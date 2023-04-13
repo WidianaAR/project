@@ -72,7 +72,7 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/2');
+        $this->get('evaluasi/confirm/1');
 
         $data = [
             'prodi' => 'all',
@@ -87,7 +87,7 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/3');
+        $this->get('evaluasi/confirm/1');
 
         $data = [
             'prodi' => 'all',
@@ -102,7 +102,7 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/4');
+        $this->get('evaluasi/confirm/1');
 
         $data = [
             'prodi' => 11,

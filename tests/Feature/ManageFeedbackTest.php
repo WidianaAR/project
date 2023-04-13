@@ -25,8 +25,74 @@ class ManageFeedbackTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_example()
+    public function test_feedback_page_rendered()
     {
+        $this->auditor_login();
         $this->get('feedbacks')->assertStatus(200);
+    }
+
+    public function test_ed_feedback_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/evaluasi')->assertStatus(200);
+    }
+
+    public function test_ed_feedback_year_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/evaluasi/2023')->assertStatus(200);
+    }
+
+    public function test_ed_feedback_table_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/evaluasi/table/1')->assertStatus(200);
+    }
+
+    public function test_ed_feedback_save()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/evaluasi/table/1');
+        $data = [];
+        for ($i = 0; $i < 83; $i++) {
+            array_push($data, 'temuan');
+        }
+        $request = [
+            'id' => 1,
+            'temuan' => $data
+        ];
+        $this->post('feedbacks/evaluasi', $request)->assertRedirect('feedbacks/evaluasi/table/1')->assertStatus(302)->assertSessionHas('success');
+    }
+
+    public function test_ks_feedback_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/standar')->assertStatus(200);
+    }
+
+    public function test_ks_feedback_year_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/standar/2023')->assertStatus(200);
+    }
+
+    public function test_ks_feedback_table_page_rendered()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/standar/table/1')->assertStatus(200);
+    }
+
+    public function test_ks_feedback_save()
+    {
+        $this->auditor_login();
+        $this->get('feedbacks/standar/table/1');
+        $request = [
+            'id' => 1,
+            '0temuan' => ['temuan1A', 'temuan1B'],
+            '1temuan' => ['temuan2A', 'temuan2B'],
+            '2temuan' => ['temuan3A', 'temuan3B'],
+            '3temuan' => ['temuan4A', 'temuan4B'],
+        ];
+        $this->post('feedbacks/standar', $request)->assertRedirect('feedbacks/standar/table/1')->assertStatus(302)->assertSessionHas('success');
     }
 }

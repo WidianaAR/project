@@ -8,7 +8,7 @@
     </div>
 
     <div class="element">
-        @if (!!$panduans->count())
+        @if ($panduans->count())
             <div class="row justify-content-center">
                 @foreach ($panduans as $panduan)
                     <div class="col-auto m-3">

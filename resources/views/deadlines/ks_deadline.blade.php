@@ -11,7 +11,7 @@
     @endif
 
     <div class="row align-items-center">
-        @if (!!$deadline[0])
+        @if ($deadline[0])
             <div class="col-auto pr-0">
                 Batas akhir upload file :
             </div>

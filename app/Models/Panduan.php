@@ -10,8 +10,6 @@ class Panduan extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         'judul',
         'keterangan',
@@ -22,5 +20,6 @@ class Panduan extends Model
     {
         return Attribute::make(
         set: fn(string $value) => ucwords($value)
-        ); }
+        );
+    }
 }

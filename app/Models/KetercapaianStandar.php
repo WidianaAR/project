@@ -10,18 +10,14 @@ class KetercapaianStandar extends Model
     use HasFactory;
 
     protected $fillable = [
-        'jurusan_id',
         'prodi_id',
         'file_data',
         'tahun',
         'status',
-        'keterangan'
+        'keterangan',
+        'feedback',
+        'tanggal_audit'
     ];
-
-    public function jurusan()
-    {
-        return $this->belongsTo(Jurusan::class);
-    }
 
     public function prodi()
     {

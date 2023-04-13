@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/login');
 
 // Login dan Logout
-Route::get('login', 'App\Http\Controllers\UserController@login')->name('login');
-Route::post('login', 'App\Http\Controllers\UserController@login_action')->name('login_action');
+Route::get('login', 'App\Http\Controllers\AuthenticationController@login')->name('login');
+Route::post('login', 'App\Http\Controllers\AuthenticationController@login_action')->name('login_action');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::group(
@@ -59,11 +59,9 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('evaluasi/add', 'App\Http\Controllers\EDController@add')->name('ed_import');
             Route::get('evaluasi/change/{id_evaluasi}', 'App\Http\Controllers\EDController@change')->name('ed_change');
-            Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
 
             Route::get('standar/add', 'App\Http\Controllers\KSController@add')->name('ks_import');
             Route::get('standar/change/{id_standar}', 'App\Http\Controllers\KSController@change')->name('ks_change');
-            Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
         }
     );
 
@@ -88,9 +86,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('standar/confirm/{id_standar}', 'App\Http\Controllers\KSController@confirm')->name('ks_confirm');
             Route::get('standar/cancel_confirm/{id_standar}', 'App\Http\Controllers\KSController@cancel_confirm')->name('ks_cancel_confirm');
             Route::post('standar/feedback', 'App\Http\Controllers\KSController@feedback')->name('ks_feedback');
-
-            Route::resource('feedbacks', 'App\Http\Controllers\FeedbackController');
-
         }
     );
 
@@ -99,11 +94,9 @@ Route::group(['middleware' => 'auth'], function () {
         ['middleware' => 'kajur_koorprodi'],
         function () {
             Route::get('evaluasi/delete/{id_evaluasi}', 'App\Http\Controllers\EDController@delete')->name('ed_delete');
-            Route::post('evaluasi', 'App\Http\Controllers\EDController@add_action')->name('ed_import_action');
             Route::post('evaluasi/change', 'App\Http\Controllers\EDController@change_action')->name('ed_change_action');
 
             Route::get('standar/delete/{id_standar}', 'App\Http\Controllers\KSController@delete')->name('ks_delete');
-            Route::post('standar', 'App\Http\Controllers\KSController@add_action')->name('ks_import_action');
             Route::post('standar/change', 'App\Http\Controllers\KSController@change_action')->name('ks_change_action');
         }
     );
@@ -112,15 +105,34 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(
         ['middleware' => 'pjm_auditor'],
         function () {
-            Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
             Route::get('evaluasi/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\EDController@filter_jurusan')->name('ed_filter_jurusan');
-
-            Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
             Route::get('standar/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\KSController@filter_jurusan')->name('ks_filter_jurusan');
+            Route::get('ed_feedback/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\FeedbackEDController@filter_jurusan')->name('ed_feedback_filter_jurusan');
         }
     );
 
-    Route::get('logout', 'App\Http\Controllers\UserController@logout')->name('logout');
+
+    Route::group(
+        ['middleware' => 'pjm_kajur_auditor'],
+        function () {
+            Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
+            Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
+            Route::get('ed_feedback/filter/prodi/{prodi_id}', 'App\Http\Controllers\FeedbackEDController@filter_prodi')->name('ed_feedback_filter_prodi');
+        }
+    );
+
+
+    Route::group(
+        ['middleware' => 'kajur_koorprodi_auditor'],
+        function () {
+            Route::post('evaluasi', 'App\Http\Controllers\EDController@add_action')->name('ed_import_action');
+            Route::post('standar', 'App\Http\Controllers\KSController@add_action')->name('ks_import_action');
+        }
+    );
+
+
+
+    Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
 
     // Evaluasi Diri
     Route::get('evaluasi', 'App\Http\Controllers\EDController@home')->name('ed_home');
@@ -147,9 +159,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Feedback
-    Route::get('feedback', 'App\Http\Controllers\FeedbackController@home')->name('feedback_home');
-    Route::post('feedback/filter', 'App\Http\Controllers\FeedbackController@filter')->name('feedback_filter');
-    Route::get('feedback/{id}', 'App\Http\Controllers\FeedbackController@show')->name('feedback_detail');
+    Route::get('feedbacks/{kategori?}', 'App\Http\Controllers\FeedbackController@index')->name('feedback');
+    Route::get('feedbacks/{kategori?}/{year}', 'App\Http\Controllers\FeedbackController@filter_year')->name('fb_year');
+    Route::get('feedbacks/evaluasi/table/{id}', 'App\Http\Controllers\FeedbackController@ed_table')->name('fb_ed_table');
+    Route::post('feedbacks/evaluasi', 'App\Http\Controllers\FeedbackController@ed_table_save')->name('fb_ed_table_save');
+    Route::get('feedbacks/standar/table/{id}', 'App\Http\Controllers\FeedbackController@ks_table')->name('fb_ks_table');
+    Route::post('feedbacks/standar', 'App\Http\Controllers\FeedbackController@ks_table_save')->name('fb_ks_table_save');
 
 
     // Panduan
@@ -163,6 +178,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Ubah password
-    Route::get('password/{id}', 'App\Http\Controllers\UserController@change_pass')->name('change_password');
-    Route::post('password', 'App\Http\Controllers\UserController@change_pass_action')->name('change_password_action');
+    Route::get('password/{id}', 'App\Http\Controllers\AuthenticationController@change_pass')->name('change_password');
+    Route::post('password', 'App\Http\Controllers\AuthenticationController@change_pass_action')->name('change_password_action');
 });

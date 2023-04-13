@@ -17,7 +17,7 @@
     @endif
 
     <div class="row align-items-center">
-        @if (!!$deadline[0])
+        @if ($deadline[0])
             <div class="col-auto pr-0">
                 Batas akhir upload file :
             </div>
@@ -26,11 +26,11 @@
             </div>
         @else
             <div class="col">
-                <h5>Evaluasi Diri</h5>
+                <h5>Evaluasi Diri<span class="text-muted"> / {{ $keterangan }}</span></h5>
             </div>
         @endif
 
-        @if (!!$years)
+        @if ($years)
             <div class="col-auto text-left box">
                 <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
                     Tahun <i class='fa fa-angle-down fa-sm'></i>
@@ -99,7 +99,7 @@
 
         <div class="element">
             <div class="mt-3 text-center">
-                @if (!!$data->count())
+                @if ($data->count())
                     <table class="table table-bordered">
                         <thead class="thead">
                             <tr>
@@ -112,7 +112,9 @@
                                 <th>Tahun</th>
                                 <th>Status</th>
                                 @can('kajur')
-                                    <th>Action</th>
+                                    @if ($deadline[0])
+                                        <th>Action</th>
+                                    @endif
                                 @endcan
                             </tr>
                         </thead>
@@ -121,22 +123,23 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td><a href="{{ route('ed_table', $file->id) }}">{{ $file->file_data }}</a></td>
-
                                     @cannot('kajur')
-                                        <td>{{ $file->jurusan->nama_jurusan }}</td>
+                                        <td>{{ $file->prodi->jurusan->nama_jurusan }}</td>
                                     @endcannot
                                     <td>{{ $file->prodi->nama_prodi }}</td>
                                     <td>{{ $file->tahun }}</td>
                                     <td>{{ $file->status }}</td>
 
                                     @can('kajur')
-                                        <td>
-                                            <a type="button" class="btn btn-success"
-                                                href="{{ route('ed_change', $file->id) }}"><i class="fa fa-edit"></i></a>
-                                            <a type="button" href="{{ route('ed_delete', $file->id) }}"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                                class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                        </td>
+                                        @if ($deadline[0])
+                                            <td>
+                                                <a type="button" class="btn btn-success"
+                                                    href="{{ route('ed_change', $file->id) }}"><i class="fa fa-edit"></i></a>
+                                                <a type="button" href="{{ route('ed_delete', $file->id) }}"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
+                                                    class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                            </td>
+                                        @endif
                                     @endcan
                                 </tr>
                             @endforeach

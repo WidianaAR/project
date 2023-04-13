@@ -39,6 +39,7 @@ class AccountSeeder extends Seeder
             ],
             [
                 'role_id' => 4,
+                'prodi_id' => 11,
                 'name' => 'ini akun Auditor',
                 'email' => 'auditor@gmail.com',
                 'password' => bcrypt('12345'),

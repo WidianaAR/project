@@ -20,7 +20,10 @@ $(document).ready(function () {
             $('#jurusan_option').removeAttr('hidden');
             $('#prodi_option').attr('hidden', 'hidden');
         } else if (selected == 3) {
-            $('#jurusan_option').removeAttr('hidden');
+            $('#jurusan_option').attr('hidden', 'hidden');
+            $('#prodi_option').removeAttr('hidden');
+        } else if (selected == 4) {
+            $('#jurusan_option').attr('hidden', 'hidden');
             $('#prodi_option').removeAttr('hidden');
         } else {
             $('#jurusan_option').attr('hidden', 'hidden');

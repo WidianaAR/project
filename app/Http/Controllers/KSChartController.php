@@ -49,24 +49,39 @@ class KSChartController extends Controller
     public function home(Request $request)
     {
         $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
-        $prodis = KetercapaianStandar::where('status', 'disetujui')->join('prodis', 'prodis.id', '=', 'ketercapaian_standars.prodi_id')->select('prodis.nama_prodi', 'ketercapaian_standars.jurusan_id', 'ketercapaian_standars.prodi_id')->distinct()->get();
-        $jurusans = KetercapaianStandar::where('status', 'disetujui')->select('jurusan_id')->distinct()->get();
-        if (!!$request->all() and !!$request->tahun) {
+        $prodis = KetercapaianStandar::where('status', 'disetujui')->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
+            return $item->unique('prodi.id');
+        });
+        $jurusans = KetercapaianStandar::where('status', 'disetujui')->with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
+            return $item->unique('prodi.jurusan.id');
+        });
+
+        if ($request->all() and $request->tahun) {
             if ($request->jurusan == 'all') {
                 $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
                 $keterangan = 'Ketercapaian standar semua jurusan tahun ' . $request->tahun;
             } elseif ($request->jurusan != 'all') {
                 if ($request->prodi == 'all') {
-                    $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'jurusan_id' => $request->jurusan, 'status' => 'disetujui'])->get();
-                    $keterangan = 'Ketercapaian standar ' . $data[0]->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
+                    $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($request) {
+                        $query->where('id', $request->jurusan);
+                    })->where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
+                    if (!$data->isEmpty()) {
+                        $keterangan = 'Ketercapaian standar ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
+                    } else {
+                        $keterangan = 'Data kosong';
+                    }
                 } else {
                     $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status' => 'disetujui'])->get();
-                    $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
+                    if (!$data->isEmpty()) {
+                        $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
+                    } else {
+                        $keterangan = 'Data kosong';
+                    }
                 }
             }
         } else {
             $data = KetercapaianStandar::where(['status' => 'disetujui'])->latest()->get();
-            if (!!$data->count()) {
+            if ($data->count()) {
                 $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
             } else {
                 $keterangan = 'Data kosong';

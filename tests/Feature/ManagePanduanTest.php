@@ -28,7 +28,7 @@ class ManagePanduanTest extends TestCase
 
     private function file()
     {
-        $path = public_path('files/panduan_dummy.pdf');
+        $path = public_path('files/panduan.pdf');
         $file = new UploadedFile(
             $path,
             'test_file.pdf',
@@ -81,7 +81,7 @@ class ManagePanduanTest extends TestCase
             'keterangan' => 'Ini keterangan edit',
             'file_data' => $this->file()
         ];
-        $this->put('panduans/3', $data)->assertRedirect('panduans')->assertStatus(302)->assertSessionHas('success');
+        $this->put('panduans/1', $data)->assertRedirect('panduans')->assertStatus(302)->assertSessionHas('success');
 
         $data['file_data'] = 'Panduans/Judul Edit.pdf';
         $this->assertDatabaseHas('panduans', $data);

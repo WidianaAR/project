@@ -26,7 +26,7 @@
         @endif
 
         <div class="row align-items-center">
-            @if (!!$deadline[0])
+            @if ($deadline[0])
                 <div class="col-auto pr-0">
                     Batas akhir upload file :
                 </div>
@@ -40,8 +40,8 @@
             @endif
 
             @can('koorprodi')
-                @if (!!$years)
-                    @if (!!$deadline[0])
+                @if ($years)
+                    @if ($deadline[0])
                         <div class="col-auto text-right box">
                         @else
                             <div class="col-auto text-right box mr-3">
@@ -70,9 +70,9 @@
 
         {{-- Data --}}
         @can('koorprodi')
-            @if (!!$deadline[0])
+            @if ($deadline[0])
                 <div class="col-auto text-left pl-0">
-                    @if (!!$id_standar)
+                    @if ($id_standar)
                         <a type="button" class="btn btn-danger" href="{{ route('ks_delete', $id_standar) }}"
                             onclick="return confirm('Apakah Anda Yakin Menghapus File?');"><i class="fas fa-trash"></i>
                             Hapus File Excel</a>
@@ -107,7 +107,7 @@
             </div>
         @endcannot
 
-        @if (!!$data and !!$data->keterangan)
+        @if ($data and $data->keterangan)
             <div class="row m-3" style="width: 100%">
                 <span class="border border-danger p-2" style="display: inline-block; width: 100%">
                     <b>Yang perlu diperbaiki:</b>
@@ -118,15 +118,16 @@
         @endif
 
         {{-- Table --}}
-        @if (!!$headers)
+        @if ($headers)
             @for ($i = 0; $i <= 3; $i++)
                 <div class="m-3 text-center element">
                     <h5>{{ $sheetName[$i] }}</h5>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered"
+                        @if ($temuan) style="table-layout: fixed" @endif>
                         <thead class="thead">
                             <tr>
                                 @foreach ($headers[$i] as $header)
-                                    @if (!!$header)
+                                    @if ($header)
                                         <th>{{ $header }}</th>
                                     @endif
                                 @endforeach
@@ -134,7 +135,7 @@
                         </thead>
                         <tbody>
                             @foreach ($sheetData[$i] as $sheet)
-                                @if (!!$sheet['D'])
+                                @if ($sheet['D'])
                                     <tr>
                                         @foreach (range('A', 'C') as $v)
                                             <td> {{ $sheet[$v] }} </td>
@@ -144,9 +145,21 @@
                                             {{ $sheet['E'] }}
                                             {{ $sheet['F'] }}
                                         </td>
-                                        @foreach (range('G', 'J') as $v)
+                                        @foreach (range('G', 'I') as $v)
                                             <td> {{ $sheet[$v] }} </td>
                                         @endforeach
+                                        <td>
+                                            <a href="{{ $sheet['J'] }}">
+                                                {{ strip_tags(\Illuminate\Support\Str::limit($sheet['J'], 5, '...')) }}
+                                            </a>
+                                        </td>
+                                        @if ($temuan)
+                                            <td>
+                                                @if (array_key_exists('K', $sheet))
+                                                    {{ $sheet['K'] }}
+                                                @endif
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endif
                             @endforeach
@@ -173,14 +186,16 @@
                     <div class="modal-body">
                         <h2>Pilih File</h2>
                         <input type="file" name="file">
-                        @if (!!Auth::user()->prodi_id)
+                        @if (Auth::user()->prodi_id)
                             <input type="text" name="prodi" value="{{ Auth::user()->prodi_id }}" hidden>
-                            <input type="text" name="jurusan" value="{{ Auth::user()->jurusan_id }}" hidden>
                         @else
                             <input type="text" name="prodi" value="{{ $data->prodi_id }}" hidden>
-                            <input type="text" name="jurusan" value="{{ $data->jurusan_id }}" hidden>
                         @endif
-                        <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
+                        @if ($data && $data->tahun)
+                            <input type="text" name="tahun" value="{{ $data->tahun }}" hidden>
+                        @else
+                            <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
