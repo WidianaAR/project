@@ -10,7 +10,7 @@ class ProdiController extends Controller
 {
     public function index()
     {
-        return view('prodi.home', ['prodis' => Prodi::with('jurusan')->get()]);
+        return view('prodi.home', ['prodis' => Prodi::with('jurusan')->paginate(8)]);
     }
 
     public function create()
@@ -28,7 +28,11 @@ class ProdiController extends Controller
                 'kode_prodi.unique' => 'Kode prodi sudah terdaftar!',
                 'nama_prodi.unique' => 'Nama prodi sudah terdaftar!'
             ]);
-        Prodi::create($data);
+
+        $prodi = Prodi::create($data);
+        activity()
+            ->performedOn($prodi)
+            ->log('Menambah data prodi ' . $prodi->nama_prodi);
         return redirect('prodis')->with('success', 'Data prodi berhasil ditambahkan');
     }
 
@@ -52,7 +56,8 @@ class ProdiController extends Controller
 
         if ($request->kode_prodi != $prodi->kode_prodi) {
             $rules['kode_prodi'] = 'required|unique:prodis';
-        } elseif ($request->nama_prodi != $prodi->nama_prodi) {
+        }
+        if ($request->nama_prodi != $prodi->nama_prodi) {
             $rules['nama_prodi'] = 'required|unique:prodis';
         }
 
@@ -62,6 +67,9 @@ class ProdiController extends Controller
         ]);
 
         Prodi::find($prodi->id)->update($data);
+        activity()
+            ->performedOn($prodi)
+            ->log('Mengubah data prodi dengan id ' . $prodi->id);
         return redirect('prodis')->with('success', 'Data prodi berhasil diubah');
     }
 
@@ -71,6 +79,11 @@ class ProdiController extends Controller
         if ($data->user()->exists() || $data->evaluasi_diri()->exists() || $data->ketercapaian_standar()->exists()) {
             return back()->with('error', 'Data prodi tidak dapat dihapus karena masih memiliki data lain yang terkait.');
         }
+
+        activity()
+            ->performedOn($data)
+            ->log('Menghapus data prodi ' . $data->nama_prodi);
+        $data->delete();
         return back()->with('success', 'Data prodi berhasil dihapus');
     }
 }

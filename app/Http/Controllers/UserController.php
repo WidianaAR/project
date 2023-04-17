@@ -13,13 +13,21 @@ class UserController extends Controller
 {
     public function user()
     {
-        $users = User::with(['role', 'jurusan', 'prodi'])->latest()->get();
+        $users = User::with(['role', 'jurusan', 'prodi'])->latest()->paginate(8);
         return view('user.home', compact('users'));
     }
 
     public function delete_user($id)
     {
-        User::destroy($id);
+        $user = User::find($id);
+        if (!$user) {
+            return redirect('user')->with('error', 'Data user tidak ditemukan');
+        }
+
+        activity()
+            ->performedOn($user)
+            ->log('Menghapus data user ' . $user->name);
+        $user->delete();
         return redirect('user')->with('success', 'Data user berhasil dihapus');
     }
 
@@ -36,7 +44,7 @@ class UserController extends Controller
         $request->validate([
             'role_id' => 'required',
             'name' => 'required|unique:users',
-            'email' => 'required|email:dns|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required',
             'confirm' => 'required|same:password',
         ], [
@@ -46,7 +54,7 @@ class UserController extends Controller
             ]);
 
         $jurusan_id = ($request->role_id == 3) ? Prodi::find($request->prodi_id)->jurusan_id : $request->jurusan_id;
-        User::create([
+        $user = User::create([
             'role_id' => $request->role_id,
             'name' => $request->name,
             'email' => $request->email,
@@ -55,6 +63,9 @@ class UserController extends Controller
             'prodi_id' => $request->prodi_id,
         ]);
 
+        activity()
+            ->performedOn($user)
+            ->log('Menambahkan data user ' . $user->name);
         return redirect('user')->with('success', 'Data user berhasil ditambahkan');
     }
 
@@ -67,50 +78,60 @@ class UserController extends Controller
         return view('user.change_form', compact('user', 'prodis', 'jurusans', 'roles'));
     }
 
-    public function change_user_action(Request $request, User $user)
+    public function change_user_action(Request $request, $id_user)
     {
+        $user = User::find($id_user);
         $rules = [
             'role_id' => 'required',
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
         ];
 
         if ($request->name != $user->name) {
             $rules['name'] = 'required|unique:users';
-        } elseif ($request->email != $user->email) {
+        }
+
+        if ($request->email != $user->email) {
             $rules['email'] = 'required|unique:users';
         }
 
-        $data = $request->validate($rules, [
+        $request->validate($rules, [
             'name.unique' => 'Nama user sudah terdaftar!',
             'email.unique' => 'Email user sudah terdaftar!'
         ]);
 
-        User::find($user->id)->update($data);
+        if ($request->role_id == 3) {
+            $request->merge(['jurusan_id' => Prodi::find($request->prodi_id)->jurusan_id]);
+        }
+
+        User::find($user->id)->update($request->all());
+        activity()
+            ->performedOn($user)
+            ->log('Mengubah data user dengan id ' . $user->id);
         return redirect('user')->with('success', 'Data user berhasil diubah');
     }
 
     public function user_pjm()
     {
-        $users = User::where('role_id', 1)->latest()->get()->load('role');
+        $users = User::with('role')->where('role_id', 1)->latest()->paginate(8);
         return view('user.home', compact('users'));
     }
 
     public function user_kajur()
     {
-        $users = User::where('role_id', 2)->latest()->get()->load('role', 'jurusan');
+        $users = User::with(['role', 'jurusan'])->where('role_id', 2)->latest()->paginate(8);
         return view('user.home', compact('users'));
     }
 
     public function user_koorprodi()
     {
-        $users = User::where('role_id', 3)->latest()->get()->load('role', 'jurusan', 'prodi');
+        $users = User::with(['role', 'jurusan', 'prodi'])->where('role_id', 3)->latest()->paginate(8);
         return view('user.home', compact('users'));
     }
 
     public function user_auditor()
     {
-        $users = User::where('role_id', 4)->latest()->get()->load('role');
+        $users = User::with(['role', 'prodi'])->where('role_id', 4)->latest()->paginate(8);
         return view('user.home', compact('users'));
     }
 }

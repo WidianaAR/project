@@ -40,6 +40,11 @@ class JurusanSeeder extends Seeder
                 'nama_jurusan' => 'JIKL',
                 'keterangan' => 'Jurusan Ilmu Kebumian dan Lingkungan',
             ],
+            [
+                'kode_jurusan' => 6,
+                'nama_jurusan' => 'JD',
+                'keterangan' => 'Jurusan Dummy',
+            ],
         ];
 
         foreach ($jurusan as $value) {

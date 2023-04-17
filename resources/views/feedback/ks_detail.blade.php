@@ -9,12 +9,12 @@
 
     <div class="row m-0 align-items-center">
         <div class="col pl-1">
-            <span class="text-muted">Feedback / ketercapaian standar / <a href="">{{ $data->prodi->nama_prodi }}
+            <span class="text-muted">Feedback / Ketercapaian standar / <a href="">{{ $data->prodi->nama_prodi }}
                     {{ $data->tahun }}</a></span>
         </div>
         @can('auditor')
             <button id="tambah" type="button" class="btn btn-success mr-2" onclick="showTemuan()">
-                @if ($temuan)
+                @if ($data->temuan)
                     Ubah
                 @else
                     Tambah
@@ -38,7 +38,7 @@
                                     <th>{{ $header }}</th>
                                 @endif
                             @endforeach
-                            <th id="column" hidden>Temuan @if ($temuan)
+                            <th id="column" hidden>Temuan @if ($data->temuan)
                                     baru
                                 @endif
                             </th>
@@ -64,7 +64,7 @@
                                             {{ strip_tags(\Illuminate\Support\Str::limit($sheet['J'], 5, '...')) }}
                                         </a>
                                     </td>
-                                    @if ($temuan)
+                                    @if ($data->temuan)
                                         <td>
                                             @if (array_key_exists('K', $sheet))
                                                 {{ $sheet['K'] }}

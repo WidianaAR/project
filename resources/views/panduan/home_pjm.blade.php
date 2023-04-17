@@ -14,7 +14,7 @@
         <span class="text-muted">Panduan / <a href="">Semua data</a></span>
     </div>
 
-    <div class="element">
+    <div class="element pb-1">
         @if ($panduans->count())
             <table class="table table-bordered">
                 <thead class="thead">
@@ -51,6 +51,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $panduans->links() }}
         @else
             <h5 class="text-center">Data kosong</h5>
         @endif

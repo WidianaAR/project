@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="element">
+    <div class="element pb-1">
         @if ($users->count())
             <table class="table table-bordered">
                 <thead class="thead">
@@ -81,6 +81,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $users->links() }}
         @else
             <h5>Data kosong</h5>
         @endif

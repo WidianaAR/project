@@ -51,7 +51,7 @@ class ManageKSChartTest extends TestCase
 
         $data = [
             'prodi' => 11,
-            'tahun' => 2023,
+            'tahun' => 2022,
             'jurusan' => 1,
             'file' => $file,
         ];
@@ -77,9 +77,9 @@ class ManageKSChartTest extends TestCase
         $data = [
             'prodi' => 'all',
             'jurusan' => 'all',
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar semua jurusan tahun 2023');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar semua jurusan tahun 2022');
     }
 
 
@@ -92,9 +92,9 @@ class ManageKSChartTest extends TestCase
         $data = [
             'prodi' => 'all',
             'jurusan' => 1,
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar JMTI tahun 2023');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar JMTI tahun 2022');
     }
 
 
@@ -107,8 +107,8 @@ class ManageKSChartTest extends TestCase
         $data = [
             'prodi' => 11,
             'jurusan' => 1,
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar program studi Informatika tahun 2023');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar program studi Informatika tahun 2022');
     }
 }

@@ -50,21 +50,19 @@ class ManageProdiTest extends TestCase
 
     public function test_edit_prodi_page_rendered()
     {
-        $this->test_add_new_prodi();
-        $this->get('prodis/24/edit')->assertStatus(200);
-        // jika yang dijalankan hanya kelas ManageProdiTest maka id-nya dimulai dari 23
-        // jika yang dijalankan semua test maka id-nya dimulai dari 24
+        $this->login_pjm();
+        $this->get('prodis/20/edit')->assertStatus(200);
     }
 
     public function test_edit_prodi()
     {
-        $this->test_add_new_prodi();
+        $this->login_pjm();
         $data = [
             'kode_prodi' => 31,
             'jurusan_id' => 2,
             'nama_prodi' => 'Prodi edit',
         ];
-        $this->put('prodis/25', $data)->assertRedirect('prodis')->assertStatus(302)->assertSessionHas('success');
+        $this->put('prodis/20', $data)->assertRedirect('prodis')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('prodis', $data);
     }
 
@@ -72,6 +70,6 @@ class ManageProdiTest extends TestCase
     {
         $this->test_add_new_prodi();
         $this->get('prodis')->assertStatus(200);
-        $this->delete('prodis/26')->assertRedirect('prodis')->assertStatus(302)->assertSessionHas('success');
+        $this->delete('prodis/20')->assertRedirect('prodis')->assertStatus(302)->assertSessionHas('success');
     }
 }

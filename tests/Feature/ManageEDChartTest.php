@@ -77,9 +77,9 @@ class ManageEDChartTest extends TestCase
         $data = [
             'prodi' => 'all',
             'jurusan' => 'all',
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri semua jurusan tahun 2023');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri semua jurusan tahun 2022');
     }
 
 
@@ -92,9 +92,9 @@ class ManageEDChartTest extends TestCase
         $data = [
             'prodi' => 'all',
             'jurusan' => 1,
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri JMTI tahun 2023');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri JMTI tahun 2022');
     }
 
 
@@ -107,8 +107,8 @@ class ManageEDChartTest extends TestCase
         $data = [
             'prodi' => 11,
             'jurusan' => 1,
-            'tahun' => 2023
+            'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri program studi Informatika tahun 2023');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri program studi Informatika tahun 2022');
     }
 }

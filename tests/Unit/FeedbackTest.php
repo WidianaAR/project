@@ -26,15 +26,17 @@ class FeedbackTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_ed_feedbacks()
     {
-        $datas = EvaluasiDiri::all();
         $this->pjm_login();
-        $this->get(route('feedback'))->assertViewIs('feedback.home')->assertViewHas('data_evaluasi', $datas);
+        $response = $this->get(route('feedback'));
+        $datas = EvaluasiDiri::where('temuan', 1)->with('prodi')->paginate(8);
+        $response->assertViewIs('feedback.home')->assertViewHas('data_evaluasi', $datas);
     }
 
     public function test_page_displays_a_list_of_ks_feedbacks()
     {
-        $datas = KetercapaianStandar::all();
         $this->pjm_login();
-        $this->get(route('feedback', 'standar'))->assertViewIs('feedback.home')->assertViewHas('data_standar', $datas);
+        $response = $this->get(route('feedback', 'standar'));
+        $datas = KetercapaianStandar::where('temuan', 1)->with('prodi')->paginate(8);
+        $response->assertViewIs('feedback.home')->assertViewHas('data_standar', $datas);
     }
 }

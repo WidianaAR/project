@@ -37,31 +37,35 @@ class EDTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_datas()
     {
-        $data = EvaluasiDiri::all();
         $this->pjm_login();
-        $this->get('evaluasi')->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
+        $response = $this->get('evaluasi');
+        $data = EvaluasiDiri::with('prodi.jurusan', 'prodi')->latest()->paginate(8);
+        $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
     public function test_page_displays_a_list_of_datas_by_year()
     {
-        $data = EvaluasiDiri::where('tahun', 2023)->get();
         $this->pjm_login();
-        $this->get(route('ed_filter_year', 2023))->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
+        $response = $this->get(route('ed_filter_year', 2022));
+        $data = EvaluasiDiri::where('tahun', 2022)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
     public function test_page_displays_a_list_of_datas_by_jurusan()
     {
+        $this->pjm_login();
+        $response = $this->get(route('ed_filter_jurusan', 1));
         $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) {
             $query->where('id', 1);
-        })->with('prodi')->get();
-        $this->pjm_login();
-        $this->get(route('ed_filter_jurusan', 1))->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
+        })->with('prodi')->latest()->paginate(8);
+        $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
     public function test_page_displays_a_list_of_datas_by_prodi()
     {
-        $data = EvaluasiDiri::where('prodi_id', 11)->get();
         $this->pjm_login();
-        $this->get(route('ed_filter_prodi', 11))->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
+        $response = $this->get(route('ed_filter_prodi', 11));
+        $data = EvaluasiDiri::where('prodi_id', 11)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 }

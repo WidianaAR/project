@@ -34,8 +34,9 @@ class ProdiTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_prodis()
     {
-        $prodis = Prodi::all();
         $this->pjm_login();
-        $this->get(route('prodis.index'))->assertViewIs('prodi.home')->assertViewHas('prodis', $prodis);
+        $response = $this->get(route('prodis.index'));
+        $prodis = Prodi::with('jurusan')->paginate(8);
+        $response->assertViewIs('prodi.home')->assertViewHas('prodis', $prodis);
     }
 }

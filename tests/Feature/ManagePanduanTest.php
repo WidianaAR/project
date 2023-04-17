@@ -68,14 +68,13 @@ class ManagePanduanTest extends TestCase
 
     public function test_edit_panduan_page_rendered()
     {
-        $this->test_add_new_panduan();
-        $this->get('panduans/2/edit')->assertStatus(200);
+        $this->login_pjm();
+        $this->get('panduans/1/edit')->assertStatus(200);
     }
 
     public function test_edit_panduan()
     {
-        $this->test_add_new_panduan();
-
+        $this->login_pjm();
         $data = [
             'judul' => 'Judul Edit',
             'keterangan' => 'Ini keterangan edit',
@@ -89,8 +88,8 @@ class ManagePanduanTest extends TestCase
 
     public function test_delete_panduan()
     {
-        $this->test_add_new_panduan();
+        $this->login_pjm();
         $this->get('panduans')->assertStatus(200);
-        $this->delete('panduans/4')->assertRedirect('panduans')->assertStatus(302)->assertSessionHas('success');
+        $this->delete('panduans/1')->assertRedirect('panduans')->assertStatus(302)->assertSessionHas('success');
     }
 }

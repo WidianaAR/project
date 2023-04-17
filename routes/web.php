@@ -2,12 +2,14 @@
 
 use App\Models\Panduan;
 use Illuminate\Support\Facades\Route;
+use Spatie\Activitylog\Models\Activity;
 
 Route::redirect('/', '/login');
 
 // Login dan Logout
 Route::get('login', 'App\Http\Controllers\AuthenticationController@login')->name('login');
 Route::post('login', 'App\Http\Controllers\AuthenticationController@login_action')->name('login_action');
+Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::group(
@@ -21,7 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('user/add', 'App\Http\Controllers\UserController@add_user')->name('add_user');
             Route::post('user/add', 'App\Http\Controllers\UserController@add_user_action')->name('add_user_action');
             Route::get('user/change/{id_user}', 'App\Http\Controllers\UserController@change_user')->name('change_user');
-            Route::post('user/change/{user}', 'App\Http\Controllers\UserController@change_user_action')->name('change_user_action');
+            Route::post('user/change/{id_user}', 'App\Http\Controllers\UserController@change_user_action')->name('change_user_action');
             // User Filter
             Route::get('user/filter/pjm', 'App\Http\Controllers\UserController@user_pjm')->name('user_pjm');
             Route::get('user/filter/kajur', 'App\Http\Controllers\UserController@user_kajur')->name('user_kajur');
@@ -40,6 +42,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('standar/export', 'App\Http\Controllers\KSController@export_all')->name('ks_export_all');
             Route::post('standar/export/file', 'App\Http\Controllers\KSController@export_file')->name('ks_export_file');
 
+            // Filter
+            Route::get('evaluasi/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\EDController@filter_jurusan')->name('ed_filter_jurusan');
+            Route::get('standar/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\KSController@filter_jurusan')->name('ks_filter_jurusan');
+
             // Kelola Jurusan
             Route::resource('jurusans', 'App\Http\Controllers\JurusanController');
 
@@ -48,6 +54,13 @@ Route::group(['middleware' => 'auth'], function () {
 
             // Kelola Panduan
             Route::resource('panduans', 'App\Http\Controllers\PanduanController');
+
+            // Riwayat Aktivitas
+            Route::get('logs', function () {
+                $perPage = request()->query('per_page', 5);
+                $activities = Activity::with('causer')->latest()->paginate($perPage)->withQueryString();
+                return view('log', ['datas' => $activities]);
+            })->name('logs');
         }
     );
 
@@ -86,6 +99,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('standar/confirm/{id_standar}', 'App\Http\Controllers\KSController@confirm')->name('ks_confirm');
             Route::get('standar/cancel_confirm/{id_standar}', 'App\Http\Controllers\KSController@cancel_confirm')->name('ks_cancel_confirm');
             Route::post('standar/feedback', 'App\Http\Controllers\KSController@feedback')->name('ks_feedback');
+
+            Route::post('feedbacks/evaluasi', 'App\Http\Controllers\FeedbackController@ed_table_save')->name('fb_ed_table_save');
+            Route::post('feedbacks/standar', 'App\Http\Controllers\FeedbackController@ks_table_save')->name('fb_ks_table_save');
         }
     );
 
@@ -103,21 +119,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::group(
-        ['middleware' => 'pjm_auditor'],
-        function () {
-            Route::get('evaluasi/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\EDController@filter_jurusan')->name('ed_filter_jurusan');
-            Route::get('standar/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\KSController@filter_jurusan')->name('ks_filter_jurusan');
-            Route::get('ed_feedback/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\FeedbackEDController@filter_jurusan')->name('ed_feedback_filter_jurusan');
-        }
-    );
-
-
-    Route::group(
-        ['middleware' => 'pjm_kajur_auditor'],
+        ['middleware' => 'pjm_kajur'],
         function () {
             Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
             Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
-            Route::get('ed_feedback/filter/prodi/{prodi_id}', 'App\Http\Controllers\FeedbackEDController@filter_prodi')->name('ed_feedback_filter_prodi');
         }
     );
 
@@ -130,9 +135,6 @@ Route::group(['middleware' => 'auth'], function () {
         }
     );
 
-
-
-    Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
 
     // Evaluasi Diri
     Route::get('evaluasi', 'App\Http\Controllers\EDController@home')->name('ed_home');
@@ -162,17 +164,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('feedbacks/{kategori?}', 'App\Http\Controllers\FeedbackController@index')->name('feedback');
     Route::get('feedbacks/{kategori?}/{year}', 'App\Http\Controllers\FeedbackController@filter_year')->name('fb_year');
     Route::get('feedbacks/evaluasi/table/{id}', 'App\Http\Controllers\FeedbackController@ed_table')->name('fb_ed_table');
-    Route::post('feedbacks/evaluasi', 'App\Http\Controllers\FeedbackController@ed_table_save')->name('fb_ed_table_save');
     Route::get('feedbacks/standar/table/{id}', 'App\Http\Controllers\FeedbackController@ks_table')->name('fb_ks_table');
-    Route::post('feedbacks/standar', 'App\Http\Controllers\FeedbackController@ks_table_save')->name('fb_ks_table_save');
 
 
     // Panduan
     Route::get('panduan', function () {
-        return view('panduan.home', ['panduans' => Panduan::all()]);
+        return view('panduan.home', ['panduans' => Panduan::paginate(8)]);
     })->name('panduan_home');
     Route::get('panduan/download/{id}', function ($id) {
-        return response()->download(storage_path('app/public/' . Panduan::find($id)->file_data));
+        $data = Panduan::find($id)->file_data;
+        activity()->log('Download file panduan ' . basename($data));
+        return response()->download(storage_path('app/public/' . $data));
     })->name('panduan_download');
     Route::get('panduan/{id}', 'App\Http\Controllers\PanduanController@show')->name('panduan_detail');
 

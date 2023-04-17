@@ -55,11 +55,11 @@
                         </li>
                     </ul>
                 </li>
-                <li class="{{ Request::is('standar*') ? 'active' : '' }}">
-                    <a href="{{ URL('standar') }}">Ketercapaian Standar</a>
-                </li>
                 <li class="{{ Request::is('evaluasi*') ? 'active' : '' }}">
                     <a href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
+                </li>
+                <li class="{{ Request::is('standar*') ? 'active' : '' }}">
+                    <a href="{{ URL('standar') }}">Ketercapaian Standar</a>
                 </li>
                 <li class="{{ Request::is(['panduans*', 'panduan*']) ? 'active' : '' }}">
                     <a
@@ -77,8 +77,13 @@
                     </li>
                 @endcan
                 <li class="{{ Request::is('feedbacks*') ? 'active' : '' }}">
-                    <a href="{{ URL('feedbacks') }}">Feedback Auditor</a>
+                    <a href="{{ URL('feedbacks') }}">Temuan Audit</a>
                 </li>
+                @can('pjm')
+                    <li class="{{ Request::is('logs*') ? 'active' : '' }}">
+                        <a href="{{ URL('logs') }}">Riwayat Aktivitas</a>
+                    </li>
+                @endcan
             </ul>
         </nav>
 
@@ -94,17 +99,14 @@
                         </li>
                     </ul>
 
-                    <span class="navbar-text text-right mr-1">
-                        <b>{{ Auth::user()->name }}</b>
-                        <br> {{ Auth::user()->role->role_name }}
-                    </span>
-
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown pr-4">
-                            <a class="dropdown-toggle nav-link" href="#" id="dropdownMenuLink"
+                            <a class="dropdown-toggle nav-link py-0" href="#" id="dropdownMenuLink"
                                 data-toggle="dropdown">
-                                <img style="border-radius: 50%" src="{{ URL::asset('images/user.png') }}"
-                                    width="40px" height="40px">
+                                <span class="navbar-text text-right mr-1">
+                                    <b>{{ Auth::user()->name }}</b>
+                                    <br> {{ Auth::user()->role->role_name }}
+                                </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="{{ route('change_password', Auth::user()->id) }}">Ubah

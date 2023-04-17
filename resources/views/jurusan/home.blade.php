@@ -21,7 +21,7 @@
         <span class="text-muted">Jurusan / <a href="">Semua data</a></span>
     </div>
 
-    <div class="element">
+    <div class="element pb-1">
         @if ($jurusans->count())
             <table class="table table-bordered">
                 <thead class="thead">
@@ -53,6 +53,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $jurusans->links() }}
         @else
             <h5>Data kosong</h5>
         @endif

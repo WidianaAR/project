@@ -23,6 +23,9 @@
                     </div>
                 @endforeach
             </div>
+            <div class="d-flex justify-content-end">
+                {{ $panduans->links() }}
+            </div>
         @else
             <h5 class="text-center">Data kosong</h5>
         @endif

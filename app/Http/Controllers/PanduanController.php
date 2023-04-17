@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Panduan;
 use App\Traits\FileTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PanduanController extends Controller
 {
@@ -13,7 +12,7 @@ class PanduanController extends Controller
 
     public function index()
     {
-        return view('panduan.home_pjm', ['panduans' => Panduan::all()]);
+        return view('panduan.home_pjm', ['panduans' => Panduan::latest()->paginate(8)]);
     }
 
     public function create()
@@ -33,12 +32,14 @@ class PanduanController extends Controller
 
         $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
 
-        Panduan::create([
+        $panduan = Panduan::create([
             'judul' => $request->judul,
             'keterangan' => $request->keterangan,
             'file_data' => $path
         ]);
-
+        activity()
+            ->performedOn($panduan)
+            ->log('Menambahkan data panduan ' . $panduan->judul);
         return redirect()->route('panduans.index')->with('success', 'Data panduan berhasil disimpan');
     }
 
@@ -70,13 +71,19 @@ class PanduanController extends Controller
             'keterangan' => $request->keterangan,
             'file_data' => $path
         ]);
-
+        activity()
+            ->performedOn($panduan)
+            ->log('Mengubah data panduan dengan id ' . $panduan->id);
         return redirect()->route('panduans.index')->with('success', 'Data panduan berhasil diubah');
     }
 
     public function destroy($id)
     {
-        Panduan::destroy($id);
+        $panduan = Panduan::find($id);
+        activity()
+            ->performedOn($panduan)
+            ->log('Menghapus data panduan ' . $panduan->judul);
+        $panduan->delete();
         return back()->with('success', 'Data panduan berhasil dihapus');
     }
 }

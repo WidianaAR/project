@@ -65,8 +65,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cek_login' => \App\Http\Middleware\LoginCheck::class,
         'kajur_koorprodi' => \App\Http\Middleware\RoleKajurKoorprodi::class,
-        'pjm_auditor' => \App\Http\Middleware\RolePJMAuditor::class,
-        'pjm_kajur_auditor' => \App\Http\Middleware\RolePJMKajurAuditor::class,
+        'pjm_kajur' => \App\Http\Middleware\RolePJMKajur::class,
         'kajur_koorprodi_auditor' => \App\Http\Middleware\RoleKajurKoorprodiAuditor::class
     ];
 }

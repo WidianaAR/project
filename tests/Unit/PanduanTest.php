@@ -34,8 +34,9 @@ class PanduanTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_panduans()
     {
-        $panduans = Panduan::all();
         $this->pjm_login();
-        $this->get(route('panduans.index'))->assertViewIs('panduan.home_pjm')->assertViewHas('panduans', $panduans);
+        $response = $this->get(route('panduans.index'));
+        $panduans = Panduan::paginate(8);
+        $response->assertViewIs('panduan.home_pjm')->assertViewHas('panduans', $panduans);
     }
 }

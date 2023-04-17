@@ -9,7 +9,7 @@ trait CountdownTrait
 {
     public function EDCountdown() {
         $deadline = EDDeadline::where('status', 'on going')->first();
-        if (!!$deadline) {
+        if ($deadline) {
             $date = $deadline->batas_waktu;
             $id = $deadline->id;
         } else {
@@ -21,7 +21,7 @@ trait CountdownTrait
 
     public function KSCountdown() {
         $deadline = KSDeadline::where('status', 'on going')->first();
-        if (!!$deadline) {
+        if ($deadline) {
             $date = $deadline->batas_waktu;
             $id = $deadline->id;
         } else {

@@ -21,7 +21,7 @@
         <span class="text-muted">Program studi / <a href="">Semua data</a></span>
     </div>
 
-    <div class="element">
+    <div class="element pb-1">
         @if ($prodis->count())
             <table class="table table-bordered">
                 <thead class="thead">
@@ -52,6 +52,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $prodis->links() }}
         @else
             <h5>Data kosong</h5>
         @endif

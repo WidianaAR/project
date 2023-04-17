@@ -9,17 +9,26 @@
 
     <div class="row m-0 align-items-center">
         <div class="col pl-1">
-            <span class="text-muted">Feedback / evaluasi diri / <a href="">{{ $data->prodi->nama_prodi }}
+            <span class="text-muted">Feedback / Evaluasi diri / <a href="">{{ $data->prodi->nama_prodi }}
                     {{ $data->tahun }}</a></span>
         </div>
         @can('auditor')
             <button id="tambah" type="button" class="btn btn-success mr-2" onclick="showTemuan()">
-                @if ($temuan)
+                @if ($data->temuan)
                     Ubah
                 @else
                     Tambah
                 @endif temuan
             </button>
+        @endcan
+        @can('pjm')
+            <div class="col text-right px-2">
+                <form action="{{ route('ed_export_file') }}" method="POST">
+                    @csrf
+                    <input name="filename" type="hidden" value="{{ $data->file_data }}">
+                    <input type="submit" class="btn btn-primary" value="Export File">
+                </form>
+            </div>
         @endcan
         <a href="{{ route('feedback') }}" type="button" class="btn btn-danger"><i class="fa fa-arrow-left"
                 aria-hidden="true"></i>Kembali</a>
@@ -31,7 +40,7 @@
                 @foreach ($sheetData as $sheet)
                     <tr>
                         @if (!$sheet[3])
-                            <td id="title" colspan="@if ($temuan) 10 @else 9 @endif">
+                            <td id="title" colspan="@if ($data->temuan) 10 @else 9 @endif">
                                 {{ $sheet[0] }} </td>
                         @else
                             @foreach (range(0, 7) as $v)
@@ -46,7 +55,7 @@
                                     {{ $sheet[8] }}
                                 @endif
                             </td>
-                            @if ($temuan)
+                            @if ($data->temuan)
                                 <td>
                                     @if ($sheet[9])
                                         {{ $sheet[9] }}
@@ -54,7 +63,7 @@
                                 </td>
                             @endif
                             @if ($sheet[0] == 'No')
-                                <td id="column" hidden>Temuan @if ($temuan)
+                                <td id="column" hidden>Temuan @if ($data->temuan)
                                         baru
                                     @endif
                                 </td>

@@ -46,22 +46,22 @@ class ManageFeedbackTest extends TestCase
     public function test_ed_feedback_table_page_rendered()
     {
         $this->auditor_login();
-        $this->get('feedbacks/evaluasi/table/1')->assertStatus(200);
+        $this->get('feedbacks/evaluasi/table/9')->assertStatus(200);
     }
 
     public function test_ed_feedback_save()
     {
         $this->auditor_login();
-        $this->get('feedbacks/evaluasi/table/1');
+        $this->get('feedbacks/evaluasi/table/9');
         $data = [];
         for ($i = 0; $i < 83; $i++) {
             array_push($data, 'temuan');
         }
         $request = [
-            'id' => 1,
+            'id' => 9,
             'temuan' => $data
         ];
-        $this->post('feedbacks/evaluasi', $request)->assertRedirect('feedbacks/evaluasi/table/1')->assertStatus(302)->assertSessionHas('success');
+        $this->post('feedbacks/evaluasi', $request)->assertRedirect('feedbacks/evaluasi/table/9')->assertStatus(302)->assertSessionHas('success');
     }
 
     public function test_ks_feedback_page_rendered()
@@ -79,20 +79,20 @@ class ManageFeedbackTest extends TestCase
     public function test_ks_feedback_table_page_rendered()
     {
         $this->auditor_login();
-        $this->get('feedbacks/standar/table/1')->assertStatus(200);
+        $this->get('feedbacks/standar/table/9')->assertStatus(200);
     }
 
     public function test_ks_feedback_save()
     {
         $this->auditor_login();
-        $this->get('feedbacks/standar/table/1');
+        $this->get('feedbacks/standar/table/9');
         $request = [
-            'id' => 1,
+            'id' => 9,
             '0temuan' => ['temuan1A', 'temuan1B'],
             '1temuan' => ['temuan2A', 'temuan2B'],
             '2temuan' => ['temuan3A', 'temuan3B'],
             '3temuan' => ['temuan4A', 'temuan4B'],
         ];
-        $this->post('feedbacks/standar', $request)->assertRedirect('feedbacks/standar/table/1')->assertStatus(302)->assertSessionHas('success');
+        $this->post('feedbacks/standar', $request)->assertRedirect('feedbacks/standar/table/9')->assertStatus(302)->assertSessionHas('success');
     }
 }

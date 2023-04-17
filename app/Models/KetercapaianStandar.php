@@ -15,8 +15,7 @@ class KetercapaianStandar extends Model
         'tahun',
         'status',
         'keterangan',
-        'feedback',
-        'tanggal_audit'
+        'temuan'
     ];
 
     public function prodi()

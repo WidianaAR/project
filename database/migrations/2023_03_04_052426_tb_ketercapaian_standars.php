@@ -19,8 +19,7 @@ return new class extends Migration {
             $table->integer('tahun');
             $table->string('status', 100);
             $table->text('keterangan')->nullable(TRUE);
-            $table->boolean('feedback')->nullable(TRUE);
-            $table->date('tanggal_audit')->nullable(TRUE);
+            $table->boolean('temuan')->nullable(TRUE);
             $table->timestamps();
         });
     }

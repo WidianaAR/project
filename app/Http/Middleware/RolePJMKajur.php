@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class RolePJMAuditor
+class RolePJMKajur
 {
     /**
      * Handle an incoming request.
@@ -22,7 +22,7 @@ class RolePJMAuditor
         }
         $user = Auth::user();
 
-        if ($user->role_id == 1 || $user->role_id == 4)
+        if ($user->role_id == 1 || $user->role_id == 2)
             return $next($request);
 
         return redirect('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);

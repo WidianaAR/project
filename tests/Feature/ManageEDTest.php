@@ -116,19 +116,19 @@ class ManageEDTest extends TestCase
 
     public function test_ed_table_page_rendered()
     {
-        $this->test_ed_import_file();
+        $this->kajur_login();
         $this->get('evaluasi/table/1')->assertStatus(200);
     }
 
     public function test_ed_edit_page_rendered()
     {
-        $this->test_ed_import_file();
+        $this->kajur_login();
         $this->get('evaluasi/change/1')->assertStatus(200);
     }
 
     public function test_ed_edit_file()
     {
-        $this->test_ed_import_file();
+        $this->kajur_login();
         $file = $this->dummy_file();
         $data = [
             'id_evaluasi' => 1,
@@ -144,20 +144,19 @@ class ManageEDTest extends TestCase
 
     public function test_ed_delete()
     {
-        $this->test_ed_import_file();
+        $this->kajur_login();
         $this->get('evaluasi/delete/1')->assertRedirect('evaluasi')->assertStatus(302);
         $data = [
             'prodi_id' => 11,
-            'tahun' => 2023,
+            'tahun' => 2022,
         ];
         $this->assertDatabaseMissing('evaluasi_diris', $data);
     }
 
     public function test_ed_confirm()
     {
-        $this->test_ed_import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
+        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi/table/1')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('evaluasi_diris', [
             'id' => 1,
             'status' => 'disetujui'
@@ -166,10 +165,9 @@ class ManageEDTest extends TestCase
 
     public function test_ed_cancel_confirm()
     {
-        $this->test_ed_import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
-        $this->get('evaluasi/cancel_confirm/1')->assertRedirect('evaluasi')->assertStatus(302);
+        $this->get('evaluasi/confirm/1')->assertRedirect('evaluasi/table/1')->assertStatus(302)->assertSessionHas('success');
+        $this->get('evaluasi/cancel_confirm/1')->assertRedirect('evaluasi/table/1')->assertStatus(302);
         $this->assertDatabaseHas('evaluasi_diris', [
             'id' => 1,
             'status' => 'ditinjau'
@@ -178,7 +176,6 @@ class ManageEDTest extends TestCase
 
     public function test_ed_feedback()
     {
-        $this->test_ed_import_file();
         $this->auditor_login();
         $data = [
             'id_evaluasi' => 1,
@@ -217,14 +214,12 @@ class ManageEDTest extends TestCase
 
     public function test_ed_filter_jurusan()
     {
-        $this->test_ed_import_file();
         $this->pjm_login();
         $this->get('evaluasi/filter/jurusan/1')->assertStatus(200);
     }
 
     public function test_ed_filter_prodi()
     {
-        $this->test_ed_import_file();
         $this->pjm_login();
         $this->get('evaluasi/filter/prodi/11')->assertStatus(200);
     }

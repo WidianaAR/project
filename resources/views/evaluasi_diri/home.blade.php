@@ -36,9 +36,11 @@
                     Tahun <i class='fa fa-angle-down fa-sm'></i>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="moduleDropDown">
-                    <a class="dropdown-item" href="{{ route('ed_home') }}">Semua</a>
+                    <a class="dropdown-item {{ Request::is('evaluasi') ? 'active' : '' }}"
+                        href="{{ route('ed_home') }}">Semua</a>
                     @foreach ($years as $year)
-                        <a class="dropdown-item" href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
+                        <a class="dropdown-item {{ Request::is('evaluasi/filter/year/' . $year) ? 'active' : '' }}"
+                            href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
                     @endforeach
                 </div>
             </div>
@@ -51,7 +53,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="moduleDropDown">
                     @foreach ($jurusans as $jurusan)
-                        <a class="dropdown-item"
+                        <a class="dropdown-item {{ Request::is('evaluasi/filter/jurusan/' . $jurusan->id) ? 'active' : '' }}"
                             href="{{ route('ed_filter_jurusan', $jurusan->id) }}">{{ $jurusan->nama_jurusan }}</a>
                     @endforeach
                 </div>
@@ -69,7 +71,7 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
                     @foreach ($prodis as $prodi)
-                        <a class="dropdown-item"
+                        <a class="dropdown-item {{ Request::is('evaluasi/filter/prodi/' . $prodi->id) ? 'active' : '' }}"
                             href="{{ route('ed_filter_prodi', $prodi->id) }}">{{ $prodi->nama_prodi }}</a>
                     @endforeach
                 </div>
@@ -97,8 +99,8 @@
             @endcan
         </div>
 
-        <div class="element">
-            <div class="mt-3 text-center">
+        <div class="element pb-1">
+            <div class="text-center">
                 @if ($data->count())
                     <table class="table table-bordered">
                         <thead class="thead">
@@ -122,7 +124,8 @@
                             @foreach ($data as $file)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('ed_table', $file->id) }}">{{ $file->file_data }}</a></td>
+                                    <td><a href="{{ route('ed_table', $file->id) }}">{{ basename($file->file_data) }}</a>
+                                    </td>
                                     @cannot('kajur')
                                         <td>{{ $file->prodi->jurusan->nama_jurusan }}</td>
                                     @endcannot
@@ -145,6 +148,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    {{ $data->links() }}
                 @else
                     <h5>Data Kosong</h5>
                 @endif

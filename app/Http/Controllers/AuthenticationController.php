@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,21 +24,26 @@ class AuthenticationController extends Controller
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->role_id == 1) {
+                activity()->log('PJM login');
                 return redirect()->intended('pjm');
             } elseif ($user->role_id == 2) {
+                activity()->log('Kajur login');
                 return redirect()->intended('kajur');
             } elseif ($user->role_id == 3) {
+                activity()->log('Koorprodi login');
                 return redirect()->intended('koorprodi');
             } elseif ($user->role_id == 4) {
+                activity()->log('Auditor login');
                 return redirect()->intended('auditor');
             }
             return redirect('login');
         }
-        return back()->withErrors(['login_gagal' => 'Akun tidak terdaftar di dalam sistem']);
+        return back()->withErrors(['login_gagal' => 'Email atau password salah']);
     }
 
     public function logout(Request $request)
     {
+        activity()->log('User logout');
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -53,9 +58,9 @@ class AuthenticationController extends Controller
     public function change_pass_action(Request $request)
     {
         $user = Auth::user();
-        if (Hash::check($request->old_pass, $user->password) == false) {
+        if (!Hash::check($request->old_pass, $user->password)) {
             return back()->withErrors(['old_pass' => 'Password lama salah!']);
-        } elseif (Hash::check($request->password, $user->password) == true) {
+        } elseif (Hash::check($request->password, $user->password)) {
             return back()->withErrors(['password' => 'Password baru tidak boleh sama dengan password lama.']);
         }
 
@@ -65,7 +70,11 @@ class AuthenticationController extends Controller
                 'conf_pass.same' => 'Password tidak sama, mohon periksa kembali input Anda.'
             ]);
 
-        User::find($user->id)->update(['password' => Hash::make($request->password)]);
+        $data = User::find($user->id);
+        $data->update(['password' => Hash::make($request->password)]);
+        activity()
+            ->performedOn($data)
+            ->log('User mengubah password');
         return redirect()->route('ks_chart')->with('success', 'Password akun berhasil diubah.');
     }
 }

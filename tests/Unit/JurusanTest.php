@@ -34,8 +34,9 @@ class JurusanTest extends TestCase
     // Controller test
     public function test_page_displays_a_list_of_jurusans()
     {
-        $jurusans = Jurusan::all();
         $this->pjm_login();
-        $this->get(route('jurusans.index'))->assertViewIs('jurusan.home')->assertViewHas('jurusans', $jurusans);
+        $response = $this->get(route('jurusans.index'));
+        $jurusans = Jurusan::paginate(8);
+        $response->assertViewIs('jurusan.home')->assertViewHas('jurusans', $jurusans);
     }
 }

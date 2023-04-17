@@ -116,19 +116,19 @@ class ManageKSTest extends TestCase
 
     public function test_ks_table_page_rendered()
     {
-        $this->test_ks_import_file();
+        $this->kajur_login();
         $this->get('standar/table/1')->assertStatus(200);
     }
 
     public function test_ks_edit_page_rendered()
     {
-        $this->test_ks_import_file();
+        $this->kajur_login();
         $this->get('standar/change/1')->assertStatus(200);
     }
 
     public function test_ks_edit_file()
     {
-        $this->test_ks_import_file();
+        $this->kajur_login();
         $file = $this->dummy_file();
         $data = [
             'id_standar' => 1,
@@ -144,19 +144,18 @@ class ManageKSTest extends TestCase
 
     public function test_ks_delete()
     {
-        $this->test_ks_import_file();
+        $this->kajur_login();
         $this->get('standar/delete/1')->assertRedirect('standar')->assertStatus(302);
         $this->assertDatabaseMissing('ketercapaian_standars', [
             'prodi_id' => 11,
-            'tahun' => 2023
+            'tahun' => 2022
         ]);
     }
 
     public function test_ks_confirm()
     {
-        $this->test_ks_import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1')->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
+        $this->get('standar/confirm/1')->assertRedirect('standar/table/1')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('ketercapaian_standars', [
             'id' => 1,
             'status' => 'disetujui'
@@ -165,10 +164,9 @@ class ManageKSTest extends TestCase
 
     public function test_ks_cancel_confirm()
     {
-        $this->test_ks_import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1')->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
-        $this->get('standar/cancel_confirm/1')->assertRedirect('standar')->assertStatus(302);
+        $this->get('standar/confirm/1')->assertRedirect('standar/table/1')->assertStatus(302)->assertSessionHas('success');
+        $this->get('standar/cancel_confirm/1')->assertRedirect('standar/table/1')->assertStatus(302);
         $this->assertDatabaseHas('ketercapaian_standars', [
             'id' => 1,
             'status' => 'ditinjau'
@@ -177,7 +175,6 @@ class ManageKSTest extends TestCase
 
     public function test_ks_feedback()
     {
-        $this->test_ks_import_file();
         $this->auditor_login();
         $data = [
             'id_standar' => 1,
@@ -216,14 +213,12 @@ class ManageKSTest extends TestCase
 
     public function test_ks_filter_jurusan()
     {
-        $this->test_ks_import_file();
         $this->pjm_login();
         $this->get('standar/filter/jurusan/1')->assertStatus(200);
     }
 
     public function test_ks_filter_prodi()
     {
-        $this->test_ks_import_file();
         $this->pjm_login();
         $this->get('standar/filter/prodi/11')->assertStatus(200);
     }

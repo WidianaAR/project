@@ -48,7 +48,7 @@ class KSChartController extends Controller
 
     public function home(Request $request)
     {
-        $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+        $years = KetercapaianStandar::where('status', 'disetujui')->distinct()->pluck('tahun')->toArray();
         $prodis = KetercapaianStandar::where('status', 'disetujui')->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
             return $item->unique('prodi.id');
         });

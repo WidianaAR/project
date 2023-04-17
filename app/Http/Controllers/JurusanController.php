@@ -9,7 +9,7 @@ class JurusanController extends Controller
 {
     public function index()
     {
-        return view('jurusan.home', ['jurusans' => Jurusan::all()]);
+        return view('jurusan.home', ['jurusans' => Jurusan::paginate(8)]);
     }
 
     public function create()
@@ -28,7 +28,10 @@ class JurusanController extends Controller
                 'nama_jurusan.unique' => 'Singkatan jurusan sudah terdaftar!',
                 'keterangan.unique' => 'Nama jurusan sudah terdaftar'
             ]);
-        Jurusan::create($data);
+        $jurusan = Jurusan::create($data);
+        activity()
+            ->performedOn($jurusan)
+            ->log('Menambahkan data jurusan ' . $jurusan->nama_jurusan);
         return redirect('jurusans')->with('success', 'Data jurusan berhasil ditambahkan');
     }
 
@@ -49,11 +52,15 @@ class JurusanController extends Controller
 
         if ($request->kode_jurusan != $jurusan->kode_jurusan) {
             $rules['kode_jurusan'] = 'required|unique:jurusans';
-        } elseif ($request->nama_jurusan != $jurusan->nama_jurusan) {
+        }
+        if ($request->nama_jurusan != $jurusan->nama_jurusan) {
             $rules['nama_jurusan'] = 'required|unique:jurusans';
-        } elseif ($request->keterangan != $jurusan->keterangan) {
+        }
+        if ($request->keterangan != $jurusan->keterangan) {
             $rules['keterangan'] = 'required|unique:jurusans';
         }
+
+        // dd($rules);
 
         $data = $request->validate($rules, [
             'kode_jurusan.unique' => 'Kode jurusan sudah terdaftar!',
@@ -61,6 +68,9 @@ class JurusanController extends Controller
             'keterangan.unique' => 'Nama jurusan sudah terdaftar'
         ]);
         Jurusan::find($jurusan->id)->update($data);
+        activity()
+            ->performedOn($jurusan)
+            ->log('Mengubah data jurusan dengan id ' . $jurusan->id);
         return redirect('jurusans')->with('success', 'Data jurusan berhasil diubah');
     }
 
@@ -70,6 +80,9 @@ class JurusanController extends Controller
         if ($data->prodi()->exists()) {
             return back()->with('error', 'Data jurusan tidak dapat dihapus karena masih memiliki data lain yang terkait.');
         }
+        activity()
+            ->performedOn($data)
+            ->log('Menghapus data jurusan ' . $data->nama_jurusan);
         $data->delete();
         return back()->with('success', 'Data jurusan berhasil dihapus');
     }

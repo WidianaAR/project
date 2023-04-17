@@ -33,7 +33,8 @@
                     <select name='jurusan_id' class="custom-select select-jurusan" id="inputGroupSelect02">
                         <option value='' selected>Jurusan</option>
                         @foreach ($jurusans as $jurusan)
-                            <option value={{ $jurusan->id }}>{{ $jurusan->nama_jurusan }}</option>
+                            <option value={{ $jurusan->id }} {{ old('jurusan_id') == $jurusan->id ? 'selected' : '' }}>
+                                {{ $jurusan->nama_jurusan }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -44,7 +45,8 @@
                     <select name='prodi_id' class="custom-select select-prodi" id="inputGroupSelect03">
                         <option value='' selected>Program studi</option>
                         @foreach ($prodis as $prodi)
-                            <option value={{ $prodi->id }}>{{ $prodi->nama_prodi }}</option>
+                            <option value={{ $prodi->id }} {{ old('prodi_id') == $prodi->id ? 'selected' : '' }}>
+                                {{ $prodi->nama_prodi }}</option>
                         @endforeach
                     </select>
                 </div>

@@ -3,11 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\Panduan;
+use App\Traits\FileTrait;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 
 class PanduanSeeder extends Seeder
 {
+    use FileTrait;
     /**
      * Run the database seeds.
      *
@@ -23,6 +25,7 @@ class PanduanSeeder extends Seeder
             null,
             true
         );
+        $ed_file = $this->UploadFilePanduan($ed_file, 'ED_Template.xlsx');
 
         $ks_path = public_path("files/KS_Template.xlsx");
         $ks_file = new UploadedFile(
@@ -32,6 +35,7 @@ class PanduanSeeder extends Seeder
             null,
             true
         );
+        $ks_file = $this->UploadFilePanduan($ks_file, 'KS_Template.xlsx');
 
         Panduan::create([
             'judul' => 'Pengisian Evaluasi Diri Prorgram Studi',
