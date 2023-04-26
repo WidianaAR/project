@@ -68,7 +68,7 @@ class UserTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('user/filter/auditor');
-        $users = User::with(['role', 'prodi'])->where('role_id', 4)->latest()->paginate(8);
+        $users = User::with(['role', 'jurusan', 'prodi'])->where('role_id', 4)->latest()->paginate(8);
         $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 }
