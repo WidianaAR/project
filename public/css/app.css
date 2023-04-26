@@ -50,7 +50,6 @@ button.simple:focus {
 }
 
 #login-bg {
-    display: flex;
     width: 100%;
     background: linear-gradient(63.18deg, #0D64AC 58.33%, rgba(13, 100, 172, 0.7) 100%);
     font-family: Helvetica;
@@ -100,21 +99,6 @@ button.simple:focus {
     height: 12%;
 }
 
-@media (max-width: 700px) {
-    .login-right {
-        display: none;
-    }
-
-    .login-box {
-        width: 65vh;
-    }
-
-    .login-left {
-        width: 100%;
-        padding-right: 5%;
-    }
-}
-
 table {
     text-align: center;
 }
@@ -157,4 +141,41 @@ thead {
 
 .time {
     color: #CE4848;
+}
+
+
+
+
+@media (max-width: 425px) {
+    .login-box {
+        width: 90vw;
+        height: 55vh;
+    }
+
+    .login-right {
+        display: none;
+    }
+
+    .login-left {
+        width: 100%;
+        padding-right: 5%;
+    }
+
+    .login-left h2 {
+        font-size: 7vw;
+    }
+
+    .login-left img {
+        width: 10vw;
+        height: auto;
+        margin-bottom: 2px;
+    }
+
+    .bold {
+        font-size: 3vw;
+    }
+
+    div.box {
+        font-size: 3vw;
+    }
 }

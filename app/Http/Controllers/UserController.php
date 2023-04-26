@@ -100,14 +100,23 @@ class UserController extends Controller
             'email.unique' => 'Email user sudah terdaftar!'
         ]);
 
-        if ($request->role_id == 3) {
+        if ($request->role_id == 3 || $request->role_id == 4) {
             $request->merge(['jurusan_id' => Prodi::find($request->prodi_id)->jurusan_id]);
         }
 
-        User::find($user->id)->update($request->all());
+        if ($user->prodi_id && $request->role_id == 1 || $request->role_id == 2) {
+            $request->merge(['prodi_id' => null]);
+        }
+
+        if ($request->role_id == 1) {
+            $request->merge(['prodi_id' => null, 'jurusan_id' => null]);
+        }
+
+        $user->update($request->all());
         activity()
             ->performedOn($user)
             ->log('Mengubah data user dengan id ' . $user->id);
+
         return redirect('user')->with('success', 'Data user berhasil diubah');
     }
 

@@ -80,6 +80,7 @@ class PanduanController extends Controller
     public function destroy($id)
     {
         $panduan = Panduan::find($id);
+        $this->DeleteFile($panduan->file_data);
         activity()
             ->performedOn($panduan)
             ->log('Menghapus data panduan ' . $panduan->judul);

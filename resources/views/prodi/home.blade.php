@@ -26,9 +26,9 @@
             <table class="table table-bordered">
                 <thead class="thead">
                     <tr>
-                        <th>Kode Prodi</th>
+                        <th>Kode Program Studi</th>
                         <th>Jurusan</th>
-                        <th>Nama</th>
+                        <th>Nama Program Studi</th>
                         <th>Action</th>
                     </tr>
                 </thead>

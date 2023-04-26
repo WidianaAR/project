@@ -124,7 +124,7 @@ class FeedbackController extends Controller
         } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->jurusan_id) {
             activity()->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($data->temuan != 1) {
+        } elseif ($user->role_id != 4 && $data->temuan != 1) {
             activity()->log('Prohibited access | Mencoba akses data evaluasi diri yang belum memiliki temuan');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
@@ -187,7 +187,7 @@ class FeedbackController extends Controller
         } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->jurusan_id) {
             activity()->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($data->temuan != 1) {
+        } elseif ($user->role_id != 4 && $data->temuan != 1) {
             activity()->log('Prohibited access | Mencoba akses data ketercapaian standar yang belum memiliki temuan');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }

@@ -19,7 +19,7 @@
         </div>
     @endif
     <div class="d-flex align-items-center flex-wrap" id="login-bg">
-        <div class="container-fluid">
+        <div class="container-fluid p-0">
             <div class="login-box pl-2 m-auto">
                 <div class="login-left">
                     <img src="/images/Logo ITK.png" width="50px" height="35px">

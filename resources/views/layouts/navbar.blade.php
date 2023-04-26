@@ -30,7 +30,6 @@
             <div class="sidebar-header p-3">
                 <table>
                     <tr>
-
                         <td style="width: 15%; background-color: white; border-radius: 5px"> <img
                                 src="{{ URL::asset('images/Logo ITK_no teks.png') }}" width="100%" height="100%">
                         </td>
@@ -48,10 +47,10 @@
                         class="dropdown-toggle">Dashboard</a>
                     <ul class="collapse list-unstyled" id="dashboardSubmenu">
                         <li>
-                            <a href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
+                            <a href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
                         </li>
                         <li>
-                            <a href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
+                            <a href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
                         </li>
                     </ul>
                 </li>
@@ -89,13 +88,31 @@
 
         <!-- Navbar -->
         <div class="container-fluid p-0" id="top-navbar">
-            <nav class="navbar navbar-expand-lg navbar-light" id="navbar">
-                <div class="collapse navbar-collapse align-items-middle" id="navbarSupportedContent">
+            <nav class="navbar navbar-expand-sm navbar-light" id="navbar">
+                <div class="collapse navbar-collapse align-items-middle">
                     <ul class="navbar-nav mr-auto ml-3">
                         <li class="nav-item active">
-                            <button type="button" id="sidebarCollapse" class='btn btn-light'>
-                                <i class='fas fa-bars' style='color:#808080'></i>
-                            </button>
+                            <a class="btn btn-light nav-link dropdown-toggle" href="#" id="sidebarCollapse"
+                                role="button" data-toggle="dropdown">
+                                <i class="fas fa-bars" style="color:#808080"></i>
+                            </a>
+                            <div class="dropdown-menu" id="dropdown-nav">
+                                <a class="dropdown-item" href="{{ URL('ed_chart') }}">Chart Evaluasi Diri</a>
+                                <a class="dropdown-item" href="{{ URL('ks_chart') }}">Chart Ketercapaian Standar</a>
+                                <a class="dropdown-item" href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
+                                <a class="dropdown-item" href="{{ URL('standar') }}">Ketercapaian Standar</a>
+                                <a class="dropdown-item"
+                                    href="@if (Auth::user()->role_id == 1) {{ URL('panduans') }} @else {{ URL('panduan') }} @endif">Panduan</a>
+                                @can('pjm')
+                                    <a class="dropdown-item" href="{{ URL('user') }}">User</a>
+                                    <a class="dropdown-item" href="{{ URL('jurusans') }}">Jurusan</a>
+                                    <a class="dropdown-item" href="{{ URL('prodis') }}">Program Studi</a>
+                                @endcan
+                                <a class="dropdown-item" href="{{ URL('feedbacks') }}">Temuan Audit</a>
+                                @can('pjm')
+                                    <a class="dropdown-item" href="{{ URL('logs') }}">Riwayat Aktivitas</a>
+                                @endcan
+                            </div>
                         </li>
                     </ul>
 

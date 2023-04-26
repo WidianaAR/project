@@ -25,27 +25,26 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="input-group mb-3" id="jurusan_option" hidden>
+                <div class="input-group mb-3" id="jurusan_option" @if ($user->role_id != 2) hidden @endif>
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="inputGroupSelect02">Pilih</label>
                     </div>
                     <select name='jurusan_id' class="custom-select select-jurusan" id="inputGroupSelect02">
-                        <option value='{{ $user->jurusan_id }}'>Jurusan
-                        </option>
+                        <option value="1">Jurusan</option>
                         @foreach ($jurusans as $jurusan)
-                            <option value={{ $jurusan->id }} @if (old('jurusan_id') == $jurusan->id) selected @endif>
+                            <option value={{ $jurusan->id }} @if (old('jurusan_id') == $jurusan->id || $user->jurusan_id == $jurusan->id) selected @endif>
                                 {{ $jurusan->nama_jurusan }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="input-group mb-3" id="prodi_option" hidden>
+                <div class="input-group mb-3" id="prodi_option" @if ($user->role_id == 1 || $user->role_id == 2) hidden @endif>
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="inputGroupSelect03">Pilih</label>
                     </div>
                     <select name='prodi_id' class="custom-select select-prodi" id="inputGroupSelect03">
-                        <option value='{{ $user->prodi_id }}' selected>Program studi</option>
+                        <option value="1">Program Studi</option>
                         @foreach ($prodis as $prodi)
-                            <option value={{ $prodi->id }} @if (old('prodi_id') == $prodi->id) selected @endif>
+                            <option value={{ $prodi->id }} @if (old('prodi_id') == $prodi->id || $user->prodi_id == $prodi->id) selected @endif>
                                 {{ $prodi->nama_prodi }}</option>
                         @endforeach
                     </select>

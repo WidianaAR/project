@@ -20,9 +20,8 @@
     width: 100%;
 }
 
-/* ---------------------------------------------------
-    SIDEBAR STYLE
------------------------------------------------------ */
+
+/* Sidebar */
 #sidebar {
     width: 250px;
     position: fixed;
@@ -80,9 +79,8 @@ ul ul a {
     background: #303D53;
 }
 
-/* ---------------------------------------------------
-    TOP-NAVBAR STYLE
------------------------------------------------------ */
+
+/* Top navbar */
 #navbar {
     background-color: white;
     padding: 0 2px 0 2px;
@@ -113,9 +111,13 @@ ul ul a {
     animation: none;
 }
 
-/* ---------------------------------------------------
-    MEDIAQUERIES
------------------------------------------------------ */
+
+@media (min-width: 700px) {
+    #dropdown-nav {
+        display: none;
+    }
+}
+
 @media (max-width: 700px) {
     #sidebar {
         margin-left: -250px;
@@ -139,9 +141,5 @@ ul ul a {
 
     #content.active {
         width: calc(100% - 250px);
-    }
-
-    #sidebarCollapse span {
-        display: none;
     }
 }

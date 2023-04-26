@@ -66,27 +66,27 @@
 
             {{-- Data --}}
             @can('koorprodi')
-                @if ($deadline[0])
-                    <div class="col-auto text-left pl-1">
-                        @if ($id_standar)
+                <div class="col-auto text-left @if (($data && $data->tahun != date('Y')) || !$deadline[0]) pl-0 @endif">
+                    @if ($deadline[0])
+                        @if ($id_standar && $data && $data->tahun == date('Y'))
                             <a type="button" class="btn btn-danger" href="{{ route('ks_delete', $id_standar) }}"
                                 onclick="return confirm('Apakah Anda Yakin Menghapus File?');"><i class="fas fa-trash"></i>
                                 Hapus File Excel</a>
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal"
                                 data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
-                        @else
+                        @elseif(!$id_standar)
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal"
                                 data-target="#importModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
                         @endif
-                    </div>
-                @endif
+                    @endif
+                </div>
             @endcan
 
             @cannot('koorprodi')
                 <div class="@if ($data) col-auto text-left @else ml-3 @endif">
                     @can('auditor')
                         @if ($data)
-                            @if ($data->status == 'ditinjau' && $deadline[0])
+                            @if ($data->status == 'ditinjau' && $deadline[0] && $data->tahun == date('Y'))
                                 <a type="button" class="btn btn-secondary" href="" data-toggle="modal"
                                     data-target="#feedbackModal">
                                     Perlu Perbaikan
@@ -95,7 +95,7 @@
                                     onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
                                     Konfirmasi
                                 </a>
-                            @elseif ($data->status == 'disetujui')
+                            @elseif ($data->status == 'disetujui' && $deadline[0] && $data->tahun == date('Y'))
                                 <a type="button" class="btn btn-secondary" href="{{ route('ks_cancel_confirm', $id_standar) }}"
                                     onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
                                     Batal Setujui

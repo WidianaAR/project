@@ -28,7 +28,7 @@
                     <tr>
                         <th>Kode Jurusan</th>
                         <th>Singkatan</th>
-                        <th>Nama</th>
+                        <th>Nama Jurusan</th>
                         <th>Action</th>
                     </tr>
                 </thead>
