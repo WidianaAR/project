@@ -45,7 +45,7 @@ class UserController extends Controller
             'role_id' => 'required',
             'name' => 'required|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            'password' => 'required|min:8|string',
             'confirm' => 'required|same:password',
         ], [
                 'name.unique' => 'Nama user sudah terdaftar!',

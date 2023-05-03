@@ -36,7 +36,7 @@ class PanduanTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get(route('panduans.index'));
-        $panduans = Panduan::paginate(8);
+        $panduans = Panduan::latest()->paginate(8);
         $response->assertViewIs('panduan.home_pjm')->assertViewHas('panduans', $panduans);
     }
 }

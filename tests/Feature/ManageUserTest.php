@@ -21,7 +21,7 @@ class ManageUserTest extends TestCase
         $this->withoutExceptionHandling();
         $this->post('login', [
             'email' => 'pjm@gmail.com',
-            'password' => '12345',
+            'password' => 'SimjamuTest123',
         ]);
         $this->assertAuthenticated();
     }
@@ -45,8 +45,8 @@ class ManageUserTest extends TestCase
             'role_id' => 1,
             'name' => 'New user',
             'email' => 'new@gmail.com',
-            'password' => '12345',
-            'confirm' => '12345',
+            'password' => 'SimjamuTest123',
+            'confirm' => 'SimjamuTest123',
         ];
         $this->post('user/add', $user)->assertRedirect('user')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('users', [

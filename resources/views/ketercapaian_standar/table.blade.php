@@ -91,16 +91,16 @@
                                     data-target="#feedbackModal">
                                     Perlu Perbaikan
                                 </a>
-                                <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"
-                                    onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
-                                    Konfirmasi
-                                </a>
                             @elseif ($data->status == 'disetujui' && $deadline[0] && $data->tahun == date('Y'))
                                 <a type="button" class="btn btn-secondary" href="{{ route('ks_cancel_confirm', $id_standar) }}"
                                     onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
                                     Batal Setujui
                                 </a>
                             @endif
+                            <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"
+                                onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
+                                Konfirmasi
+                            </a>
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal">
                                 <i class="fas fa-file-upload"></i> Ganti File Excel
                             </a>

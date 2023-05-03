@@ -23,7 +23,7 @@ class UserTest extends TestCase
             'role_id' => 1,
             'name' => 'New User',
             'email' => 'new@gmail.com',
-            'password' => '12345',
+            'password' => 'SimjamuTest123',
         ]);
 
         $this->assertEquals('1', $user->role_id);

@@ -19,7 +19,7 @@ class ManageJurusanTest extends TestCase
         $this->withoutExceptionHandling();
         $this->post('login', [
             'email' => 'pjm@gmail.com',
-            'password' => '12345',
+            'password' => 'SimjamuTest123',
         ]);
         $this->assertAuthenticated();
     }

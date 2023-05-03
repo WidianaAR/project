@@ -20,14 +20,14 @@ class AccountSeeder extends Seeder
                 'role_id' => 1,
                 'name' => 'ini akun PJM',
                 'email' => 'pjm@gmail.com',
-                'password' => bcrypt('12345'),
+                'password' => bcrypt('SimjamuTest123'),
             ],
             [
                 'role_id' => 2,
                 'jurusan_id' => 1,
                 'name' => 'ini akun Kajur',
                 'email' => 'kajur@gmail.com',
-                'password' => bcrypt('12345'),
+                'password' => bcrypt('SimjamuTest123'),
             ],
             [
                 'role_id' => 3,
@@ -35,7 +35,7 @@ class AccountSeeder extends Seeder
                 'prodi_id' => 11,
                 'name' => 'ini akun Koorprodi',
                 'email' => 'koorprodi@gmail.com',
-                'password' => bcrypt('12345'),
+                'password' => bcrypt('SimjamuTest123'),
             ],
             [
                 'role_id' => 4,
@@ -43,7 +43,7 @@ class AccountSeeder extends Seeder
                 'prodi_id' => 11,
                 'name' => 'ini akun Auditor',
                 'email' => 'auditor@gmail.com',
-                'password' => bcrypt('12345'),
+                'password' => bcrypt('SimjamuTest123'),
             ],
             [
                 'role_id' => 3,
@@ -51,7 +51,7 @@ class AccountSeeder extends Seeder
                 'prodi_id' => 10,
                 'name' => 'ini akun Testing',
                 'email' => 'widia.war@gmail.com',
-                'password' => bcrypt('12345'),
+                'password' => bcrypt('SimjamuTest123'),
             ],
         ];
 

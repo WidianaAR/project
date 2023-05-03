@@ -20,7 +20,7 @@ class ManageEDChartTest extends TestCase
         $this->withoutExceptionHandling();
         $this->post('login', [
             'email' => 'kajur@gmail.com',
-            'password' => '12345',
+            'password' => 'SimjamuTest123',
         ]);
         $this->assertAuthenticated();
     }
@@ -31,7 +31,7 @@ class ManageEDChartTest extends TestCase
         $this->withoutExceptionHandling();
         $this->post('login', [
             'email' => 'auditor@gmail.com',
-            'password' => '12345',
+            'password' => 'SimjamuTest123',
         ]);
         $this->assertAuthenticated();
     }
