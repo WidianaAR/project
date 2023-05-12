@@ -36,8 +36,6 @@ class ProdiController extends Controller
         return redirect('prodis')->with('success', 'Data prodi berhasil ditambahkan');
     }
 
-    // public function show($id) {}
-
     public function edit($id)
     {
         return view('prodi.change_form', [
@@ -77,7 +75,7 @@ class ProdiController extends Controller
     {
         $data = Prodi::find($id);
         if ($data->user()->exists() || $data->evaluasi_diri()->exists() || $data->ketercapaian_standar()->exists()) {
-            return back()->with('error', 'Data prodi tidak dapat dihapus karena masih memiliki data lain yang terkait.');
+            return back()->with('error', 'Data prodi tidak dapat dihapus karena masih memiliki data lain yang terkait!');
         }
 
         activity()

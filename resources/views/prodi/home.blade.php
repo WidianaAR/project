@@ -23,8 +23,8 @@
 
     <div class="element pb-1">
         @if ($prodis->count())
-            <table class="table table-bordered">
-                <thead class="thead">
+            <table class="table">
+                <thead>
                     <tr>
                         <th>Kode Program Studi</th>
                         <th>Jurusan</th>
@@ -39,13 +39,13 @@
                             <td>{{ $prodi->jurusan->nama_jurusan }}</td>
                             <td>{{ $prodi->nama_prodi }}</td>
                             <td>
-                                <a type="button" class="btn btn-success" href="{{ route('prodis.edit', $prodi->id) }}"><i
-                                        class="fa fa-edit"></i></a>
+                                <a type="button" class="btn btn-outline-success btn-sm"
+                                    href="{{ route('prodis.edit', $prodi->id) }}"><i class="fa fa-edit"></i> Ubah</a>
                                 <form action="{{ route('prodis.destroy', $prodi->id) }}" method="POST" class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                        class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
                                 </form>
                             </td>
                         </tr>

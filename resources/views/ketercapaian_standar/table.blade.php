@@ -91,16 +91,18 @@
                                     data-target="#feedbackModal">
                                     Perlu Perbaikan
                                 </a>
-                            @elseif ($data->status == 'disetujui' && $deadline[0] && $data->tahun == date('Y'))
+                            @elseif ($data->status == 'disetujui')
                                 <a type="button" class="btn btn-secondary" href="{{ route('ks_cancel_confirm', $id_standar) }}"
                                     onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
-                                    Batal Setujui
+                                    Batal Konfirmasi
                                 </a>
                             @endif
-                            <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"
-                                onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
-                                Konfirmasi
-                            </a>
+                            @if ($data->status == 'ditinjau')
+                                <a type="button" class="btn btn-success" href="{{ route('ks_confirm', $id_standar) }}"
+                                    onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
+                                    Konfirmasi
+                                </a>
+                            @endif
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal">
                                 <i class="fas fa-file-upload"></i> Ganti File Excel
                             </a>
@@ -130,8 +132,8 @@
                 <div class="element text-right">
                     <span class="text-muted">{{ $data->prodi->nama_prodi }} / <a
                             href="">{{ $data->tahun }}</a></span>
-                    <table class="table table-bordered mt-2">
-                        <thead class="thead">
+                    <table class="table mt-2 text-left">
+                        <thead>
                             <th colspan="8" class="py-1">
                                 <h5>{{ $sheetName[$i] }}</h5>
                             </th>

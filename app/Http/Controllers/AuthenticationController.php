@@ -65,8 +65,10 @@ class AuthenticationController extends Controller
         }
 
         $request->validate([
+            'password' => 'required|min:8|string',
             'conf_pass' => 'required|same:password'
         ], [
+                'password.min' => 'Password minimal 8 karakter!',
                 'conf_pass.same' => 'Password tidak sama, mohon periksa kembali input Anda.'
             ]);
 
@@ -75,6 +77,6 @@ class AuthenticationController extends Controller
         activity()
             ->performedOn($data)
             ->log('User mengubah password');
-        return redirect()->route('ks_chart')->with('success', 'Password akun berhasil diubah.');
+        return redirect()->route('ed_chart')->with('success', 'Password akun berhasil diubah.');
     }
 }

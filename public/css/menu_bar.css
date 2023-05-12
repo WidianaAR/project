@@ -1,3 +1,8 @@
+body {
+    background-color: #F1F5F9;
+    font-size: 15px;
+}
+
 .wrapper {
     display: flex;
     width: 100%;
@@ -5,12 +10,12 @@
 
 #content {
     background-color: #F1F5F9;
-    padding: 2vh 0;
+    margin: 0;
     width: calc(100% - 250px);
     transition: all 0.3s;
     position: absolute;
     z-index: -1;
-    top: 60px;
+    top: 15vh;
     right: 0;
     height: fit-content;
     min-height: 100%;
@@ -21,7 +26,6 @@
 }
 
 
-/* Sidebar */
 #sidebar {
     width: 250px;
     position: fixed;
@@ -32,6 +36,7 @@
     background: #212A39;
     color: #fff;
     transition: all 0.3s;
+    font-size: 14px;
 }
 
 #sidebar.active {
@@ -39,11 +44,14 @@
 }
 
 #sidebar .sidebar-header {
-    background: #0D64AC;
+    color: white;
+    background-color: #0D64AC;
+    height: 65px;
+    margin-bottom: 1vh;
 }
 
 #sidebar ul li a {
-    padding: 10px 20px;
+    padding: 9px 20px;
     font-size: 1.1em;
     color: #808080;
     display: block;
@@ -74,20 +82,19 @@ a[data-toggle="collapse"] {
 }
 
 ul ul a {
-    font-size: 0.9em !important;
-    padding-left: 30px !important;
+    font-size: 0.9em;
+    padding-left: 30px;
     background: #303D53;
 }
 
 
-/* Top navbar */
 #navbar {
     background-color: white;
     padding: 0 2px 0 2px;
     border-bottom: none;
-    border-radius: 0;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
     font-size: small;
+    height: 51px;
+    border-bottom: solid 2px rgba(0, 0, 0, 0.1);
 }
 
 #top-navbar {
@@ -96,6 +103,7 @@ ul ul a {
     position: fixed;
     top: 0;
     right: 0;
+    background-color: #F1F5F9;
 }
 
 #top-navbar.active {
@@ -112,13 +120,13 @@ ul ul a {
 }
 
 
-@media (min-width: 700px) {
+@media (min-width: 800px) {
     #dropdown-nav {
         display: none;
     }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
     #sidebar {
         margin-left: -250px;
     }

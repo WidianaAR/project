@@ -9,7 +9,7 @@
 
     <div class="row m-0">
         <div class="col pl-1">
-            <h4>Program studi</h4>
+            <h5>Program studi</h5>
         </div>
         <div class="col p-0 text-right">
             <span class="text-muted">Program studi / <a href="{{ route('prodis.create') }}">Tambah prodi</a></span>

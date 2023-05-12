@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    if (window.matchMedia("(min-width: 700px)").matches) {
+    if (window.matchMedia("(min-width: 800px)").matches) {
         $('#sidebarCollapse').on('click', function () {
             $('#sidebar, #content, #top-navbar').toggleClass('active');
             $('.collapse.in').toggleClass('in');

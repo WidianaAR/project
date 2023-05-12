@@ -58,8 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
             // Riwayat Aktivitas
             Route::get('logs', function () {
                 $perPage = request()->query('per_page', 5);
-                $activities = Activity::with('causer')->latest()->paginate($perPage)->withQueryString();
-                return view('log', ['datas' => $activities]);
+                $datas = Activity::with('causer')->latest()->paginate($perPage)->withQueryString();
+                return view('log', compact('datas'));
             })->name('logs');
         }
     );

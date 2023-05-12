@@ -9,7 +9,7 @@
 
     <div class="row m-0">
         <div class="col pl-1">
-            <h4>Jurusan</h4>
+            <h5>Jurusan</h5>
         </div>
         <div class="col p-0 text-right">
             <span class="text-muted">Jurusan / <a href="{{ route('jurusans.create') }}">Ubah jurusan</a></span>

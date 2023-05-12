@@ -38,7 +38,7 @@ class KSTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('standar');
-        $data = KetercapaianStandar::with('prodi.jurusan', 'prodi')->latest()->paginate(8);
+        $data = KetercapaianStandar::with('prodi.jurusan', 'prodi')->latest('tahun')->paginate(8);
         $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }
 
@@ -46,7 +46,7 @@ class KSTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get(route('ks_filter_year', 2022));
-        $data = KetercapaianStandar::where('tahun', 2022)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $data = KetercapaianStandar::where('tahun', 2022)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
         $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }
 
@@ -56,7 +56,7 @@ class KSTest extends TestCase
         $response = $this->get(route('ks_filter_jurusan', 1));
         $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) {
             $query->where('id', 1);
-        })->with('prodi')->latest()->paginate(8);
+        })->with('prodi')->latest('tahun')->paginate(8);
         $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }
 
@@ -64,7 +64,7 @@ class KSTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get(route('ks_filter_prodi', 11));
-        $data = KetercapaianStandar::where('prodi_id', 11)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $data = KetercapaianStandar::where('prodi_id', 11)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
         $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }
 }

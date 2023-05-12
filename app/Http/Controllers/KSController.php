@@ -26,27 +26,27 @@ class KSController extends Controller
         if ($user->role_id == 2) {
             $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->with('prodi')->latest()->paginate(8);
+            })->with('prodi')->latest('tahun')->paginate(8);
             $jurusans = null;
             $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
             $years = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->distinct()->pluck('tahun')->toArray();
+            })->latest('tahun')->distinct()->pluck('tahun')->toArray();
         } elseif ($user->role_id == 3 || $user->role_id == 4) {
-            $ketercapaian_standar = KetercapaianStandar::where('prodi_id', $user->prodi_id)->latest()->first();
+            $ketercapaian_standar = KetercapaianStandar::where('prodi_id', $user->prodi_id)->latest('tahun')->first();
             if ($ketercapaian_standar->tahun == date('Y')) {
                 $id_ed = $ketercapaian_standar->id;
                 return redirect()->route('ks_table', $id_ed);
             } else {
-                $years = ($ketercapaian_standar) ? KetercapaianStandar::where('prodi_id', $user->prodi_id)->distinct()->pluck('tahun')->toArray() : null;
+                $years = ($ketercapaian_standar) ? KetercapaianStandar::where('prodi_id', $user->prodi_id)->latest('tahun')->distinct()->pluck('tahun')->toArray() : null;
                 [$id_standar, $sheetData, $headers, $sheetName, $data] = null;
                 return view('ketercapaian_standar.table', compact('deadline', 'id_standar', 'sheetData', 'headers', 'sheetName', 'years', 'data'));
             }
         } else {
-            $data = KetercapaianStandar::with('prodi.jurusan', 'prodi')->latest()->paginate(8);
+            $data = KetercapaianStandar::with('prodi.jurusan', 'prodi')->latest('tahun')->paginate(8);
             $jurusans = Jurusan::all();
             $prodis = Prodi::all();
-            $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+            $years = KetercapaianStandar::latest('tahun')->distinct()->pluck('tahun')->toArray();
         }
         return view('ketercapaian_standar.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans', 'keterangan'));
     }
@@ -131,7 +131,7 @@ class KSController extends Controller
             array_push($sheetData, $sheet);
             array_push($headers, $header);
         }
-        $years = KetercapaianStandar::where('prodi_id', $data->prodi_id)->distinct()->pluck('tahun')->toArray();
+        $years = KetercapaianStandar::where('prodi_id', $data->prodi_id)->latest('tahun')->distinct()->pluck('tahun')->toArray();
         $deadline = $this->KSCountdown();
         return view('ketercapaian_standar.table', compact('deadline', 'id_standar', 'sheetData', 'headers', 'sheetName', 'years', 'data'));
     }
@@ -146,17 +146,17 @@ class KSController extends Controller
             $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
             $years = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->distinct()->pluck('tahun')->toArray();
+            })->latest('tahun')->distinct()->pluck('tahun')->toArray();
             $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->where('tahun', '=', $year)->with('prodi')->latest()->paginate(8);
+            })->where('tahun', '=', $year)->with('prodi')->latest('tahun')->paginate(8);
         } elseif ($user->role_id == 3 || $user->role_id == 4) {
             $data = KetercapaianStandar::where([['prodi_id', '=', $user->prodi_id], ['tahun', '=', $year]])->first();
             return redirect()->route('ks_table', $data->id);
         } else {
-            $data = KetercapaianStandar::where('tahun', $year)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+            $data = KetercapaianStandar::where('tahun', $year)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
             $prodis = Prodi::all();
-            $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+            $years = KetercapaianStandar::latest('tahun')->distinct()->pluck('tahun')->toArray();
 
         }
         return view('ketercapaian_standar.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
@@ -171,14 +171,14 @@ class KSController extends Controller
             $prodis = Prodi::where('jurusan_id', $user->jurusan_id)->get();
             $years = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->distinct()->pluck('tahun')->toArray();
+            })->latest('tahun')->distinct()->pluck('tahun')->toArray();
             $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->jurusan_id);
-            })->where('prodi_id', '=', $prodi_id)->with('prodi')->latest()->paginate(8);
+            })->where('prodi_id', '=', $prodi_id)->with('prodi')->latest('tahun')->paginate(8);
         } else {
             $prodis = Prodi::all();
-            $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
-            $data = KetercapaianStandar::where('prodi_id', $prodi_id)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+            $years = KetercapaianStandar::latest('tahun')->distinct()->pluck('tahun')->toArray();
+            $data = KetercapaianStandar::where('prodi_id', $prodi_id)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
         }
         $keterangan = ($data->count()) ? $data[0]->prodi->nama_prodi : 'Data kosong';
         return view('ketercapaian_standar.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
@@ -189,10 +189,10 @@ class KSController extends Controller
         $jurusans = Jurusan::all();
         $deadline = $this->KSCountdown();
         $prodis = Prodi::all();
-        $years = KetercapaianStandar::distinct()->pluck('tahun')->toArray();
+        $years = KetercapaianStandar::latest('tahun')->distinct()->pluck('tahun')->toArray();
         $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($jurusan_id) {
             $query->where('id', $jurusan_id);
-        })->with('prodi')->latest()->paginate(8);
+        })->with('prodi')->latest('tahun')->paginate(8);
         $keterangan = ($data->count()) ? $data[0]->prodi->jurusan->nama_jurusan : 'Data kosong';
         return view('ketercapaian_standar.home', compact('deadline', 'data', 'years', 'prodis', 'jurusans', 'keterangan'));
     }

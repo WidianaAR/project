@@ -26,7 +26,6 @@ class KSChartController extends Controller
             array_push($values, $value);
         }
 
-        // Menjumlahkan semua array (tiap row)
         foreach ($values as $row) {
             foreach ($row as $key => $val) {
                 if (!isset($value_param[$key])) {
@@ -37,7 +36,6 @@ class KSChartController extends Controller
             }
         }
 
-        // Membagi tiap row yang sudah dijumlahkan dengan banyak data untuk mencari rata-rata
         $value_param = collect($value_param)->map(function ($item) use ($data) {
             return $item / count($data);
         });
@@ -65,14 +63,14 @@ class KSChartController extends Controller
                     $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($request) {
                         $query->where('id', $request->jurusan);
                     })->where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
-                    if (!$data->isEmpty()) {
+                    if ($data->count()) {
                         $keterangan = 'Ketercapaian standar ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
                     } else {
                         $keterangan = 'Data kosong';
                     }
                 } else {
                     $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status' => 'disetujui'])->get();
-                    if (!$data->isEmpty()) {
+                    if ($data->count()) {
                         $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
                     } else {
                         $keterangan = 'Data kosong';
@@ -80,7 +78,7 @@ class KSChartController extends Controller
                 }
             }
         } else {
-            $data = KetercapaianStandar::where(['status' => 'disetujui'])->latest()->get();
+            $data = KetercapaianStandar::where(['status' => 'disetujui'])->latest()->get()->take(1);
             if ($data->count()) {
                 $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
             } else {

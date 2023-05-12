@@ -16,8 +16,8 @@
 
     <div class="element pb-1">
         @if ($panduans->count())
-            <table class="table table-bordered">
-                <thead class="thead">
+            <table class="table">
+                <thead>
                     <th>No</th>
                     <th>Judul</th>
                     <th>Keterangan</th>
@@ -35,16 +35,16 @@
                                     href="{{ route('panduan_download', $panduan->id) }}">{{ strip_tags(\Illuminate\Support\Str::limit(basename($panduan->file_data), 15, '...')) }}</a>
                             </td>
                             <td class="wd-2">
-                                <a type="button" class="btn btn-secondary"
-                                    href="{{ route('panduans.show', $panduan->id) }}"><i class="fa fa-eye"></i></a>
-                                <a type="button" class="btn btn-success"
-                                    href="{{ route('panduans.edit', $panduan->id) }}"><i class="fa fa-edit"></i></a>
+                                <a type="button" class="btn btn-outline-secondary btn-sm"
+                                    href="{{ route('panduans.show', $panduan->id) }}"><i class="fa fa-eye"></i> Lihat</a>
+                                <a type="button" class="btn btn-outline-success btn-sm"
+                                    href="{{ route('panduans.edit', $panduan->id) }}"><i class="fa fa-edit"></i> Ubah</a>
                                 <form action="{{ route('panduans.destroy', $panduan->id) }}" method="POST"
                                     class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                        class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
                                 </form>
                             </td>
                         </tr>

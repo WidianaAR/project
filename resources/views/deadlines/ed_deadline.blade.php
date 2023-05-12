@@ -34,7 +34,7 @@
             <div class="row mb-3 px-3">
                 <label class="col-sm-2 col-form-label">Atur Tanggal : </label>
                 <div class="col-sm-10">
-                    @if ($deadline[0] != null)
+                    @if ($deadline[0])
                         <input type="text" name="id" value="{{ $deadline[1] }}" hidden>
                         <input type="date" name="date" value="{{ date('Y-m-d', strtotime($deadline[0])) }}"
                             class="w-100 form-control" required>
@@ -47,7 +47,7 @@
             <div class="row mb-3 px-3">
                 <label class="col-sm-2 col-form-label">Atur Waktu : </label>
                 <div class="col-sm-10">
-                    @if ($deadline[0] != null)
+                    @if ($deadline[0])
                         <input type="time" name="time" value="{{ date('H:i', strtotime($deadline[0])) }}"
                             class="w-100 form-control" required>
                     @else

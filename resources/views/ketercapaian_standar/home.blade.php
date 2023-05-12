@@ -82,13 +82,13 @@
                         @foreach ($data as $file)
                             <input name="data[]" type="hidden" value="{{ $file->file_data }}">
                         @endforeach
-                        <input type="submit" class="btn btn-primary" value="Export Semua File">
+                        <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
                     </form>
                 </div>
             @endcan
 
             @can('kajur')
-                @if ($deadline[0] != null)
+                @if ($deadline[0])
                     <div class="floating-action-button">
                         <a type="button" href="{{ route('ks_import') }}" class="btn"><i class='fa fa-plus-circle fa-2x'
                                 style='color: #0D64AC'></i></a>
@@ -97,13 +97,13 @@
             @endcan
         </div>
 
-        <div class="text-center element pb-1">
+        <div class="element pb-1">
             @if ($data->count())
-                <table class="table table-bordered">
-                    <thead class="thead">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nama File</th>
+                            <th>No</th>
+                            <th>File</th>
                             @cannot('kajur')
                                 <th>Jurusan</th>
                             @endcannot
@@ -130,11 +130,11 @@
                             @can('kajur')
                                 @if ($deadline[0])
                                     <td>
-                                        <a type="button" class="btn btn-success" href="{{ route('ks_change', $file->id) }}"><i
-                                                class="fa fa-edit"></i></a>
+                                        <a type="button" class="btn btn-outline-success btn-sm"
+                                            href="{{ route('ks_change', $file->id) }}"><i class="fa fa-edit"></i> Ubah</a>
                                         <a type="button" href="{{ route('ks_delete', $file->id) }}"
                                             onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                            class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                            class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
                                     </td>
                                 @endif
                             @endcan

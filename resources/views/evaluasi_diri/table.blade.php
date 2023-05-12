@@ -91,16 +91,18 @@
                                     data-target="#feedbackModal">
                                     Perlu Perbaikan
                                 </a>
-                            @elseif ($data->status == 'disetujui' && $data->tahun == date('Y'))
+                            @elseif ($data->status == 'disetujui')
                                 <a type="button" class="btn btn-secondary" href="{{ route('ed_cancel_confirm', $id_evaluasi) }}"
                                     onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
-                                    Batal Setujui
+                                    Batal Konfirmasi
                                 </a>
                             @endif
-                            <a type="button" class="btn btn-success" href="{{ route('ed_confirm', $id_evaluasi) }}"
-                                onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
-                                Konfirmasi
-                            </a>
+                            @if ($data->status == 'ditinjau')
+                                <a type="button" class="btn btn-success" href="{{ route('ed_confirm', $id_evaluasi) }}"
+                                    onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
+                                    Konfirmasi
+                                </a>
+                            @endif
                             <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal">
                                 <i class="fas fa-file-upload"></i> Ganti File Excel
                             </a>
@@ -128,7 +130,7 @@
         @if ($sheetData)
             <div class="element text-right">
                 <span class="text-muted">{{ $data->prodi->nama_prodi }} / <a href="">{{ $data->tahun }}</a></span>
-                <table class="table table-bordered mt-3">
+                <table class="table mt-3 text-left">
                     @foreach ($sheetData as $sheet)
                         <tr>
                             @if (!$sheet[3])

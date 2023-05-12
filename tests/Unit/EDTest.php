@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\EvaluasiDiri;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class EDTest extends TestCase
@@ -39,7 +38,7 @@ class EDTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('evaluasi');
-        $data = EvaluasiDiri::with('prodi.jurusan', 'prodi')->latest()->paginate(8);
+        $data = EvaluasiDiri::with('prodi.jurusan', 'prodi')->latest('tahun')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
@@ -47,7 +46,7 @@ class EDTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get(route('ed_filter_year', 2022));
-        $data = EvaluasiDiri::where('tahun', 2022)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $data = EvaluasiDiri::where('tahun', 2022)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
@@ -57,7 +56,7 @@ class EDTest extends TestCase
         $response = $this->get(route('ed_filter_jurusan', 1));
         $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) {
             $query->where('id', 1);
-        })->with('prodi')->latest()->paginate(8);
+        })->with('prodi')->latest('tahun')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 
@@ -65,7 +64,7 @@ class EDTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get(route('ed_filter_prodi', 11));
-        $data = EvaluasiDiri::where('prodi_id', 11)->with('prodi', 'prodi.jurusan')->latest()->paginate(8);
+        $data = EvaluasiDiri::where('prodi_id', 11)->with('prodi', 'prodi.jurusan')->latest('tahun')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 }

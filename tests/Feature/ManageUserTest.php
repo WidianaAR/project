@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ManageUserTest extends TestCase
@@ -14,7 +13,6 @@ class ManageUserTest extends TestCase
      * @return void
      */
     use RefreshDatabase;
-    use WithFaker;
 
     private function pjm_login()
     {

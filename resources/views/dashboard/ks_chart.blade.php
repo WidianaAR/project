@@ -24,7 +24,7 @@
                     @endif
                 </div>
                 <div class="col-auto text-right p-0 box">
-                    <select class="form-control" id="tahun" name="tahun">
+                    <select class="form-control form-control-sm" id="tahun" name="tahun">
                         @if ($param)
                             @foreach ($years as $year)
                                 <option value="{{ $year }}">{{ $year }}</option>
@@ -36,7 +36,8 @@
                 </div>
 
                 <div class="col-auto p-0 box">
-                    <select class="form-control select-jurusan" id="jurusan" name="jurusan" onchange="update()">
+                    <select class="form-control form-control-sm select-jurusan" id="jurusan" name="jurusan"
+                        onchange="update()">
                         <option value="all">Semua jurusan</option>
                         @foreach ($jurusans as $data)
                             @foreach ($data as $jurusan)
@@ -49,13 +50,13 @@
                 </div>
 
                 <div class="col-auto p-0 box">
-                    <select class="form-control select-prodi" id="prodi" name="prodi">
+                    <select class="form-control form-control-sm select-prodi" id="prodi" name="prodi">
                         <option value="all">Semua program studi</option>
                     </select>
                 </div>
 
                 <div class="col-auto p-0 mr-3 box">
-                    <button type="submit" class="btn btn-primary">Tampilkan</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Tampilkan</button>
                 </div>
             </div>
         </form>
@@ -71,7 +72,7 @@
             </div>
 
             <div class="element text-left">
-                <h5 class="pb-2">Legend / keterangan</h5>
+                <h6 class="pb-2">Legend / keterangan</h6>
                 <small>
                     <ul style="columns: 2">
                         @for ($i = 0; $i < count($param) - 1; $i++)
@@ -79,6 +80,12 @@
                         @endfor
                     </ul>
                 </small>
+            </div>
+        @else
+            <div class="element row mt-4">
+                <div class="col">
+                    <h5>Data ketercapaian standar masih ditinjau oleh Auditor</h5>
+                </div>
             </div>
         @endif
     </div>

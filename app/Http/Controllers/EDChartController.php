@@ -28,7 +28,6 @@ class EDChartController extends Controller
             array_push($values, $value);
         }
 
-        // Menjumlahkan semua array (tiap row)
         foreach ($values as $row) {
             foreach ($row as $key => $val) {
                 if (!isset($value_param[$key])) {
@@ -39,10 +38,10 @@ class EDChartController extends Controller
             }
         }
 
-        // Membagi tiap row yang sudah dijumlahkan dengan banyak data untuk mencari rata-rata
         $value_param = collect($value_param)->map(function ($item) use ($data) {
             return $item / count($data);
         });
+
         $value_param = $value_param->toArray();
         $legend = array_reduce($legend, 'array_merge', []);
         $legend = array_values(array_filter($legend));
@@ -69,14 +68,14 @@ class EDChartController extends Controller
                     $data = EvaluasiDiri::withWhereHas('prodi.jurusan', function ($query) use ($request) {
                         $query->where('id', $request->jurusan);
                     })->where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
-                    if (!$data->isEmpty()) {
+                    if ($data->count()) {
                         $keterangan = 'Evaluasi diri ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
                     } else {
                         $keterangan = 'Data kosong';
                     }
                 } else {
                     $data = EvaluasiDiri::where(['tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status' => 'disetujui'])->get();
-                    if (!$data->isEmpty()) {
+                    if ($data->count()) {
                         $keterangan = 'Evaluasi diri program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
                     } else {
                         $keterangan = 'Data kosong';
@@ -84,7 +83,7 @@ class EDChartController extends Controller
                 }
             }
         } else {
-            $data = EvaluasiDiri::where(['status' => 'disetujui'])->latest()->get();
+            $data = EvaluasiDiri::where(['status' => 'disetujui'])->latest()->get()->take(1);
             if ($data->count()) {
                 $keterangan = 'Evaluasi diri program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
             } else {

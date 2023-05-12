@@ -84,13 +84,13 @@
                         @foreach ($data as $file)
                             <input name="data[]" type="hidden" value="{{ $file->file_data }}">
                         @endforeach
-                        <input type="submit" class="btn btn-primary" value="Export Semua File">
+                        <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
                     </form>
                 </div>
             @endcan
 
             @can('kajur')
-                @if ($deadline[0] != null)
+                @if ($deadline[0])
                     <div class="floating-action-button">
                         <a type="button" href="{{ route('ed_import') }}" class="btn"><i class='fa fa-plus-circle fa-2x'
                                 style='color: #0D64AC'></i></a>
@@ -99,60 +99,58 @@
             @endcan
         </div>
 
-        <div class="element pb-1">
-            <div class="text-center">
-                @if ($data->count())
-                    <table class="table table-bordered">
-                        <thead class="thead">
+        <div class="element pb-1 table-responsive">
+            @if ($data->count())
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            @cannot('kajur')
+                                <th>Jurusan</th>
+                            @endcannot
+                            <th>Program Studi</th>
+                            <th>Tahun</th>
+                            <th>Status</th>
+                            @can('kajur')
+                                @if ($deadline[0])
+                                    <th>Action</th>
+                                @endif
+                            @endcan
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $file)
                             <tr>
-                                <th>#</th>
-                                <th>Nama File</th>
+                                <td>{{ $loop->iteration }}</td>
+                                <td><a href="{{ route('ed_table', $file->id) }}">{{ basename($file->file_data) }}</a>
+                                </td>
                                 @cannot('kajur')
-                                    <th>Jurusan</th>
+                                    <td>{{ $file->prodi->jurusan->nama_jurusan }}</td>
                                 @endcannot
-                                <th>Program Studi</th>
-                                <th>Tahun</th>
-                                <th>Status</th>
+                                <td>{{ $file->prodi->nama_prodi }}</td>
+                                <td>{{ $file->tahun }}</td>
+                                <td>{{ $file->status }}</td>
+
                                 @can('kajur')
                                     @if ($deadline[0])
-                                        <th>Action</th>
+                                        <td>
+                                            <a type="button" class="btn btn-outline-success btn-sm"
+                                                href="{{ route('ed_change', $file->id) }}"><i class="fa fa-edit"></i> Ubah</a>
+                                            <a type="button" href="{{ route('ed_delete', $file->id) }}"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
+                                                class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
+                                        </td>
                                     @endif
                                 @endcan
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data as $file)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('ed_table', $file->id) }}">{{ basename($file->file_data) }}</a>
-                                    </td>
-                                    @cannot('kajur')
-                                        <td>{{ $file->prodi->jurusan->nama_jurusan }}</td>
-                                    @endcannot
-                                    <td>{{ $file->prodi->nama_prodi }}</td>
-                                    <td>{{ $file->tahun }}</td>
-                                    <td>{{ $file->status }}</td>
-
-                                    @can('kajur')
-                                        @if ($deadline[0])
-                                            <td>
-                                                <a type="button" class="btn btn-success"
-                                                    href="{{ route('ed_change', $file->id) }}"><i class="fa fa-edit"></i></a>
-                                                <a type="button" href="{{ route('ed_delete', $file->id) }}"
-                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                                    class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                            </td>
-                                        @endif
-                                    @endcan
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    {{ $data->links() }}
-                @else
-                    <h5>Data Kosong</h5>
-                @endif
-            </div>
+                        @endforeach
+                    </tbody>
+                </table>
+                {{ $data->links() }}
+            @else
+                <h5>Data Kosong</h5>
+            @endif
         </div>
 
         @can('pjm')

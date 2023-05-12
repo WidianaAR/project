@@ -33,8 +33,8 @@
                         <td style="width: 15%; background-color: white; border-radius: 5px"> <img
                                 src="{{ URL::asset('images/Logo ITK_no teks.png') }}" width="100%" height="100%">
                         </td>
-                        <td>
-                            <h5>SIMJAMU ITK</h5>
+                        <td class="pl-3">
+                            <h5><b>SIMJAMU ITK</b></h5>
                         </td>
                     </tr>
                 </table>
@@ -87,14 +87,14 @@
         </nav>
 
         <!-- Navbar -->
-        <div class="container-fluid p-0" id="top-navbar">
-            <nav class="navbar navbar-expand-sm navbar-light" id="navbar">
+        <div class="container-fluid" id="top-navbar">
+            <nav class="navbar navbar-expand-md navbar-light mx-4 mt-3" id="navbar">
                 <div class="collapse navbar-collapse align-items-middle">
                     <ul class="navbar-nav mr-auto ml-3">
                         <li class="nav-item active">
-                            <a class="btn btn-light nav-link dropdown-toggle" href="#" id="sidebarCollapse"
+                            <a class="btn btn-light btn-sm nav-link dropdown-toggle" href="#" id="sidebarCollapse"
                                 role="button" data-toggle="dropdown">
-                                <i class="fas fa-bars" style="color:#808080"></i>
+                                <i class="fas fa-bars fa-sm" style="color:#808080"></i>
                             </a>
                             <div class="dropdown-menu" id="dropdown-nav">
                                 <a class="dropdown-item" href="{{ URL('ed_chart') }}">Chart Evaluasi Diri</a>
@@ -139,7 +139,7 @@
         <!-- Content -->
         <div id="content">
             <div class="container-fluid row justify-content-center p-0 m-0">
-                <div class="col px-4">
+                <div class="col mx-4">
                     @yield('isi')
                 </div>
             </div>

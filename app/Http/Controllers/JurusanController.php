@@ -35,8 +35,6 @@ class JurusanController extends Controller
         return redirect('jurusans')->with('success', 'Data jurusan berhasil ditambahkan');
     }
 
-    // public function show($id) {}
-
     public function edit($id)
     {
         return view('jurusan.change_form', ['data' => Jurusan::find($id)]);
@@ -60,8 +58,6 @@ class JurusanController extends Controller
             $rules['keterangan'] = 'required|unique:jurusans';
         }
 
-        // dd($rules);
-
         $data = $request->validate($rules, [
             'kode_jurusan.unique' => 'Kode jurusan sudah terdaftar!',
             'nama_jurusan.unique' => 'Singkatan jurusan sudah terdaftar!',
@@ -78,7 +74,7 @@ class JurusanController extends Controller
     {
         $data = Jurusan::find($id);
         if ($data->prodi()->exists()) {
-            return back()->with('error', 'Data jurusan tidak dapat dihapus karena masih memiliki data lain yang terkait.');
+            return back()->with('error', 'Data jurusan tidak dapat dihapus karena masih memiliki data lain yang terkait!');
         }
         activity()
             ->performedOn($data)

@@ -17,8 +17,8 @@
                 <a href="{{ route('logs', ['per_page' => 10]) }}">10</a> |
                 <a href="{{ route('logs', ['per_page' => 25]) }}">25</a>
             </p>
-            <table class="table table-bordered">
-                <thead class="thead">
+            <table class="table">
+                <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama</th>

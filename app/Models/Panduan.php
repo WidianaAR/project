@@ -19,7 +19,7 @@ class Panduan extends Model
     public function Judul(): Attribute
     {
         return Attribute::make(
-        set: fn(string $value) => ucwords($value)
+            set: fn(string $value) => ucwords($value)
         );
     }
 }

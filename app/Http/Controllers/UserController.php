@@ -50,10 +50,11 @@ class UserController extends Controller
         ], [
                 'name.unique' => 'Nama user sudah terdaftar!',
                 'email.unique' => 'Email user sudah terdaftar!',
+                'password.min' => 'Password minimal 8 karakter!',
                 'confirm.same' => 'Password tidak sama, mohon periksa kembali password Anda.'
             ]);
 
-        $jurusan_id = ($request->role_id == 3) ? Prodi::find($request->prodi_id)->jurusan_id : $request->jurusan_id;
+        $jurusan_id = ($request->role_id == 3 || $request->role_id == 4) ? Prodi::find($request->prodi_id)->jurusan_id : $request->jurusan_id;
         $user = User::create([
             'role_id' => $request->role_id,
             'name' => $request->name,

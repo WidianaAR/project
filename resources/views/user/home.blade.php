@@ -28,7 +28,7 @@
                 <a class="dropdown-item {{ Request::is('user/filter/pjm') ? 'active' : '' }}"
                     href="{{ route('user_pjm') }}">PJM</a>
                 <a class="dropdown-item {{ Request::is('user/filter/kajur') ? 'active' : '' }}"
-                    href="{{ route('user_kajur') }}">Kepala Jurusan</a>
+                    href="{{ route('user_kajur') }}">Ketua Jurusan</a>
                 <a class="dropdown-item {{ Request::is('user/filter/koorprodi') ? 'active' : '' }}"
                     href="{{ route('user_koorprodi') }}">Koordinator Program Studi</a>
                 <a class="dropdown-item {{ Request::is('user/filter/auditor') ? 'active' : '' }}"
@@ -38,10 +38,10 @@
     </div>
     <div class="element pb-1">
         @if ($users->count())
-            <table class="table table-bordered">
-                <thead class="thead">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th>#</th>
+                        <th>No</th>
                         <th>Role</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -68,11 +68,11 @@
                                 <td>-</td>
                             @endif
                             <td>
-                                <a type="button" class="btn btn-success" href="{{ route('change_user', $user->id) }}"><i
-                                        class="fa fa-edit"></i></a>
+                                <a type="button" class="btn btn-outline-success btn-sm"
+                                    href="{{ route('change_user', $user->id) }}"><i class="fa fa-edit"></i> Ubah</a>
                                 <a type="button" href="{{ route('delete_user', $user->id) }}"
                                     onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                    class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                    class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
                             </td>
                         </tr>
                     @endforeach

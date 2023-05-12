@@ -23,10 +23,9 @@ trix-toolbar .trix-button-group--file-tools {
 
 div.element {
     background-color: white;
-    margin-top: 2vh;
-    padding: 2vh;
-    box-shadow: 2px 2px 5px #0000001a;
+    margin: 2vh 0 0 0;
     border-radius: 5px;
+    padding: 1vw;
 }
 
 div.box {
@@ -37,6 +36,7 @@ div.box {
     border-radius: 5px;
     padding: 1vh;
     margin: 0 1vh;
+    font-size: small;
 }
 
 button.simple {
@@ -99,13 +99,8 @@ button.simple:focus {
     height: 12%;
 }
 
-table {
-    text-align: center;
-}
-
 thead {
-    background-color: #0D64AC;
-    color: #FFFFFF;
+    color: #0D64AC;
 }
 
 .floating-action-button {
