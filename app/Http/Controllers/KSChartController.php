@@ -17,8 +17,8 @@ class KSChartController extends Controller
         for ($i = 0; $i < count($data); $i++) {
             $value = [];
             $file = IOFactory::load(storage_path('app/public/' . $data[$i]->file_data));
-            $maxCell = $file->getSheet(5)->getHighestRowAndColumn();
-            $sheetData = $file->getSheet(5)->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row']);
+            $maxCell = $file->getSheetByName('Chart')->getHighestRowAndColumn();
+            $sheetData = $file->getSheetByName('Chart')->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row']);
             for ($j = 0; $j < count($sheetData); $j++) {
                 array_push($param, $sheetData[$j]['0']);
                 array_push($value, intval($sheetData[$j]['1']));

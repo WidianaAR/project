@@ -68,7 +68,7 @@
                 <h6 class="pb-2">Legend / keterangan</h6>
                 <small>
                     <ul style="columns: 2">
-                        @for ($i = 0; $i < count($legend) - 1; $i++)
+                        @for ($i = 0; $i < count($legend); $i++)
                             <li>{{ $legend[$i] }}</li>
                         @endfor
                     </ul>
