@@ -128,7 +128,7 @@
                             <td>{{ $file->tahun }}</td>
                             <td>{{ $file->status }}</td>
                             @can('kajur')
-                                @if ($deadline[0])
+                                @if ($deadline[0] && $file->tahun == date('Y'))
                                     <td>
                                         <a type="button" class="btn btn-outline-success btn-sm"
                                             href="{{ route('ks_change', $file->id) }}"><i class="fa fa-edit"></i> Ubah</a>
