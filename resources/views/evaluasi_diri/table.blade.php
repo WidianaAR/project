@@ -39,9 +39,9 @@
                 </div>
             @endif
 
-            @canany(['koorprodi', 'auditor'])
+            @can('koorprodi')
                 @if ($years)
-                    <div class="col-auto text-right box mx-0">
+                    <div class="col-auto text-right box mx-2">
                         <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
                             Tahun <i class='fa fa-angle-down fa-sm'></i>
                         </button>
@@ -54,28 +54,28 @@
                 @endif
             @endcanany
 
-            @can('pjm')
-                <div class="col text-right p-0">
+            @if ($data)
+                <div class="col-auto text-right p-0">
                     <form action="{{ route('ed_export_file') }}" method="POST">
                         @csrf
                         <input name="filename" type="hidden" value="{{ $data->file_data }}">
-                        <input type="submit" class="btn btn-primary" value="Export File">
+                        <input type="submit" class="btn btn-sm btn-primary" value="Export File">
                     </form>
                 </div>
-            @endcan
+            @endif
 
             {{-- Data --}}
             @can('koorprodi')
-                <div class="col-auto text-left @if (($data && $data->tahun != date('Y')) || !$deadline[0]) pl-0 @endif">
+                <div class="col-auto text-left @if (($data && $data->tahun != date('Y')) || !$deadline[0]) pl-0 @else pl-1 @endif">
                     @if ($deadline[0])
                         @if ($id_evaluasi && $data && $data->tahun == date('Y'))
-                            <a type="button" class="btn btn-danger" href="{{ route('ed_delete', $id_evaluasi) }}"
+                            <a type="button" class="btn btn-sm btn-danger" href="{{ route('ed_delete', $id_evaluasi) }}"
                                 onclick="return confirm('Apakah Anda yakin menghapus file?');"><i class="fas fa-trash"></i>
                                 Hapus File Excel</a>
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal"
+                            <a type="button" class="btn btn-sm btn-secondary" href="" data-toggle="modal"
                                 data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @elseif(!$id_evaluasi)
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal"
+                            <a type="button" class="btn btn-sm btn-primary" href="" data-toggle="modal"
                                 data-target="#importModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
                         @endif
                     @endif
@@ -84,34 +84,9 @@
 
             @cannot('koorprodi')
                 <div class="@if ($data) col-auto text-left @else ml-3 @endif">
-                    @can('auditor')
-                        @if ($data)
-                            @if ($data->status == 'ditinjau' && $deadline[0] && $data->tahun == date('Y'))
-                                <a type="button" class="btn btn-secondary" href="" data-toggle="modal"
-                                    data-target="#feedbackModal">
-                                    Perlu Perbaikan
-                                </a>
-                            @elseif ($data->status == 'disetujui')
-                                <a type="button" class="btn btn-secondary" href="{{ route('ed_cancel_confirm', $id_evaluasi) }}"
-                                    onclick="return confirm('Apakah Anda yakin membatalkan data ini? Data yang sudah dibatalkan akan dihapus dari statistik');">
-                                    Batal Konfirmasi
-                                </a>
-                            @endif
-                            @if ($data->status == 'ditinjau')
-                                <a type="button" class="btn btn-success" href="{{ route('ed_confirm', $id_evaluasi) }}"
-                                    onclick="return confirm('Apakah Anda yakin menyetujui data ini? Data yang sudah disetujui akan disimpan ke dalam statistik');">
-                                    Konfirmasi
-                                </a>
-                            @endif
-                            <a type="button" class="btn btn-primary" href="" data-toggle="modal" data-target="#importModal">
-                                <i class="fas fa-file-upload"></i> Ganti File Excel
-                            </a>
-                        @endif
-                    @else
-                        <a type="button" class="btn btn-danger" href="{{ route('ed_home') }}">
-                            <i class="fa fa-arrow-left" aria-hidden="true"></i> Kembali
-                        </a>
-                    @endcan
+                    <a type="button" class="btn btn-sm btn-secondary" href="{{ route('ed_home') }}">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Kembali
+                    </a>
                 </div>
             @endcannot
         </div>
@@ -126,7 +101,6 @@
             </div>
         @endif
 
-        {{-- Table --}}
         @if ($sheetData)
             <div class="element text-right">
                 <span class="text-muted">{{ $data->prodi->nama_prodi }} / <a href="">{{ $data->tahun }}</a></span>
@@ -134,16 +108,18 @@
                     @foreach ($sheetData as $sheet)
                         <tr>
                             @if (!$sheet[3])
-                                <td id="title" colspan="9">
-                                    {{ $sheet[0] }} </td>
+                                <th id="title" colspan="9">
+                                    {{ $sheet[0] }} </th>
                             @else
-                                @foreach (range(0, 7) as $v)
-                                    <td> {{ $sheet[$v] }} </td>
+                                @foreach (range(0, 4) as $v)
+                                    @if ($sheet[$v] != 'Total')
+                                        <td> {{ $sheet[$v] }} </td>
+                                    @endif
                                 @endforeach
                                 <td>
                                     @if (\Illuminate\Support\Facades\URL::isValidUrl($sheet[8]))
                                         <a href="{{ $sheet[8] }}">
-                                            {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 7, '...')) }}
+                                            {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 20, '...')) }}
                                         </a>
                                     @else
                                         {{ $sheet[8] }}
@@ -169,47 +145,29 @@
         @endcan
     @endsection
 
-    <div class="modal fade" id="importModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('ed_import_action') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <h2>Pilih File</h2>
-                        <input type="file" name="file">
-                        <input type="text" name="prodi" value="{{ Auth::user()->prodi_id }}" hidden>
-                        <input type="text" name="tahun" value="{{ $data->tahun ?? date('Y') }}" hidden>
-                        <input type="text" name="id" value="{{ $data->id ?? '' }}" hidden>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <input class="btn btn-primary" type="submit" value="Simpan">
-                    </div>
-                </form>
+    @can('koorprodi')
+        <div class="modal fade" id="importModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('ed_import_action') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <h2>Pilih File</h2>
+                            <input type="file" name="file">
+                            <input type="text" name="prodi" value="{{ Auth::user()->user_access_file[0]->prodi_id }}"
+                                hidden>
+                            <input type="text" name="tahun" value="{{ $data->tahun ?? date('Y') }}" hidden>
+                            <input type="text" name="id" value="{{ $data->id ?? '' }}" hidden>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
+                            <input class="btn btn-sm btn-primary" type="submit" value="Simpan">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
-
-    <div class="modal fade" id="feedbackModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('ed_feedback') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="text" name="id_evaluasi" value="{{ $id_evaluasi }}" hidden>
-                        <h5>Apa yang perlu diperbaiki?</h5>
-                        <textarea name="feedback" style="height: 200px; width: 100%"> </textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <input class="btn btn-primary" type="submit" value="Simpan">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    </div>
+    @endcan
 </body>
 
 </html>

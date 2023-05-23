@@ -12,14 +12,9 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('evaluasi_diris', function (Blueprint $table) {
+        Schema::create('statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prodi_id')->constrained();
-            $table->string('file_data');
-            $table->integer('tahun');
-            $table->string('status', 100);
-            $table->text('keterangan')->nullable(TRUE);
-            $table->boolean('temuan')->nullable(TRUE);
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('evaluasi_diris');
+        Schema::dropIfExists('statuses');
     }
 };

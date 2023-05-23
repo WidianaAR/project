@@ -19,9 +19,20 @@
                         </span>
                     @else
                         <span class="text-muted">Dashboard /
-                            <a href="">Grafik ketercapaian standar</a>
+                            <a href="">Ketercapaian standar</a>
                         </span>
                     @endif
+                </div>
+                <div class="col-auto text-left box">
+                    <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Ketegori <i class='fa fa-angle-down fa-sm'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="moduleDropDown">
+                        <a class="dropdown-item {{ Request::is('ed_chart') ? 'active' : '' }}"
+                            href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
+                        <a class="dropdown-item {{ Request::is('ks_chart') ? 'active' : '' }}"
+                            href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
+                    </div>
                 </div>
                 <div class="col-auto text-right p-0 box">
                     <select class="form-control form-control-sm" id="tahun" name="tahun">
@@ -35,25 +46,41 @@
                     </select>
                 </div>
 
-                <div class="col-auto p-0 box">
-                    <select class="form-control form-control-sm select-jurusan" id="jurusan" name="jurusan"
-                        onchange="update()">
-                        <option value="all">Semua jurusan</option>
-                        @foreach ($jurusans as $data)
-                            @foreach ($data as $jurusan)
-                                <option value="{{ $jurusan->prodi->jurusan->id }}">
-                                    {{ $jurusan->prodi->jurusan->nama_jurusan }}
-                                </option>
+                @can('pjm')
+                    <div class="col-auto p-0 box text-sm">
+                        <select class="form-control form-control-sm select-jurusan" id="jurusan" name="jurusan"
+                            onchange="update()">
+                            <option value="all">Semua jurusan</option>
+                            @foreach ($jurusans as $data)
+                                @foreach ($data as $jurusan)
+                                    <option value="{{ $jurusan->prodi->jurusan->id }}">
+                                        {{ $jurusan->prodi->jurusan->nama_jurusan }}
+                                    </option>
+                                @endforeach
                             @endforeach
-                        @endforeach
-                    </select>
-                </div>
+                        </select>
+                    </div>
+                @endcan
 
-                <div class="col-auto p-0 box">
-                    <select class="form-control form-control-sm select-prodi" id="prodi" name="prodi">
-                        <option value="all">Semua program studi</option>
-                    </select>
-                </div>
+                @cannot('koorprodi')
+                    <div class="col-auto p-0 box">
+                        <select class="form-control form-control-sm @can('pjm') select-prodi @endcan" id="prodi"
+                            name="prodi">
+                            @cannot('auditor')
+                                <option value="all">Semua program studi</option>
+                            @endcannot
+                            @cannot('pjm')
+                                @foreach ($prodis as $data)
+                                    @foreach ($data as $prodi)
+                                        <option value="{{ $prodi->prodi->id }}">
+                                            {{ $prodi->prodi->nama_prodi }}
+                                        </option>
+                                    @endforeach
+                                @endforeach
+                            @endcannot
+                        </select>
+                    </div>
+                @endcannot
 
                 <div class="col-auto p-0 mr-3 box">
                     <button type="submit" class="btn btn-primary btn-sm">Tampilkan</button>

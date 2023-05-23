@@ -27,25 +27,20 @@ class Prodi extends Model
         return $this->belongsTo(Jurusan::class);
     }
 
-    public function user()
+    public function user_access_file()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(UserAccessFile::class);
     }
 
-    public function evaluasi_diri()
+    public function dokumen()
     {
-        return $this->hasMany(EvaluasiDiri::class);
-    }
-
-    public function ketercapaian_standar()
-    {
-        return $this->hasMany(KetercapaianStandar::class);
+        return $this->hasMany(Dokumen::class);
     }
 
     protected function namaProdi(): Attribute
     {
         return Attribute::make(
-        set: fn(string $value) => ucwords($value),
+            set: fn(string $value) => ucwords($value),
         );
     }
 }

@@ -12,14 +12,10 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('ketercapaian_standars', function (Blueprint $table) {
+        Schema::create('tahaps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prodi_id')->constrained();
-            $table->string('file_data');
-            $table->integer('tahun');
-            $table->string('status', 100);
-            $table->text('keterangan')->nullable(TRUE);
-            $table->boolean('temuan')->nullable(TRUE);
+            $table->foreignId('dokumen_id')->constrained();
+            $table->foreignId('status_id')->constrained();
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('ketercapaian_standars');
+        Schema::dropIfExists('tahaps');
     }
 };

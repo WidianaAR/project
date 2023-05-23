@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dokumen;
 use App\Models\KSDeadline;
+use App\Models\Tahap;
 use App\Traits\CountdownTrait;
 use Illuminate\Http\Request;
 
@@ -36,6 +38,17 @@ class KSDeadlineController extends Controller
     public function set_time_action_end($id)
     {
         $data = KSDeadline::find($id);
+        $files = Dokumen::where(['kategori' => 'standar', 'status_id' => 1])->get();
+
+        foreach ($files as $file) {
+            $file->update(['status_id' => 2]);
+
+            Tahap::create([
+                'dokumen_id' => $file->id,
+                'status_id' => 2
+            ]);
+        }
+
         activity()
             ->causedByAnonymous()
             ->performedOn($data)

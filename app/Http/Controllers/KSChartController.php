@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KetercapaianStandar;
+use App\Models\Dokumen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class KSChartController extends Controller
@@ -46,39 +47,74 @@ class KSChartController extends Controller
 
     public function home(Request $request)
     {
-        $years = KetercapaianStandar::where('status', 'disetujui')->distinct()->pluck('tahun')->toArray();
-        $prodis = KetercapaianStandar::where('status', 'disetujui')->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
-            return $item->unique('prodi.id');
-        });
-        $jurusans = KetercapaianStandar::where('status', 'disetujui')->with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
-            return $item->unique('prodi.jurusan.id');
-        });
+        $user = Auth::user();
+        $jurusans = null;
+        $prodis = null;
+
+        if ($user->role_id == 1) {
+            $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->distinct()->pluck('tahun')->toArray();
+            $prodis = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
+                return $item->unique('prodi.id');
+            });
+            $jurusans = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->with('prodi.jurusan')->get()->groupBy('prodi.jurusan.id')->map(function ($item) {
+                return $item->unique('prodi.jurusan.id');
+            });
+        } elseif ($user->role_id == 2) {
+            $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->user_access_file[0]->jurusan_id);
+            })->distinct()->pluck('tahun')->toArray();
+            $prodis = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                $query->where('id', $user->user_access_file[0]->jurusan_id);
+            })->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
+                return $item->unique('prodi.id');
+            });
+        } elseif ($user->role_id == 3) {
+            $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 7, 'prodi_id' => $user->user_access_file[0]->prodi_id])->distinct()->pluck('tahun')->toArray();
+        } else {
+            $auditor_prodis = [];
+            foreach ($user->user_access_file as $value) {
+                array_push($auditor_prodis, $value->prodi_id);
+            }
+
+            $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->whereIn('prodi_id', $auditor_prodis)->distinct()->pluck('tahun')->toArray();
+            $prodis = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->whereIn('prodi_id', $auditor_prodis)->with('prodi')->get()->groupBy('prodi.id')->map(function ($item) {
+                return $item->unique('prodi.id');
+            });
+        }
 
         if ($request->all() and $request->tahun) {
             if ($request->jurusan == 'all') {
-                $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
+                $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $request->tahun, 'status_id' => 7])->get();
                 $keterangan = 'Ketercapaian standar semua jurusan tahun ' . $request->tahun;
             } elseif ($request->jurusan != 'all') {
                 if ($request->prodi == 'all') {
-                    $data = KetercapaianStandar::withWhereHas('prodi.jurusan', function ($query) use ($request) {
+                    $data = Dokumen::withWhereHas('prodi.jurusan', function ($query) use ($request) {
                         $query->where('id', $request->jurusan);
-                    })->where(['tahun' => $request->tahun, 'status' => 'disetujui'])->get();
+                    })->where(['kategori' => 'standar', 'tahun' => $request->tahun, 'status_id' => 7])->get();
                     if ($data->count()) {
                         $keterangan = 'Ketercapaian standar ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $request->tahun;
+                    } elseif ($user->role_id == 2) {
+                        $data = Dokumen::withWhereHas('prodi.jurusan', function ($query) use ($user) {
+                            $query->where('id', $user->user_access_file[0]->jurusan_id);
+                        })->where(['kategori' => 'standar', 'tahun' => $request->tahun, 'status_id' => 7])->get();
+                        $keterangan = 'Ketercapaian standar ' . $data[0]->prodi->jurusan->nama_jurusan . ' tahun ' . $data[0]->tahun;
                     } else {
                         $keterangan = 'Data kosong';
                     }
                 } else {
-                    $data = KetercapaianStandar::where(['tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status' => 'disetujui'])->get();
+                    $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $request->tahun, 'prodi_id' => $request->prodi, 'status_id' => 7])->get();
                     if ($data->count()) {
                         $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $request->tahun;
+                    } elseif ($user->role_id == 3) {
+                        $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $request->tahun, 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 7])->get();
+                        $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
                     } else {
                         $keterangan = 'Data kosong';
                     }
                 }
             }
         } else {
-            $data = KetercapaianStandar::where(['status' => 'disetujui'])->latest()->get()->take(1);
+            $data = Dokumen::where(['kategori' => 'standar', 'status_id' => 7])->latest()->get()->take(1);
             if ($data->count()) {
                 $keterangan = 'Ketercapaian standar program studi ' . $data[0]->prodi->nama_prodi . ' tahun ' . $data[0]->tahun;
             } else {

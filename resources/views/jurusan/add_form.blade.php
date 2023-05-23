@@ -16,12 +16,13 @@
         </div>
     </div>
 
-    <div class="element">
-        <div class="add-form">
+    <div class="element row justify-content-center">
+        <div class="add-form col-6">
             <form action="{{ route('jurusans.store') }}" method="POST">
                 @csrf
-                <input type="text" name="kode_jurusan" placeholder="Kode Jurusan"
-                    class="form-control @error('kode_jurusan') is-invalid mb-0 @enderror"
+                <label class="mb-1">Kode jurusan</label>
+                <input type="text" name="kode_jurusan"
+                    class="form-control form-control-sm @error('kode_jurusan') is-invalid mb-0 @enderror"
                     aria-describedby="kode_jurusan_error" value="{{ old('kode_jurusan') }}" required>
                 @error('kode_jurusan')
                     <div class="invalid-feedback mt-0 mb-2" id="kode_jurusan_error">
@@ -29,8 +30,9 @@
                     </div>
                 @enderror
 
-                <input type="text" name="nama_jurusan" placeholder="Singkatan"
-                    class="form-control @error('nama_jurusan') is-invalid mb-0 @enderror"
+                <label class="mb-1">Singkatan</label>
+                <input type="text" name="nama_jurusan"
+                    class="form-control form-control-sm @error('nama_jurusan') is-invalid mb-0 @enderror"
                     aria-describedby="nama_jurusan_error" value="{{ old('nama_jurusan') }}" required>
                 @error('nama_jurusan')
                     <div class="invalid-feedback mt-0 mb-2" id="nama_jurusan_error">
@@ -38,9 +40,10 @@
                     </div>
                 @enderror
 
-                <input type="text" name="keterangan" placeholder="Nama Jurusan"
-                    class="form-control @error('keterangan') is-invalid mb-0 @enderror" aria-describedby="keterangan_error"
-                    value="{{ old('keterangan') }}" required>
+                <label class="mb-1">Nama jurusan</label>
+                <input type="text" name="keterangan"
+                    class="form-control form-control-sm @error('keterangan') is-invalid mb-0 @enderror"
+                    aria-describedby="keterangan_error" value="{{ old('keterangan') }}" required>
                 @error('keterangan')
                     <div class="invalid-feedback mt-0 mb-2" id="keterangan_error">
                         {{ $message }}
@@ -48,9 +51,9 @@
                 @enderror
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-danger mr-2" type="button" value="Batal"
+                    <a class="btn btn-sm btn-secondary mr-2" type="button" value="Batal"
                         href="{{ route('jurusans.index') }}">Batal</a>
-                    <input class="btn btn-primary" type="submit" value="Tambah">
+                    <input class="btn btn-sm btn-primary" type="submit" value="Tambah jurusan">
                 </div>
             </form>
         </div>

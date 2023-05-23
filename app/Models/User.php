@@ -60,10 +60,15 @@ class User extends Authenticatable
         return $this->belongsTo(Prodi::class);
     }
 
+    public function user_access_file()
+    {
+        return $this->hasMany(UserAccessFile::class);
+    }
+
     public function name(): Attribute
     {
         return Attribute::make(
-        set: fn(string $value) => ucwords($value)
+            set: fn(string $value) => ucwords($value)
         );
     }
 }

@@ -19,19 +19,23 @@
         </div>
     </div>
 
-    <div class="element">
-        <div class="add-form">
+    <div class="element row justify-content-center">
+        <div class="add-form col-6">
             <form action="{{ route('ks_import_action') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="file" class="form-control @error('file') m-0 is-invalid @enderror"
+                <label class="mb-1">File ketercapaian standar</label>
+                <input type="file" name="file"
+                    class="form-control form-control-sm @error('file') m-0 is-invalid @enderror"
                     aria-describedby="file-error" required>
                 @error('file')
                     <div class="invalid-feedback mb-2" id="file-error">
                         {{ $message }}
                     </div>
                 @enderror
+
+                <label class="mb-1">Program studi</label>
                 <select name='prodi' class="custom-select" required>
-                    <option value='' selected>Pilih program studi</option>
+                    <option value='' selected></option>
                     @foreach ($prodis as $prodi)
                         <option value="{{ $prodi->id }}" {{ old('prodi') == $prodi->id ? 'selected' : '' }}>
                             {{ $prodi->nama_prodi }}</option>
@@ -39,8 +43,9 @@
                 </select>
                 <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
                 <div class="d-grid mt-3 gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-danger mr-2" type="button" value="Batal" href="{{ route('ks_home') }}">Batal</a>
-                    <input class="btn btn-primary" type="submit" value="Simpan">
+                    <a class="btn btn-sm btn-secondary mr-2" type="button" value="Batal"
+                        href="{{ route('ks_home') }}">Batal</a>
+                    <input class="btn btn-sm btn-primary" type="submit" value="Tambah data">
                 </div>
             </form>
         </div>

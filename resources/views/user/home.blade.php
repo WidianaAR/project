@@ -58,11 +58,18 @@
                             <td> {{ $user->name }} </td>
                             <td> {{ $user->email }} </td>
                             @if ($user->role_id == 2)
-                                <td>{{ $user->jurusan->nama_jurusan }}</td>
+                                <td>{{ $user->user_access_file[0]->jurusan->nama_jurusan }}</td>
                                 <td>-</td>
-                            @elseif ($user->role_id == 3 || $user->role_id == 4)
-                                <td>{{ $user->jurusan->nama_jurusan }}</td>
-                                <td>{{ $user->prodi->nama_prodi }}</td>
+                            @elseif ($user->role_id == 3)
+                                <td>{{ $user->user_access_file[0]->jurusan->nama_jurusan }}</td>
+                                <td>{{ $user->user_access_file[0]->prodi->nama_prodi }}</td>
+                            @elseif ($user->role_id == 4)
+                                <td>-</td>
+                                <td>
+                                    @foreach ($user->user_access_file as $item)
+                                        {{ $item->prodi->nama_prodi }} <br>
+                                    @endforeach
+                                </td>
                             @else
                                 <td>-</td>
                                 <td>-</td>

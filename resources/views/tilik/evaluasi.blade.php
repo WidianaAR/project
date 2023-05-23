@@ -1,4 +1,5 @@
 @extends('layouts.navbar')
+
 @section('isi')
     @if (Session::has('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -9,53 +10,53 @@
 
     <div class="row m-0 align-items-center">
         <div class="col pl-1">
-            <span class="text-muted">Feedback / Evaluasi diri / <a href="">{{ $data->prodi->nama_prodi }}
+            <span class="text-muted">Daftar tilik / Evaluasi / <a href="">{{ $data->prodi->nama_prodi }}
                     {{ $data->tahun }}</a></span>
         </div>
         @can('auditor')
-            <button id="tambah" type="button" class="btn btn-success mr-2" onclick="showTemuan()">
-                @if ($data->temuan)
+            <button id="tambah" type="button" class="btn btn-sm btn-primary mr-2" onclick="showTilik()">
+                @if ($data->status_id == 3)
                     Ubah
                 @else
                     Tambah
-                @endif temuan
+                @endif tilik
             </button>
         @endcan
-        @can('pjm')
+        @cannot('auditor')
             <div class="col text-right px-2">
                 <form action="{{ route('ed_export_file') }}" method="POST">
                     @csrf
                     <input name="filename" type="hidden" value="{{ $data->file_data }}">
-                    <input type="submit" class="btn btn-primary" value="Export File">
+                    <input type="submit" class="btn btn-sm btn-primary" value="Export file">
                 </form>
             </div>
         @endcan
-        <a href="{{ route('feedback') }}" type="button" class="btn btn-danger"><i class="fa fa-arrow-left"
-                aria-hidden="true"></i>Kembali</a>
+        <a href="@if (Auth::user()->role_id == 4) {{ route('tilik_home_auditor') }} @else {{ route('tilik_home') }} @endif"
+            type="button" class="btn btn-sm btn-secondary"><i class="fa fa-arrow-left" aria-hidden="true"></i>Kembali</a>
     </div>
-    <form action="{{ route('fb_ed_table_save') }}" method="POST">
+    <form action="{{ route('tilik_ed_table_save') }}" method="POST">
         @csrf
-        <div class="text-center element">
-            <table class="table table-bordered" style="table-layout: fixed">
+        <div class="element">
+            <table class="table table-bordered">
                 @foreach ($sheetData as $sheet)
                     <tr>
                         @if (!$sheet[3])
-                            <td id="title" colspan="@if ($data->temuan) 10 @else 9 @endif">
-                                {{ $sheet[0] }} </td>
+                            <th id="title" colspan="10">
+                                {{ $sheet[0] }} </th>
                         @else
-                            @foreach (range(0, 7) as $v)
+                            @foreach (range(0, 4) as $v)
                                 <td> {{ $sheet[$v] }} </td>
                             @endforeach
                             <td>
                                 @if (\Illuminate\Support\Facades\URL::isValidUrl($sheet[8]))
                                     <a href="{{ $sheet[8] }}">
-                                        {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 7, '...')) }}
+                                        {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 15, '...')) }}
                                     </a>
                                 @else
                                     {{ $sheet[8] }}
                                 @endif
                             </td>
-                            @if ($data->temuan)
+                            @if ($data->status_id == 3)
                                 <td>
                                     @if ($sheet[9])
                                         {{ $sheet[9] }}
@@ -63,14 +64,14 @@
                                 </td>
                             @endif
                             @if ($sheet[0] == 'No')
-                                <td id="column" hidden>Temuan @if ($data->temuan)
+                                <td class="col-2" id="column" hidden>Tilik @if ($data->status_id == 3)
                                         baru
                                     @endif
                                 </td>
                             @else
                                 <td id="cell" hidden>
                                     @if ($sheet[1])
-                                        <textarea name="temuan[]"></textarea>
+                                        <textarea name="tilik[]">{{ $sheet[9] ?? '' }}</textarea>
                                     @endif
                                 </td>
                             @endif
@@ -80,17 +81,15 @@
             </table>
             <input type="text" name="id" value="{{ $data->id }}" hidden>
             <div class="text-right">
-                <button id="simpan" type="submit" class="btn btn-primary" hidden>Simpan temuan</button>
+                <button id="simpan" type="submit" class="btn btn-sm btn-primary" hidden>Simpan tilik</button>
             </div>
         </div>
     </form>
 
     <script>
-        function showTemuan() {
-            var colspan = parseInt($('#title').attr('colspan'));
+        function showTilik() {
             $("#column, #cell, #simpan").removeAttr("hidden");
             $("#tambah").attr("hidden", "hidden");
-            $('#title').attr('colspan', colspan + 1);
         }
     </script>
 @endsection

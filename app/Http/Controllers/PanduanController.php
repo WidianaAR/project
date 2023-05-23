@@ -15,6 +15,11 @@ class PanduanController extends Controller
         return view('panduan.home_pjm', ['panduans' => Panduan::latest()->paginate(8)]);
     }
 
+    public function index_others()
+    {
+        return view('panduan.home', ['panduans' => Panduan::paginate(8)]);
+    }
+
     public function create()
     {
         return view('panduan.add_form');
@@ -86,5 +91,12 @@ class PanduanController extends Controller
             ->log('Menghapus data panduan ' . $panduan->judul);
         $panduan->delete();
         return back()->with('success', 'Data panduan berhasil dihapus');
+    }
+
+    public function download($id)
+    {
+        $data = Panduan::find($id)->file_data;
+        activity()->log('Download file panduan ' . basename($data));
+        return response()->download(storage_path('app/public/' . $data));
     }
 }

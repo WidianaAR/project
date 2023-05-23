@@ -17,7 +17,12 @@
                                 <h5 class="card-title">{{ $panduan->judul }}</h5>
                                 <p class="card-text">
                                     {{ strip_tags(\Illuminate\Support\Str::limit($panduan->keterangan, 100, '...')) }}</p>
-                                <a href="{{ route('panduan_detail', $panduan->id) }}">Read more</a>
+                                <div class="row">
+                                    <a class="col" href="{{ route('panduan_detail', $panduan->id) }}">Read more</a>
+                                    <div class="col"></div>
+                                    <a href="{{ route('panduan_download', $panduan->id) }}" class="col-auto mr-1"><i
+                                            class="fa-solid fa-download"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>

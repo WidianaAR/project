@@ -8,8 +8,8 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
         integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/478979d709.js" crossorigin="anonymous"></script>
 
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
@@ -42,45 +42,53 @@
 
             <ul class="list-unstyled components">
                 <li
-                    class="{{ Request::is(['ks_chart', 'ed_chart', 'pjm', 'kajur', 'koorprodi', 'auditor']) ? 'active' : '' }}">
-                    <a href="#dashboardSubmenu" data-toggle="collapse" aria-expanded="false"
-                        class="dropdown-toggle">Dashboard</a>
-                    <ul class="collapse list-unstyled" id="dashboardSubmenu">
-                        <li>
-                            <a href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
-                        </li>
-                        <li>
-                            <a href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="{{ Request::is('evaluasi*') ? 'active' : '' }}">
-                    <a href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
-                </li>
-                <li class="{{ Request::is('standar*') ? 'active' : '' }}">
-                    <a href="{{ URL('standar') }}">Ketercapaian Standar</a>
-                </li>
-                <li class="{{ Request::is(['panduans*', 'panduan*']) ? 'active' : '' }}">
-                    <a
-                        href="@if (Auth::user()->role_id == 1) {{ URL('panduans') }} @else {{ URL('panduan') }} @endif">Panduan</a>
+                    class="{{ Request::is(['ed_chart', 'ks_chart', 'pjm', 'kajur', 'koorprodi', 'auditor']) ? 'active' : '' }}">
+                    <a href="{{ URL('ed_chart') }}"><i class="fa fa-bar-chart"></i> Dashboard</a>
                 </li>
                 @can('pjm')
-                    <li class="{{ Request::is('user*') ? 'active' : '' }}">
-                        <a href="{{ URL('user') }}">User</a>
-                    </li>
-                    <li class="{{ Request::is('jurusans*') ? 'active' : '' }}">
-                        <a href="{{ URL('jurusans') }}">Jurusan</a>
-                    </li>
-                    <li class="{{ Request::is('prodis*') ? 'active' : '' }}">
-                        <a href="{{ URL('prodis') }}">Program Studi</a>
+                    <li class="{{ Request::is(['user*', 'jurusans*', 'prodis*']) ? 'active' : '' }}">
+                        <a href="#dashboardSubmenu2" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                class="fa fa-database"></i> Manajemen Data</a>
+                        <ul class="collapse list-unstyled" id="dashboardSubmenu2">
+                            <li>
+                                <a href="{{ URL('jurusans') }}">Jurusan</a>
+                            </li>
+                            <li>
+                                <a href="{{ URL('prodis') }}">Program Studi</a>
+                            </li>
+                            <li>
+                                <a href="{{ URL('user') }}">Pengguna</a>
+                            </li>
+                        </ul>
                     </li>
                 @endcan
-                <li class="{{ Request::is('feedbacks*') ? 'active' : '' }}">
-                    <a href="{{ URL('feedbacks') }}">Temuan Audit</a>
+                <li class="{{ Request::is(['panduans*', 'panduan*']) ? 'active' : '' }}">
+                    <a href="@if (Auth::user()->role_id == 1) {{ URL('panduans') }} @else {{ URL('panduan') }} @endif"><i
+                            class="fa fa-circle-info"></i> Panduan</a>
+                </li>
+                @cannot('auditor')
+                    <li class="{{ Request::is('evaluasi*') ? 'active' : '' }}">
+                        <a href="{{ URL('evaluasi') }}"> <i class="fa fa-file"></i> Evaluasi Diri</a>
+                    </li>
+                    <li class="{{ Request::is('standar*') ? 'active' : '' }}">
+                        <a href="{{ URL('standar') }}"> <i class="fa fa-file"></i> Ketercapaian Standar</a>
+                    </li>
+                @endcannot
+                <li class="{{ Request::is(['tilik_auditor*', 'tilik*']) ? 'active' : '' }}">
+                    <a
+                        href="@if (Auth::user()->role_id == 4) {{ URL('tilik_auditor') }} @else {{ URL('tilik') }} @endif">
+                        <i class="fa-solid fa-table-list"></i>
+                        Daftar Tilik</a>
+                </li>
+                <li class="{{ Request::is(['pasca_auditor*', 'pasca*']) ? 'active' : '' }}">
+                    <a
+                        href="@if (Auth::user()->role_id == 4) {{ URL('pasca_auditor') }} @else {{ URL('pasca') }} @endif">
+                        <i class="fa fa-files-o"></i>
+                        Pasca Audit</a>
                 </li>
                 @can('pjm')
                     <li class="{{ Request::is('logs*') ? 'active' : '' }}">
-                        <a href="{{ URL('logs') }}">Riwayat Aktivitas</a>
+                        <a href="{{ URL('logs') }}"> <i class="fa fa-history"></i> Riwayat Aktivitas</a>
                     </li>
                 @endcan
             </ul>

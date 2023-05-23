@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dokumen;
 use App\Models\EDDeadline;
+use App\Models\Tahap;
 use App\Traits\CountdownTrait;
 use Illuminate\Http\Request;
 
@@ -36,10 +38,20 @@ class EDDeadlineController extends Controller
     public function set_time_action_end($id)
     {
         $data = EDDeadline::find($id);
+        $files = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 1])->get();
+
+        foreach ($files as $file) {
+            $file->update(['status_id' => 2]);
+
+            Tahap::create([
+                'dokumen_id' => $file->id,
+                'status_id' => 2
+            ]);
+        }
         activity()
             ->causedByAnonymous()
             ->performedOn($data)
-            ->log('Waktu pengisian ketercapaian standar selesai');
+            ->log('Waktu pengisian evaluasi diri selesai');
         $data->update(['status' => 'finish']);
         return redirect()->route('ed_home');
     }

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\EvaluasiDiri;
+use App\Models\Dokumen;
 use App\Traits\FileTrait;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 
@@ -26,180 +25,180 @@ class EDSeeder extends Seeder
 
         // Data tahun 2022
         $path = $this->UploadFile($file, "Evaluasi Diri_Informatika_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 11,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Sistem Informasi_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 10,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Fisika_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 1,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Matematika_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 2,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Mesin_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 3,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Elektro_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 4,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Kimia_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 5,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Sipil_2022.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 7,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2022,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
 
         // Data tahun 2021
         $path = $this->UploadFile($file, "Evaluasi Diri_Informatika_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 11,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Sistem Informasi_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 10,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Fisika_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 1,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Matematika_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 2,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Mesin_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 3,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Elektro_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 4,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Kimia_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 5,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
 
         $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Sipil_2021.xlsx");
-        EvaluasiDiri::create(
+        Dokumen::create(
             [
                 'prodi_id' => 7,
+                'status_id' => 2,
+                'kategori' => 'evaluasi',
                 'tahun' => 2021,
                 'file_data' => $path,
-                'status' => 'ditinjau',
-                'keterangan' => null
             ]
         );
     }

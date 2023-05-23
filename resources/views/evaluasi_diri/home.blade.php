@@ -1,75 +1,79 @@
-@extends('layouts.navbar')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('isi')
-    {{-- Countdown Time --}}
-    @if (Session::has('success'))
-        <div class="alert alert-success" role="alert" id="msg-box">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ Session::get('success') }}
-        </div>
-    @endif
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
 
-    @if (Session::has('error'))
-        <div class="alert alert-danger" role="alert" id="msg-box">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ Session::get('error') }}
-        </div>
-    @endif
+<body>
+    @extends('layouts.navbar')
 
-    <div class="row align-items-center">
-        @if ($deadline[0])
-            <div class="col-auto pr-0">
-                Batas akhir upload file :
-            </div>
-            <div class="col text-left">
-                @include('evaluasi_diri/countdown')
-            </div>
-        @else
-            <div class="col">
-                <h5>Evaluasi Diri<span class="text-muted"> / {{ $keterangan }}</span></h5>
+    @section('isi')
+        @if (Session::has('success'))
+            <div class="alert alert-success" role="alert" id="msg-box">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ Session::get('success') }}
             </div>
         @endif
 
-        @if ($years)
-            <div class="col-auto text-left box">
-                <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
-                    Tahun <i class='fa fa-angle-down fa-sm'></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="moduleDropDown">
-                    <a class="dropdown-item {{ Request::is('evaluasi') ? 'active' : '' }}"
-                        href="{{ route('ed_home') }}">Semua</a>
-                    @foreach ($years as $year)
-                        <a class="dropdown-item {{ Request::is('evaluasi/filter/year/' . $year) ? 'active' : '' }}"
-                            href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
-                    @endforeach
-                </div>
+        @if (Session::has('error'))
+            <div class="alert alert-danger" role="alert" id="msg-box">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ Session::get('error') }}
             </div>
         @endif
 
-        @cannot('kajur')
-            <div class="col-auto text-left box">
-                <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
-                    Jurusan <i class='fa fa-angle-down fa-sm'></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="moduleDropDown">
-                    @foreach ($jurusans as $jurusan)
-                        <a class="dropdown-item {{ Request::is('evaluasi/filter/jurusan/' . $jurusan->id) ? 'active' : '' }}"
-                            href="{{ route('ed_filter_jurusan', $jurusan->id) }}">{{ $jurusan->nama_jurusan }}</a>
-                    @endforeach
+        <div class="row align-items-center">
+            @if ($deadline[0])
+                <div class="col-auto pr-0">
+                    Batas akhir upload file :
                 </div>
-            </div>
-        @endcannot
-
-        @can('pjm')
-            <div class="col-auto text-left box">
+                <div class="col text-left">
+                    @include('evaluasi_diri/countdown')
+                </div>
             @else
-                <div class="col-auto text-left box mr-3">
-                @endcan
+                <div class="col">
+                    <h5>Evaluasi Diri<span class="text-muted"> / {{ $keterangan }}</span></h5>
+                </div>
+            @endif
 
-                <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
+            @if ($years)
+                <div class="col-auto text-left box">
+                    <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Tahun <i class='fa fa-angle-down fa-sm'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="moduleDropDown">
+                        <a class="dropdown-item {{ Request::is('evaluasi') ? 'active' : '' }}"
+                            href="{{ route('ed_home') }}">Semua</a>
+                        @foreach ($years as $year)
+                            <a class="dropdown-item {{ Request::is('evaluasi/filter/year/' . $year) ? 'active' : '' }}"
+                                href="{{ route('ed_filter_year', $year) }}">{{ $year }}</a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            @cannot('kajur')
+                <div class="col-auto text-left box">
+                    <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Jurusan <i class='fa fa-angle-down fa-sm'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="moduleDropDown">
+                        @foreach ($jurusans as $jurusan)
+                            <a class="dropdown-item {{ Request::is('evaluasi/filter/jurusan/' . $jurusan->id) ? 'active' : '' }}"
+                                href="{{ route('ed_filter_jurusan', $jurusan->id) }}">{{ $jurusan->nama_jurusan }}</a>
+                        @endforeach
+                    </div>
+                </div>
+            @endcannot
+
+            <div class="col-auto text-left box">
+                <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false" data-offset="offset">
                     Prodi <i class='fa fa-angle-down fa-sm'></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
+                <div class="dropdown-menu dropdown-menu-right dropdown-scrollable" aria-labelledby="moduleDropDown">
                     @foreach ($prodis as $prodi)
                         <a class="dropdown-item {{ Request::is('evaluasi/filter/prodi/' . $prodi->id) ? 'active' : '' }}"
                             href="{{ route('ed_filter_prodi', $prodi->id) }}">{{ $prodi->nama_prodi }}</a>
@@ -77,17 +81,15 @@
                 </div>
             </div>
 
-            @can('pjm')
-                <div class="col-auto text-left">
-                    <form action="{{ route('ed_export_all') }}" method="POST">
-                        @csrf
-                        @foreach ($data as $file)
-                            <input name="data[]" type="hidden" value="{{ $file->file_data }}">
-                        @endforeach
-                        <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
-                    </form>
-                </div>
-            @endcan
+            <div class="col-auto text-left">
+                <form action="{{ route('ed_export_all') }}" method="POST">
+                    @csrf
+                    @foreach ($data as $file)
+                        <input name="data[]" type="hidden" value="{{ $file->file_data }}">
+                    @endforeach
+                    <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
+                </form>
+            </div>
 
             @can('kajur')
                 @if ($deadline[0])
@@ -113,9 +115,7 @@
                             <th>Tahun</th>
                             <th>Status</th>
                             @can('kajur')
-                                @if ($deadline[0])
-                                    <th>Action</th>
-                                @endif
+                                <th>Action</th>
                             @endcan
                         </tr>
                     </thead>
@@ -130,7 +130,10 @@
                                 @endcannot
                                 <td>{{ $file->prodi->nama_prodi }}</td>
                                 <td>{{ $file->tahun }}</td>
-                                <td>{{ $file->status }}</td>
+                                <td>
+                                    <a href="" data-toggle="modal"
+                                        data-target="#tahapModal{{ $loop->iteration }}">{{ $file->status->keterangan }}</a>
+                                </td>
 
                                 @can('kajur')
                                     @if ($deadline[0] && $file->tahun == date('Y'))
@@ -141,6 +144,8 @@
                                                 onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
                                                 class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
                                         </td>
+                                    @else
+                                        <td class="text-center">-</td>
                                     @endif
                                 @endcan
                             </tr>
@@ -160,3 +165,19 @@
             </div>
         @endcan
     @endsection
+
+    @foreach ($data as $file)
+        <div class="modal fade" id="tahapModal{{ $loop->iteration }}" role="dialog" arialabelledby="modalLabel"
+            area-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="row pl-5">
+                        @include('layouts.tahap_breadcrumb')
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</body>
+
+</html>

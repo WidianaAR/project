@@ -26,21 +26,21 @@ class Jurusan extends Model
         return $this->hasMany(Prodi::class);
     }
 
-    public function user()
+    public function user_access_file()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(UserAccessFile::class);
     }
 
     protected function namaJurusan(): Attribute
     {
         return Attribute::make(
-        set: fn(string $value) => strtoupper($value)
+            set: fn(string $value) => strtoupper($value)
         );
     }
     protected function keterangan(): Attribute
     {
         return Attribute::make(
-        set: fn(string $value) => ucwords($value)
+            set: fn(string $value) => ucwords($value)
         );
     }
 }

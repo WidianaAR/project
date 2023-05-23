@@ -17,9 +17,12 @@ class DatabaseSeeder extends Seeder
             ProdiSeeder::class,
             RoleSeeder::class,
             AccountSeeder::class,
+            UserAccessFileSeeder::class,
+            StatusSeeder::class,
             PanduanSeeder::class,
             EDSeeder::class,
-            KSSeeder::class
+            KSSeeder::class,
+            TahapSeeder::class
         ]);
     }
 }
