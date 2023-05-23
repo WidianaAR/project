@@ -71,10 +71,9 @@ class KSController extends Controller
             $extension = $request->file('file')->extension();
             $path = $this->UploadFile($request->file('file'), "Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             $ksdata = Dokumen::updateOrCreate(
-                ['prodi_id' => $request->prodi, 'tahun' => $request->tahun],
+                ['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'standar'],
                 [
                     'status_id' => 1,
-                    'kategori' => 'standar',
                     'file_data' => $path,
                 ]
             );

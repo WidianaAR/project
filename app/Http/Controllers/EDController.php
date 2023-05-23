@@ -71,10 +71,9 @@ class EDController extends Controller
             $extension = $request->file('file')->extension();
             $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             $eddata = Dokumen::updateOrCreate(
-                ['prodi_id' => $request->prodi, 'tahun' => $request->tahun],
+                ['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'evaluasi'],
                 [
                     'status_id' => 1,
-                    'kategori' => 'evaluasi',
                     'file_data' => $path,
                 ]
             );
