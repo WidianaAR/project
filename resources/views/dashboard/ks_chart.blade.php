@@ -1,21 +1,22 @@
 @extends('layouts.navbar')
 
-@section('isi')
-    @if (session('success'))
-        <div class="alert alert-success" role="alert" id="msg-box">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ session('success') }}
-        </div>
-    @endif
+@section('title')
+    <title>Dashboard Ketercapaian Standar</title>
+@endsection
 
-    <div class="container text-center p-0">
+@section('isi')
+    @cannot('koorprodi')
+        @include('dashboard.files_card')
+    @endcannot
+
+    <div class="container text-center p-0 @cannot('koorprodi') mt-5 @endcannot">
         <form method="POST" action="{{ route('ks_chart_post') }}">
             @csrf
             <div class="row align-items-center mb-3">
                 <div class="col text-left">
                     @if ($param)
-                        <span class="text-muted">
-                            {{ $keterangan }}
+                        <span class="text-muted">Dashboard / Ketercapaian standar /
+                            <a href="">{{ $keterangan }}</a>
                         </span>
                     @else
                         <span class="text-muted">Dashboard /
@@ -34,7 +35,7 @@
                             href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
                     </div>
                 </div>
-                <div class="col-auto text-right p-0 box">
+                <div class="col-auto p-0 box">
                     <select class="form-control form-control-sm" id="tahun" name="tahun">
                         @if ($param)
                             @foreach ($years as $year)
@@ -47,10 +48,10 @@
                 </div>
 
                 @can('pjm')
-                    <div class="col-auto p-0 box text-sm">
+                    <div class="col-auto p-0 box">
                         <select class="form-control form-control-sm select-jurusan" id="jurusan" name="jurusan"
                             onchange="update()">
-                            <option value="all">Semua jurusan</option>
+                            <option value="">Semua jurusan</option>
                             @foreach ($jurusans as $data)
                                 @foreach ($data as $jurusan)
                                     <option value="{{ $jurusan->prodi->jurusan->id }}">
@@ -66,9 +67,7 @@
                     <div class="col-auto p-0 box">
                         <select class="form-control form-control-sm @can('pjm') select-prodi @endcan" id="prodi"
                             name="prodi">
-                            @cannot('auditor')
-                                <option value="all">Semua program studi</option>
-                            @endcannot
+                            <option value="">Semua program studi</option>
                             @cannot('pjm')
                                 @foreach ($prodis as $data)
                                     @foreach ($data as $prodi)
@@ -182,7 +181,7 @@
 
         function update() {
             $('select.select-prodi').find('option').remove().end().append(
-                '<option value="all">Semua program studi</option>');
+                '<option value="">Semua program studi</option>');
             var selected = $('select.select-jurusan').children("option:selected").val();
             var prodis = {!! json_encode($prodis) !!}
             $.each(prodis, function(i, data) {

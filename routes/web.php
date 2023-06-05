@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Panduan;
 use Illuminate\Support\Facades\Route;
 use Spatie\Activitylog\Models\Activity;
 
@@ -9,7 +8,14 @@ Route::redirect('/', '/login');
 // Login dan Logout
 Route::get('login', 'App\Http\Controllers\AuthenticationController@login')->name('login');
 Route::post('login', 'App\Http\Controllers\AuthenticationController@login_action')->name('login_action');
-Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
+
+
+// Lupa password
+Route::get('lupa_password', 'App\Http\Controllers\AuthenticationController@forget_pass')->name('forget_password');
+Route::post('lupa_password', 'App\Http\Controllers\AuthenticationController@forget_pass_action')->name('forget_password_action');
+route::get('reset_password/{token}', 'App\Http\Controllers\AuthenticationController@reset_pass')->name('reset_password');
+route::post('reset_password', 'App\Http\Controllers\AuthenticationController@reset_pass_action')->name('reset_password_action');
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::group(
@@ -24,11 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('user/add', 'App\Http\Controllers\UserController@add_user_action')->name('add_user_action');
             Route::get('user/change/{id_user}', 'App\Http\Controllers\UserController@change_user')->name('change_user');
             Route::post('user/change/{id_user}', 'App\Http\Controllers\UserController@change_user_action')->name('change_user_action');
-            // User Filter
-            Route::get('user/filter/pjm', 'App\Http\Controllers\UserController@user_pjm')->name('user_pjm');
-            Route::get('user/filter/kajur', 'App\Http\Controllers\UserController@user_kajur')->name('user_kajur');
-            Route::get('user/filter/koorprodi', 'App\Http\Controllers\UserController@user_koorprodi')->name('user_koorprodi');
-            Route::get('user/filter/auditor', 'App\Http\Controllers\UserController@user_auditor')->name('user_auditor');
+            Route::get('user/filter/{role}', 'App\Http\Controllers\UserController@user_filter')->name('user_filter');
 
             // Kelola Evaluasi Diri
             Route::get('evaluasi/set_time', 'App\Http\Controllers\EDDeadlineController@set_time')->name('ed_set_time');
@@ -38,15 +40,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('standar/set_time', 'App\Http\Controllers\KSDeadlineController@set_time')->name('ks_set_time');
             Route::post('standar/set_time', 'App\Http\Controllers\KSDeadlineController@set_time_action')->name('ks_set_time_action');
 
-            // Filter
-            Route::get('evaluasi/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\EDController@filter_jurusan')->name('ed_filter_jurusan');
-            Route::get('standar/filter/jurusan/{jurusan_id}', 'App\Http\Controllers\KSController@filter_jurusan')->name('ks_filter_jurusan');
-
             // Kelola Jurusan
             Route::resource('jurusans', 'App\Http\Controllers\JurusanController');
 
             // Kelola Prodi
             Route::resource('prodis', 'App\Http\Controllers\ProdiController');
+            Route::get('prodis/filter/{jurusan}', 'App\Http\Controllers\ProdiController@prodi_filter')->name('prodis_filter');
 
             // Kelola Panduan
             Route::resource('panduans', 'App\Http\Controllers\PanduanController');
@@ -82,6 +81,9 @@ Route::group(['middleware' => 'auth'], function () {
         ['middleware' => 'cek_login:3'],
         function () {
             Route::get('koorprodi', 'App\Http\Controllers\EDChartController@home');
+
+            Route::get('evaluasi/filter/{tahun}', 'App\Http\Controllers\EDController@filter_year')->name('ed_filter_year');
+            Route::get('standar/filter/{tahun}', 'App\Http\Controllers\KSController@filter_year')->name('ks_filter_year');
         }
     );
 
@@ -91,18 +93,25 @@ Route::group(['middleware' => 'auth'], function () {
         function () {
             Route::get('auditor', 'App\Http\Controllers\EDChartController@home');
 
-            Route::get('tilik_auditor/{kategori?}', 'App\Http\Controllers\TilikController@index_auditor')->name('tilik_home_auditor');
-            Route::get('tilik_auditor/{kategori?}/{year}', 'App\Http\Controllers\TilikController@filter_year_auditor')->name('tilik_year_auditor');
+            // Tilik
+            Route::get('tilik', 'App\Http\Controllers\TilikController@index')->name('tilik_home');
+            Route::post('tilik/filter', 'App\Http\Controllers\TilikController@index')->name('tilik_filter');
+            Route::post('tilik/change', 'App\Http\Controllers\TilikController@change_action')->name('tilik_change');
+            Route::get('tilik/evaluasi/table/{id}', 'App\Http\Controllers\TilikController@ed_table')->name('tilik_ed_table');
+            Route::get('tilik/standar/table/{id}', 'App\Http\Controllers\TilikController@ks_table')->name('tilik_ks_table');
             Route::post('tilik/evaluasi', 'App\Http\Controllers\TilikController@ed_table_save')->name('tilik_ed_table_save');
             Route::post('tilik/standar', 'App\Http\Controllers\TilikController@ks_table_save')->name('tilik_ks_table_save');
 
-            Route::get('pasca_auditor/{kategori?}', 'App\Http\Controllers\PascaAuditController@index_auditor')->name('pasca_home_auditor');
-            Route::get('pasca_auditor/{kategori?}/{year}', 'App\Http\Controllers\PascaAuditController@filter_year_auditor')->name('pasca_year_auditor');
+
+            // Pasca Audit
+            Route::get('pasca', 'App\Http\Controllers\PascaAuditController@index')->name('pasca_home');
+            Route::post('pasca/filter', 'App\Http\Controllers\PascaAuditController@index')->name('pasca_filter');
+            Route::get('pasca/evaluasi/table/{id}', 'App\Http\Controllers\PascaAuditController@ed_table')->name('pasca_ed_table');
+            Route::get('pasca/standar/table/{id}', 'App\Http\Controllers\PascaAuditController@ks_table')->name('pasca_ks_table');
             Route::post('pasca/evaluasi', 'App\Http\Controllers\PascaAuditController@ed_table_save')->name('pasca_ed_table_save');
             Route::post('pasca/standar', 'App\Http\Controllers\PascaAuditController@ks_table_save')->name('pasca_ks_table_save');
-
-            Route::get('pasca/confirm/{idi}', 'App\Http\Controllers\PascaAuditController@confirm')->name('pasca_confirm');
-            Route::get('pasca/cancel_confirm/{idi}', 'App\Http\Controllers\PascaAuditController@cancel_confirm')->name('pasca_cancel_confirm');
+            Route::get('pasca/confirm/{id}', 'App\Http\Controllers\PascaAuditController@confirm')->name('pasca_confirm');
+            Route::get('pasca/cancel_confirm/{id}', 'App\Http\Controllers\PascaAuditController@cancel_confirm')->name('pasca_cancel_confirm');
         }
     );
 
@@ -115,15 +124,6 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('standar/delete/{id_standar}', 'App\Http\Controllers\KSController@delete')->name('ks_delete');
             Route::post('standar/change', 'App\Http\Controllers\KSController@change_action')->name('ks_change_action');
-        }
-    );
-
-
-    Route::group(
-        ['middleware' => 'pjm_kajur'],
-        function () {
-            Route::get('evaluasi/filter/prodi/{prodi_id}', 'App\Http\Controllers\EDController@filter_prodi')->name('ed_filter_prodi');
-            Route::get('standar/filter/prodi/{prodi_id}', 'App\Http\Controllers\KSController@filter_prodi')->name('ks_filter_prodi');
         }
     );
 
@@ -142,14 +142,12 @@ Route::group(['middleware' => 'auth'], function () {
             // Evaluasi Diri
             Route::get('evaluasi', 'App\Http\Controllers\EDController@home')->name('ed_home');
             Route::get('evaluasi/table/{id_evaluasi}', 'App\Http\Controllers\EDController@table')->name('ed_table');
-            Route::get('evaluasi/filter/year/{year}', 'App\Http\Controllers\EDController@filter_year')->name('ed_filter_year');
             Route::post('evaluasi/export', 'App\Http\Controllers\EDController@export_all')->name('ed_export_all');
             Route::post('evaluasi/export/file', 'App\Http\Controllers\EDController@export_file')->name('ed_export_file');
 
             // Ketercapaian Standar
             Route::get('standar', 'App\Http\Controllers\KSController@home')->name('ks_home');
             Route::get('standar/table/{id_standar}', 'App\Http\Controllers\KSController@table')->name('ks_table');
-            Route::get('standar/filter/year/{year}', 'App\Http\Controllers\KSController@filter_year')->name('ks_filter_year');
             Route::post('standar/export', 'App\Http\Controllers\KSController@export_all')->name('ks_export_all');
             Route::post('standar/export/file', 'App\Http\Controllers\KSController@export_file')->name('ks_export_file');
         }
@@ -182,19 +180,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('password', 'App\Http\Controllers\AuthenticationController@change_pass_action')->name('change_password_action');
 
 
-    Route::get('pengumuman/{id}', 'App\Http\Controllers\PengumumanController@close')->name('close_pengumuman');
+    // Pengumuman
+    Route::post('pengumuman/close', 'App\Http\Controllers\PengumumanController@close')->name('close_pengumuman');
 
 
-    // Tilik
-    Route::get('tilik/{kategori?}', 'App\Http\Controllers\TilikController@index')->name('tilik_home');
-    Route::get('tilik/{kategori?}/{year}', 'App\Http\Controllers\TilikController@filter_year')->name('tilik_year');
-    Route::get('tilik/evaluasi/table/{id}', 'App\Http\Controllers\TilikController@ed_table')->name('tilik_ed_table');
-    Route::get('tilik/standar/table/{id}', 'App\Http\Controllers\TilikController@ks_table')->name('tilik_ks_table');
-
-
-    // Pasca Audit
-    Route::get('pasca/{kategori?}', 'App\Http\Controllers\PascaAuditController@index')->name('pasca_home');
-    Route::get('pasca/{kategori?}/{year}', 'App\Http\Controllers\PascaAuditController@filter_year')->name('pasca_year');
-    Route::get('pasca/evaluasi/table/{id}', 'App\Http\Controllers\PascaAuditController@ed_table')->name('pasca_ed_table');
-    Route::get('pasca/standar/table/{id}', 'App\Http\Controllers\PascaAuditController@ks_table')->name('pasca_ks_table');
+    // Logout
+    Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
 });

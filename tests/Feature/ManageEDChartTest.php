@@ -63,7 +63,7 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1');
+        $this->get('pasca/confirm/1');
         $this->get('ed_chart')->assertStatus(200);
     }
 
@@ -72,14 +72,12 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1');
+        $this->get('pasca/confirm/1');
 
         $data = [
-            'prodi' => 'all',
-            'jurusan' => 'all',
             'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri semua jurusan tahun 2022');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Tahun 2022');
     }
 
 
@@ -87,14 +85,13 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1');
+        $this->get('pasca/confirm/1');
 
         $data = [
-            'prodi' => 'all',
             'jurusan' => 1,
             'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri JMTI tahun 2022');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('JMTI 2022');
     }
 
 
@@ -102,13 +99,13 @@ class ManageEDChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('evaluasi/confirm/1');
+        $this->get('pasca/confirm/1');
 
         $data = [
             'prodi' => 11,
             'jurusan' => 1,
             'tahun' => 2022
         ];
-        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Evaluasi diri program studi Informatika tahun 2022');
+        $this->post('ed_chart', $data)->assertStatus(200)->assertSeeText('Informatika 2022');
     }
 }

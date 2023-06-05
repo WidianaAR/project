@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Prodi</title>
+@endsection
+
 @section('isi')
     @if (session('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -18,7 +23,18 @@
         <div class="col pl-1">
             <h5>Program studi</h5>
         </div>
-        <span class="text-muted">Program studi / <a href="">Semua data</a></span>
+        <div class="box col-auto text-right">
+            <button data-toggle="dropdown" aria-expanded="false" class="simple">
+                Jurusan <i class='fa fa-chevron-down fa-sm'></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
+                <a class="dropdown-item {{ Request::is('prodis') ? 'active' : '' }}" href="{{ URL('prodis') }}">Semua</a>
+                @foreach ($jurusans as $jurusan)
+                    <a class="dropdown-item {{ Request::is('prodis/filter/' . $jurusan->id) ? 'active' : '' }}"
+                        href="{{ route('prodis_filter', $jurusan->id) }}">{{ $jurusan->nama_jurusan }}</a>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <div class="element pb-1">
@@ -40,12 +56,13 @@
                             <td>{{ $prodi->nama_prodi }}</td>
                             <td>
                                 <a type="button" class="btn btn-outline-success btn-sm"
-                                    href="{{ route('prodis.edit', $prodi->id) }}"><i class="fa fa-edit"></i> Ubah</a>
+                                    href="{{ route('prodis.edit', $prodi->id) }}"><i class="fa fa-sm fa-edit"></i> Ubah</a>
                                 <form action="{{ route('prodis.destroy', $prodi->id) }}" method="POST" class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
+                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-sm fa-trash"></i>
+                                        Hapus</button>
                                 </form>
                             </td>
                         </tr>

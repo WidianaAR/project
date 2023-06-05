@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ForgetPassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthenticationController extends Controller
 {
     public function login()
     {
-        return view('login');
+        return view('authentication.login');
     }
 
     public function login_action(Request $request)
     {
         $credential = $request->validate([
-            'email' => 'required|email:dns',
+            'email' => 'email:dns',
             'password' => 'required',
         ]);
 
@@ -52,7 +55,7 @@ class AuthenticationController extends Controller
 
     public function change_pass($id)
     {
-        return view('change_password', ['user' => User::find($id)]);
+        return view('authentication.change_password', ['user' => User::find($id)]);
     }
 
     public function change_pass_action(Request $request)
@@ -65,8 +68,8 @@ class AuthenticationController extends Controller
         }
 
         $request->validate([
-            'password' => 'required|min:8|string',
-            'conf_pass' => 'required|same:password'
+            'password' => 'min:8|string',
+            'conf_pass' => 'same:password'
         ], [
                 'password.min' => 'Password minimal 8 karakter!',
                 'conf_pass.same' => 'Password tidak sama, mohon periksa kembali input Anda.'
@@ -78,5 +81,71 @@ class AuthenticationController extends Controller
             ->performedOn($data)
             ->log('User mengubah password');
         return redirect()->route('ed_chart')->with('success', 'Password akun berhasil diubah.');
+    }
+
+    public function forget_pass()
+    {
+        return view('authentication.forget_password');
+    }
+
+    public function forget_pass_action(Request $request)
+    {
+        $request->validate([
+            'email' => 'email|exists:users|unique:forget_passwords'
+        ], [
+                'email.exists' => 'Email tidak terdaftar dalam sistem!',
+                'email.unique' => 'Tautan sudah dikirim, mohon periksa email Anda!'
+            ]);
+
+        $token = Str::random(64);
+
+        ForgetPassword::create([
+            'email' => $request->email,
+            'token' => $token
+        ]);
+
+        Mail::send('authentication.email_forget_password', compact('token'), function ($message) use ($request) {
+            $message->to($request->email);
+            $message->subject('Reset password akun Simjamu ITK');
+        });
+
+        activity()->log('User mengirim tautan reset password ke ' . $request->email);
+        return back()->with('success', 'Tautan untuk reset password sudah dikirim ke email anda!');
+    }
+
+    public function reset_pass($token)
+    {
+        return view('authentication.reset_password', ['token' => $token]);
+    }
+
+    public function reset_pass_action(Request $request)
+    {
+        $request->validate([
+            'email' => 'email:dns|exists:users',
+            'password' => 'min:8|string',
+            'password_conf' => 'same:password',
+        ], [
+                'email.exists' => 'Email tidak terdaftar dalam sistem',
+                'password.min' => 'Password minimal 8 karakter!',
+                'password_conf.same' => 'Password tidak sama, mohon periksa kembali password Anda.'
+            ]);
+
+        $updatePassword = ForgetPassword::where([
+            'email' => $request->email,
+            'token' => $request->token
+        ])->first();
+
+        if (!$updatePassword) {
+            return back()->withErrors(['token_error' => 'Invalid token!']);
+        }
+
+        User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
+        ForgetPassword::where([
+            'email' => $request->email,
+            'token' => $request->token
+        ])->delete();
+        activity()->log('User merubah password akun ' . $request->email);
+
+        return redirect('/login')->with('success', 'Password berhasil diubah');
     }
 }

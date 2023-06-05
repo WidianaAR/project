@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>User</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
@@ -90,35 +94,30 @@
                 <input name="id" value="{{ $user->id }}" hidden>
 
                 <label class="mb-1">Nama</label>
-                <div class="input-group mb-3">
-                    <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                        class="form-control form-control-sm m-0 @error('name') is-invalid mb-0 @enderror"
-                        aria-describedby="name_error" required>
-                    @error('name')
-                        <div id="name_error" class="invalid-feedback mt-0 mb-2">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
+                <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                    class="form-control form-control-sm @error('name') is-invalid mb-0 @enderror"
+                    aria-describedby="name_error" required>
+                @error('name')
+                    <div id="name_error" class="invalid-feedback mt-0 mb-2">
+                        {{ $message }}
+                    </div>
+                @enderror
 
                 <label class="mb-1">Email</label>
-                <div class="input-group mb-3">
-                    <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                        class="form-control form-control-sm m-0 @error('email') is-invalid mb-0 @enderror"
-                        aria-describedby="email_error" required>
-                    @error('email')
-                        <div id="email_error" class="invalid-feedback mt-0 mb-2">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
+                <input type="email" name="email" value="{{ old('email', $user->email) }}"
+                    class="form-control form-control-sm @error('email') is-invalid mb-0 @enderror"
+                    aria-describedby="email_error" required>
+                @error('email')
+                    <div id="email_error" class="invalid-feedback mt-0 mb-2">
+                        {{ $message }}
+                    </div>
+                @enderror
 
                 <label class="mb-1">Password</label>
                 <div
-                    class="d-flex w-100 div-input align-items-center py-1 pl-0 pr-2 form-control form-control-sm @error('password') is-invalid mb-0 @enderror">
+                    class="d-flex w-100 div-input align-items-center pl-0 pr-2 mb-0 form-control form-control-sm @error('password') is-invalid @enderror">
                     <input class="mx-2 input-field border-0" type="password" name="password" id="password"
-                        aria-describedby="password_error"
-                        placeholder="Password bisa dikosongkan jika tidak ingin merubah password lama">
+                        aria-describedby="password_error">
                     <div onclick="togglePassword()">
                         <i id="icon-toggle" class="fa fa-eye fa-sm" style="color: #b5b5b5"></i>
                     </div>
@@ -127,11 +126,14 @@
                     <div id="password_error" class="invalid-feedback mt-0 mb-2">
                         {{ $message }}
                     </div>
+                @else
+                    <small class="text-danger"> <i class="fa fa-circle-info"></i> Isi jika ingin merubah password
+                        akun</small>
                 @enderror
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="d-md-flex justify-content-md-end">
                     <a class="btn btn-sm btn-secondary mr-2" type="button" href="{{ route('user') }}">Batal</a>
-                    <input class="btn btn-sm btn-primary" type="submit" value="Simpan">
+                    <input class="btn btn-sm btn-primary" type="submit" value="Simpan perubahan">
                 </div>
             </form>
         </div>

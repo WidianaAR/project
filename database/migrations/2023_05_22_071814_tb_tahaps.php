@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('tahaps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dokumen_id')->constrained();
+            $table->foreignId('dokumen_id')->constrained()->onDelete('cascade');
             $table->foreignId('status_id')->constrained();
             $table->timestamps();
         });

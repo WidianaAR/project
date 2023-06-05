@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -28,6 +29,14 @@ class ManageUserTest extends TestCase
     {
         $this->pjm_login();
         $this->get('user')->assertStatus(200);
+    }
+
+    public function test_page_displays_a_list_of_users()
+    {
+        $this->pjm_login();
+        $response = $this->get('user');
+        $users = User::with(['role', 'user_access_file', 'user_access_file.jurusan', 'user_access_file.prodi'])->latest()->paginate(8);
+        $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
     public function test_add_user_page_rendered()
@@ -80,27 +89,35 @@ class ManageUserTest extends TestCase
         $this->get('user/delete/1')->assertRedirect('user')->assertStatus(302);
     }
 
-    public function test_filter_user_pjm()
+    public function test_page_displays_a_list_of_pjms()
     {
         $this->pjm_login();
-        $this->get('user/filter/pjm')->assertStatus(200);
+        $response = $this->get('user/filter/1');
+        $users = User::with('role')->where('role_id', 1)->latest()->paginate(8);
+        $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
-    public function test_filter_user_kajur()
+    public function test_page_displays_a_list_of_kajurs()
     {
         $this->pjm_login();
-        $this->get('user/filter/kajur')->assertStatus(200);
+        $response = $this->get('user/filter/2');
+        $users = User::with(['role', 'user_access_file', 'user_access_file.jurusan'])->where('role_id', 2)->latest()->paginate(8);
+        $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
-    public function test_filter_user_koorprodi()
+    public function test_page_displays_a_list_of_koorprodis()
     {
         $this->pjm_login();
-        $this->get('user/filter/koorprodi')->assertStatus(200);
+        $response = $this->get('user/filter/3');
+        $users = User::with(['role', 'user_access_file', 'user_access_file.jurusan', 'user_access_file.prodi'])->where('role_id', 3)->latest()->paginate(8);
+        $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 
-    public function test_filter_user_auditor()
+    public function test_page_displays_a_list_of_auditors()
     {
         $this->pjm_login();
-        $this->get('user/filter/auditor')->assertStatus(200);
+        $response = $this->get('user/filter/4');
+        $users = User::with(['role', 'user_access_file', 'user_access_file.prodi'])->where('role_id', 4)->latest()->paginate(8);
+        $response->assertViewIs('user.home')->assertViewHas('users', $users);
     }
 }

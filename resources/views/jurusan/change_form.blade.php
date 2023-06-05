@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Jurusan</title>
+@endsection
+
 @section('isi')
     @if (session('error_store'))
         <div class="alert alert-danger" role="alert" id="msg-box">
@@ -31,7 +36,7 @@
                     </div>
                 @enderror
 
-                <label class="mb-1" for="basic-url" class="form-label">Singkatan</label>
+                <label class="mb-1" class="form-label">Singkatan</label>
                 <input type="text" name="nama_jurusan"
                     class="form-control form-control-sm @error('nama_jurusan') is-invalid mb-0 @enderror"
                     aria-describedby="nama_jurusan_error" value="{{ old('nama_jurusan', $data->nama_jurusan) }}" required>
@@ -41,7 +46,7 @@
                     </div>
                 @enderror
 
-                <label class="mb-1" for="basic-url" class="form-label">Nama jurusan</label>
+                <label class="mb-1" class="form-label">Nama jurusan</label>
                 <input type="text" name="keterangan"
                     class="form-control form-control-sm @error('keterangan') is-invalid mb-0 @enderror"
                     aria-describedby="keterangan_error" value="{{ old('keterangan', $data->keterangan) }}" required>
@@ -51,7 +56,7 @@
                     </div>
                 @enderror
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="d-md-flex justify-content-md-end">
                     <a class="btn btn-sm btn-secondary mr-2" type="button" href="{{ route('jurusans.index') }}">Batal</a>
                     <input class="btn btn-sm btn-primary" type="submit" value="Simpan perubahan">
                 </div>

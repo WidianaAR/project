@@ -18,6 +18,12 @@ class UserController extends Controller
         return view('user.home', compact('users'));
     }
 
+    public function user_filter($role)
+    {
+        $users = User::where('role_id', $role)->latest()->paginate(8);
+        return view('user.home', compact('users'));
+    }
+
     public function delete_user($id)
     {
         $user = User::find($id);
@@ -43,11 +49,10 @@ class UserController extends Controller
     public function add_user_action(Request $request)
     {
         $request->validate([
-            'role_id' => 'required',
-            'name' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|string',
-            'confirm' => 'required|same:password',
+            'name' => 'unique:users',
+            'email' => 'email|unique:users',
+            'password' => 'min:8|string',
+            'confirm' => 'same:password',
         ], [
                 'name.unique' => 'Nama user sudah terdaftar!',
                 'email.unique' => 'Email user sudah terdaftar!',
@@ -101,18 +106,14 @@ class UserController extends Controller
     public function change_user_action(Request $request, $id_user)
     {
         $user = User::find($id_user);
-        $rules = [
-            'role_id' => 'required',
-            'name' => 'required',
-            'email' => 'required|email',
-        ];
+        $rules = ['email' => 'email'];
 
         if ($request->name != $user->name) {
-            $rules['name'] = 'required|unique:users';
+            $rules['name'] = 'unique:users';
         }
 
         if ($request->email != $user->email) {
-            $rules['email'] = 'required|unique:users';
+            $rules['email'] = '|unique:users';
         }
 
         $request->validate($rules, [
@@ -226,6 +227,10 @@ class UserController extends Controller
         }
 
         if ($request->password) {
+            if (Hash::check($request->password, $user->password)) {
+                return back()->withErrors(['password' => 'Password baru tidak boleh sama dengan password lama.']);
+            }
+
             $user->update([
                 'role_id' => $request->role_id,
                 'name' => $request->name,
@@ -245,29 +250,5 @@ class UserController extends Controller
             ->log('Mengubah data user dengan id ' . $user->id);
 
         return redirect('user')->with('success', 'Data user berhasil diubah');
-    }
-
-    public function user_pjm()
-    {
-        $users = User::with('role')->where('role_id', 1)->latest()->paginate(8);
-        return view('user.home', compact('users'));
-    }
-
-    public function user_kajur()
-    {
-        $users = User::with(['role', 'jurusan'])->where('role_id', 2)->latest()->paginate(8);
-        return view('user.home', compact('users'));
-    }
-
-    public function user_koorprodi()
-    {
-        $users = User::with(['role', 'jurusan', 'prodi'])->where('role_id', 3)->latest()->paginate(8);
-        return view('user.home', compact('users'));
-    }
-
-    public function user_auditor()
-    {
-        $users = User::with(['role', 'prodi'])->where('role_id', 4)->latest()->paginate(8);
-        return view('user.home', compact('users'));
     }
 }

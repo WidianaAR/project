@@ -31,7 +31,7 @@
                     Batas akhir upload file :
                 </div>
                 <div class="col text-left">
-                    @include('ketercapaian_standar/countdown')
+                    @include('layouts.countdown')
                 </div>
             @else
                 <div class="col">
@@ -54,25 +54,25 @@
                 @endif
             @endcan
 
-            @if ($data)
+            @if ($file)
                 <div class="col-auto text-right p-0">
                     <form action="{{ route('ks_export_file') }}" method="POST">
                         @csrf
-                        <input name="filename" type="hidden" value="{{ $data->file_data }}">
+                        <input name="filename" type="hidden" value="{{ $file->file_data }}">
                         <input type="submit" class="btn btn-sm btn-primary" value="Export File">
                     </form>
                 </div>
             @endif
 
             @can('koorprodi')
-                <div class="col-auto text-left @if (($data && $data->tahun != date('Y')) || !$deadline[0]) pl-0 @else pl-1 @endif">
+                <div class="col-auto text-left @if (($file && $file->tahun != date('Y')) || !$deadline[0]) pl-0 @else pl-1 @endif">
                     @if ($deadline[0])
-                        @if ($id_standar && $data && $data->tahun == date('Y'))
+                        @if ($id_standar && $file && $file->tahun == date('Y'))
+                            <a type="button" class="btn btn-sm btn-success" href="" data-toggle="modal"
+                                data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                             <a type="button" class="btn btn-sm btn-danger" href="{{ route('ks_delete', $id_standar) }}"
                                 onclick="return confirm('Apakah Anda Yakin Menghapus File?');"><i class="fas fa-trash"></i>
                                 Hapus File Excel</a>
-                            <a type="button" class="btn btn-sm btn-primary" href="" data-toggle="modal"
-                                data-target="#importModal"><i class="fas fa-file-upload"></i> Ganti File Excel</a>
                         @elseif(!$id_standar)
                             <a type="button" class="btn btn-sm btn-primary" href="" data-toggle="modal"
                                 data-target="#importModal"><i class="fas fa-file-upload"></i> Import File Excel</a>
@@ -82,29 +82,21 @@
             @endcan
 
             @cannot('koorprodi')
-                <div class="@if ($data) col-auto text-left @else ml-3 @endif">
+                <div class="@if ($file) col-auto text-left @else ml-3 @endif">
                     <a type="button" class="btn btn-sm btn-secondary" href="{{ route('ks_home') }}">
-                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Kembali
+                        <i class="fa fa-sm fa-arrow-left" aria-hidden="true"></i> Kembali
                     </a>
                 </div>
             @endcannot
         </div>
 
-        @if ($data and $data->keterangan)
-            <div class="row align-items-center my-3 px-3">
-                <span class="border border-danger p-2" style="width: 100%">
-                    <b>Yang perlu diperbaiki:</b>
-                    <br>
-                    {{ $data->keterangan }}
-                </span>
-            </div>
-        @endif
-
         @if ($headers)
             @for ($i = 0; $i < count($sheetName) - 2; $i++)
-                <div class="element text-right">
-                    <span class="text-muted">{{ $data->prodi->nama_prodi }} / <a
-                            href="">{{ $data->tahun }}</a></span>
+                <div class="element">
+                    <span class="text-muted">{{ $file->prodi->nama_prodi }} / {{ $file->tahun }} @can('koorprodi')
+                            /
+                            <a href="" data-toggle="modal" data-target="#tahapModal">{{ $file->status->keterangan }}</a>
+                        @endcan </span>
                     <table class="table mt-2 text-left">
                         <thead>
                             <th colspan="8" class="py-1">
@@ -112,7 +104,7 @@
                             </th>
                             <tr>
                                 @foreach ($headers[$i] as $header)
-                                    @if ($header && $header != 'Tilik' && $header != 'Satuan')
+                                    @if ($header && $header != 'Satuan')
                                         <th class="py-1 align-middle">{{ $header }}</th>
                                     @endif
                                 @endforeach
@@ -138,6 +130,21 @@
                                                 {{ strip_tags(\Illuminate\Support\Str::limit($sheet['J'], 15, '...')) }}
                                             </a>
                                         </td>
+                                        @if (array_key_exists('K', $sheet))
+                                            <td>
+                                                {{ $sheet['K'] }}
+                                            </td>
+                                        @endif
+                                        @if (array_key_exists('L', $sheet))
+                                            <td>
+                                                {{ $sheet['L'] }}
+                                            </td>
+                                        @endif
+                                        @if (array_key_exists('M', $sheet))
+                                            <td>
+                                                {{ $sheet['M'] }}
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endif
                             @endforeach
@@ -147,7 +154,7 @@
             @endfor
         @else
             <div class="my-3 text-center element">
-                <h5>Koorprodi belum memasukkan data ketercapaian standar tahun {{ date('Y') }}</h5>
+                <h5>Koorprodi belum mengunggah file ketercapaian standar tahun {{ date('Y') }}</h5>
             </div>
         @endif
         </div>
@@ -167,21 +174,33 @@
                     <form action="{{ route('ks_import_action') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
-                            <h2>Pilih File</h2>
-                            <input type="file" name="file">
+                            <h5 class="pb-3">Silahkan unggah file ketercapaian standar tahun {{ date('Y') }}</h5>
+                            <input class="form-control form-control-sm" type="file" name="file">
                             <input type="text" name="prodi" value="{{ Auth::user()->user_access_file[0]->prodi_id }}"
                                 hidden>
-                            <input type="text" name="tahun" value="{{ $data->tahun ?? date('Y') }}" hidden>
-                            <input type="text" name="id" value="{{ $data->id ?? '' }}" hidden>
+                            <input type="text" name="tahun" value="{{ $file->tahun ?? date('Y') }}" hidden>
+                            <input type="text" name="id" value="{{ $file->id ?? '' }}" hidden>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
-                            <input class="btn btn-sm btn-primary" type="submit" value="Simpan">
+                            <input class="btn btn-sm btn-primary" type="submit" value="Unggah file">
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
+        @if ($file)
+            <div class="modal fade" id="tahapModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="row pl-5">
+                            @include('layouts.tahap_breadcrumb')
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     @endcan
 </body>
 

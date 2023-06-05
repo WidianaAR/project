@@ -48,4 +48,9 @@ trait FileTrait
     {
         Storage::disk('public')->delete($path);
     }
+
+    public function ChangeFileName($old, $new)
+    {
+        Storage::move('public/' . $old, 'public/' . $new);
+    }
 }

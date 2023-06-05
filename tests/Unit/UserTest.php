@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -32,43 +33,35 @@ class UserTest extends TestCase
     }
 
     // Controller test
-    public function test_page_displays_a_list_of_users()
+    public function test_input_validation()
     {
-        $this->pjm_login();
-        $response = $this->get('user');
-        $users = User::with(['role', 'jurusan', 'prodi'])->latest()->paginate(8);
-        $response->assertViewIs('user.home')->assertViewHas('users', $users);
-    }
+        $data = [
+            'name' => 'New User',
+            'email' => 'new@gmail.com',
+            'password' => 'SimjamuTest123',
+            'confirm' => 'SimjamuTest123',
+        ];
+        $data2 = [
+            'name' => 'Ini akun PJM',
+            'email' => 'pjm@gmail.com',
+            'password' => 'SimjamuTest123',
+            'confirm' => 'SimjamuTest',
+        ];
 
-    public function test_page_displays_a_list_of_pjms()
-    {
-        $this->pjm_login();
-        $response = $this->get('user/filter/pjm');
-        $users = User::with('role')->where('role_id', 1)->latest()->paginate(8);
-        $response->assertViewIs('user.home')->assertViewHas('users', $users);
-    }
+        $validator = Validator::make($data, [
+            'name' => 'unique:users',
+            'email' => 'email|unique:users',
+            'password' => 'min:8|string',
+            'confirm' => 'same:password',
+        ]);
+        $validator2 = Validator::make($data2, [
+            'name' => 'unique:users',
+            'email' => 'email|unique:users',
+            'password' => 'min:8|string',
+            'confirm' => 'same:password',
+        ]);
 
-    public function test_page_displays_a_list_of_kajurs()
-    {
-        $this->pjm_login();
-        $response = $this->get('user/filter/kajur');
-        $users = User::with(['role', 'jurusan'])->where('role_id', 2)->latest()->paginate(8);
-        $response->assertViewIs('user.home')->assertViewHas('users', $users);
-    }
-
-    public function test_page_displays_a_list_of_koorprodis()
-    {
-        $this->pjm_login();
-        $response = $this->get('user/filter/koorprodi');
-        $users = User::with(['role', 'jurusan', 'prodi'])->where('role_id', 3)->latest()->paginate(8);
-        $response->assertViewIs('user.home')->assertViewHas('users', $users);
-    }
-
-    public function test_page_displays_a_list_of_auditors()
-    {
-        $this->pjm_login();
-        $response = $this->get('user/filter/auditor');
-        $users = User::with(['role', 'jurusan', 'prodi'])->where('role_id', 4)->latest()->paginate(8);
-        $response->assertViewIs('user.home')->assertViewHas('users', $users);
+        $this->assertTrue($validator->passes());
+        $this->assertFalse($validator2->passes());
     }
 }

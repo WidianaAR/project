@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Jurusan</title>
+@endsection
+
 @section('isi')
     @if (session('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -40,13 +45,15 @@
                             <td>{{ $jurusan->keterangan }}</td>
                             <td>
                                 <a type="button" class="btn btn-outline-success btn-sm"
-                                    href="{{ route('jurusans.edit', $jurusan->id) }}"><i class="fa fa-edit"></i> Ubah</a>
+                                    href="{{ route('jurusans.edit', $jurusan->id) }}"><i class="fa fa-sm fa-edit"></i>
+                                    Ubah</a>
                                 <form action="{{ route('jurusans.destroy', $jurusan->id) }}" method="POST"
                                     class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
+                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-sm fa-trash"></i>
+                                        Hapus</button>
                                 </form>
                             </td>
                         </tr>

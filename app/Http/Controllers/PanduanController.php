@@ -17,7 +17,7 @@ class PanduanController extends Controller
 
     public function index_others()
     {
-        return view('panduan.home', ['panduans' => Panduan::paginate(8)]);
+        return view('panduan.home', ['panduans' => Panduan::latest()->paginate(8)]);
     }
 
     public function create()
@@ -27,15 +27,13 @@ class PanduanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'judul' => 'required',
-            'keterangan' => 'required'
-        ]);
-
-        $extension = $request->file('file_data')->extension();
-        $filename = $request->judul . '.' . $extension;
-
-        $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
+        if ($request->file('file_data')) {
+            $extension = $request->file('file_data')->extension();
+            $filename = $request->judul . '.' . $extension;
+            $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
+        } else {
+            $path = null;
+        }
 
         $panduan = Panduan::create([
             'judul' => $request->judul,
@@ -60,16 +58,18 @@ class PanduanController extends Controller
 
     public function update(Request $request, Panduan $panduan)
     {
-        $request->validate([
-            'judul' => 'required',
-            'keterangan' => 'required'
-        ]);
-
-        $extension = $request->file('file_data')->extension();
-        $filename = $request->judul . '.' . $extension;
-
-        $this->DeleteFile($panduan->file_data);
-        $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
+        if ($request->file('file_data')) {
+            $extension = $request->file('file_data')->extension();
+            $filename = $request->judul . '.' . $extension;
+            if ($panduan->file_data) {
+                $this->DeleteFile($panduan->file_data);
+            }
+            $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
+        } else {
+            $extension = pathinfo($panduan->file_data, PATHINFO_EXTENSION);
+            $path = 'Panduans/' . $request->judul . '.' . $extension;
+            $this->ChangeFileName($panduan->file_data, $path);
+        }
 
         Panduan::find($panduan->id)->update([
             'judul' => $request->judul,
@@ -85,7 +85,9 @@ class PanduanController extends Controller
     public function destroy($id)
     {
         $panduan = Panduan::find($id);
-        $this->DeleteFile($panduan->file_data);
+        if ($panduan->file_data) {
+            $this->DeleteFile($panduan->file_data);
+        }
         activity()
             ->performedOn($panduan)
             ->log('Menghapus data panduan ' . $panduan->judul);

@@ -1,13 +1,24 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>Evaluasi Diri</title>
+@endsection
+
 @section('isi')
+    @if (Session::has('error'))
+        <div class="alert alert-danger" role="alert" id="msg-box">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ Session::get('error') }}
+        </div>
+    @endif
+
     <div class="row align-items-center">
         @if ($deadline[0])
             <div class="col-auto pr-0">
                 Batas akhir upload file :
             </div>
             <div class="col text-left">
-                @include('evaluasi_diri/countdown')
+                @include('layouts.countdown')
             </div>
         @else
             <div class="col">
@@ -42,7 +53,7 @@
                     @endforeach
                 </select>
                 <input type="text" name="tahun" value="{{ date('Y') }}" hidden>
-                <div class="d-grid mt-3 gap-2 d-md-flex justify-content-md-end">
+                <div class="mt-3 d-md-flex justify-content-md-end">
                     <a class="btn btn-sm btn-secondary mr-2" type="button" value="Batal"
                         href="{{ route('ed_home') }}">Batal</a>
                     <input class="btn btn-sm btn-primary" type="submit" value="Tambah data">

@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Prodi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class ProdiTest extends TestCase
@@ -32,11 +33,29 @@ class ProdiTest extends TestCase
     }
 
     // Controller test
-    public function test_page_displays_a_list_of_prodis()
+    public function test_input_validation()
     {
-        $this->pjm_login();
-        $response = $this->get(route('prodis.index'));
-        $prodis = Prodi::with('jurusan')->paginate(8);
-        $response->assertViewIs('prodi.home')->assertViewHas('prodis', $prodis);
+        $data = [
+            'kode_prodi' => 31,
+            'jurusan_id' => 1,
+            'nama_prodi' => 'Prodi validasi',
+        ];
+        $data2 = [
+            'kode_prodi' => 11,
+            'jurusan_id' => 1,
+            'nama_prodi' => 'Informatika',
+        ];
+
+        $validator = Validator::make($data, [
+            'kode_prodi' => 'unique:prodis',
+            'nama_prodi' => 'unique:prodis'
+        ]);
+        $validator2 = Validator::make($data2, [
+            'kode_prodi' => 'unique:prodis',
+            'nama_prodi' => 'unique:prodis'
+        ]);
+
+        $this->assertTrue($validator->passes());
+        $this->assertFalse($validator2->passes());
     }
 }

@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>Panduan</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
@@ -38,12 +42,9 @@
                 <label class="col-2">File : </label>
                 <div class="col">
                     <input type="file" class="form-control form-control-sm @error('file_data') is-invalid mb-0 @enderror"
-                        name="file_data" aria-describedby="file_data_error" required>
-                    @error('file_data')
-                        <div class="invalid-feedback mt-0 mb-2" id="file_data_error">
-                            {{ message }}
-                        </div>
-                    @enderror
+                        name="file_data" aria-describedby="file_data_error">
+                    <small class="text-danger"><i class="fa fa-circle-info"></i> Unggah file baru jika ingin merubah file
+                        panduan</small>
                 </div>
             </div>
 

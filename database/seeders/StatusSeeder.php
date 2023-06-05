@@ -23,7 +23,6 @@ class StatusSeeder extends Seeder
             ['keterangan' => 'berisi tilik dan nilai akhir'],
             ['keterangan' => 'berisi tilik, komentar, dan nilai akhir'],
             ['keterangan' => 'dikonfirmasi'],
-            ['keterangan' => 'konfirmasi dibatalkan'],
         ];
 
         foreach ($status as $value) {

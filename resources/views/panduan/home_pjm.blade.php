@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Panduan</title>
+@endsection
+
 @section('isi')
     @if (session('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -29,22 +34,29 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $panduan->judul }}</td>
-                            <td>{{ strip_tags(\Illuminate\Support\Str::limit($panduan->keterangan, 20, '...')) }}</td>
+                            <td>{{ strip_tags(\Illuminate\Support\Str::limit($panduan->keterangan, 30, '...')) }}</td>
                             <td>
-                                <a
-                                    href="{{ route('panduan_download', $panduan->id) }}">{{ strip_tags(\Illuminate\Support\Str::limit(basename($panduan->file_data), 15, '...')) }}</a>
+                                @if ($panduan->file_data)
+                                    <a href="{{ route('panduan_download', $panduan->id) }}"><i
+                                            class="fa-solid fa-download"></i></a>
+                                @else
+                                    -
+                                @endif
                             </td>
                             <td class="wd-2">
                                 <a type="button" class="btn btn-outline-secondary btn-sm"
-                                    href="{{ route('panduans.show', $panduan->id) }}"><i class="fa fa-eye"></i> Lihat</a>
+                                    href="{{ route('panduans.show', $panduan->id) }}"><i class="fa fa-sm fa-eye"></i>
+                                    Lihat</a>
                                 <a type="button" class="btn btn-outline-success btn-sm"
-                                    href="{{ route('panduans.edit', $panduan->id) }}"><i class="fa fa-edit"></i> Ubah</a>
+                                    href="{{ route('panduans.edit', $panduan->id) }}"><i class="fa fa-sm fa-edit"></i>
+                                    Ubah</a>
                                 <form action="{{ route('panduans.destroy', $panduan->id) }}" method="POST"
                                     class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
+                                        class="btn btn-outline-danger btn-sm"><i class="fa fa-sm fa-trash"></i>
+                                        Hapus</button>
                                 </form>
                             </td>
                         </tr>

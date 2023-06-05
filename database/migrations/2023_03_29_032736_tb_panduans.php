@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->string('judul');
             $table->text('keterangan');
-            $table->string('file_data');
+            $table->string('file_data')->nullable();
             $table->timestamps();
         });
     }

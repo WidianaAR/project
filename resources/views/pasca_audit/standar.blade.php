@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>Pasca Audit</title>
+@endsection
+
 @section('isi')
     @if (Session::has('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -13,45 +17,35 @@
             <span class="text-muted">Daftar komentar / Standar / <a href="">{{ $data->prodi->nama_prodi }}
                     {{ $data->tahun }}</a></span>
         </div>
-        @can('auditor')
-            @if ($data->status_id != 7)
-                <button id="tambah" class="btn btn-sm btn-primary mr-2" onclick="showKomentar()">
-                    @if ($data->status_id == 4 || $data->status_id == 6)
-                        Ubah
-                    @else
-                        Tambah
-                    @endif komentar
-                </button>
+        @if ($data->status_id != 7)
+            <button id="tambah" class="btn btn-sm btn-primary mr-2" onclick="showKomentar()">
+                @if ($data->status_id == 4 || $data->status_id == 6)
+                    Ubah
+                @else
+                    Tambah
+                @endif komentar
+            </button>
 
-                <button id="tambah_nilai" class="btn btn-sm btn-primary mr-2" onclick="showNilai()">
-                    @if ($data->status_id == 5 || $data->status_id == 6)
-                        Ubah
-                    @else
-                        Tambah
-                    @endif Nilai
-                </button>
-            @endif
+            <button id="tambah_nilai" class="btn btn-sm btn-primary mr-2" onclick="showNilai()">
+                @if ($data->status_id == 5 || $data->status_id == 6)
+                    Ubah
+                @else
+                    Tambah
+                @endif Nilai
+            </button>
+        @endif
 
-            <a href="{{ route('pasca_confirm', $data->id) }}" id="konfirmasi" class="btn btn-sm btn-success mr-2"
-                onclick="return confirm('Data yang sudah dikonfirmasi akan tampil pada grafik. Yakin konfirmasi data?');"
-                @if ($data->status_id != 6) hidden @endif> Konfirmasi
-            </a>
+        <a href="{{ route('pasca_confirm', $data->id) }}" id="konfirmasi" class="btn btn-sm btn-success mr-2"
+            onclick="return confirm('Data yang sudah dikonfirmasi akan tampil pada grafik. Yakin konfirmasi data?');"
+            @if ($data->status_id != 6) hidden @endif> Konfirmasi
+        </a>
 
-            <a href="{{ route('pasca_cancel_confirm', $data->id) }}" id="konfirmasi" class="btn btn-sm btn-success mr-2"
-                @if ($data->status_id != 7) hidden @endif> Batal konfirmasi
-            </a>
-        @endcan
-        @cannot('auditor')
-            <div class="col text-right px-2">
-                <form action="{{ route('ed_export_file') }}" method="POST">
-                    @csrf
-                    <input name="filename" type="hidden" value="{{ $data->file_data }}">
-                    <input type="submit" class="btn btn-sm btn-primary" value="Export file">
-                </form>
-            </div>
-        @endcan
-        <a href="@if (Auth::user()->role_id == 4) {{ route('pasca_home_auditor') }} @else {{ route('pasca_home') }} @endif"
-            type="button" class="btn btn-sm btn-secondary"> <i class="fa fa-arrow-left" aria-hidden="true"></i>Kembali</a>
+        <a href="{{ route('pasca_cancel_confirm', $data->id) }}" id="konfirmasi" class="btn btn-sm btn-success mr-2"
+            @if ($data->status_id != 7) hidden @endif> Batal konfirmasi
+        </a>
+
+        <a href="{{ route('pasca_home') }}" type="button" class="btn btn-sm btn-secondary"> <i
+                class="fa fa-sm fa-arrow-left" aria-hidden="true"></i>Kembali</a>
     </div>
 
     <form action="{{ route('pasca_ks_table_save') }}" method="POST">

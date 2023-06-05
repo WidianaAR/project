@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>User</title>
+@endsection
+
 @section('isi')
     @if (Session::has('success'))
         <div class="alert alert-success" role="alert" id="msg-box">
@@ -25,14 +29,14 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
                 <a class="dropdown-item {{ Request::is('user') ? 'active' : '' }}" href="{{ URL('user') }}">Semua</a>
-                <a class="dropdown-item {{ Request::is('user/filter/pjm') ? 'active' : '' }}"
-                    href="{{ route('user_pjm') }}">PJM</a>
-                <a class="dropdown-item {{ Request::is('user/filter/kajur') ? 'active' : '' }}"
-                    href="{{ route('user_kajur') }}">Ketua Jurusan</a>
-                <a class="dropdown-item {{ Request::is('user/filter/koorprodi') ? 'active' : '' }}"
-                    href="{{ route('user_koorprodi') }}">Koordinator Program Studi</a>
-                <a class="dropdown-item {{ Request::is('user/filter/auditor') ? 'active' : '' }}"
-                    href="{{ route('user_auditor') }}">Auditor</a>
+                <a class="dropdown-item {{ Request::is('user/filter/1') ? 'active' : '' }}"
+                    href="{{ route('user_filter', 1) }}">PJM</a>
+                <a class="dropdown-item {{ Request::is('user/filter/2') ? 'active' : '' }}"
+                    href="{{ route('user_filter', 2) }}">Ketua Jurusan</a>
+                <a class="dropdown-item {{ Request::is('user/filter/3') ? 'active' : '' }}"
+                    href="{{ route('user_filter', 3) }}">Koordinator Program Studi</a>
+                <a class="dropdown-item {{ Request::is('user/filter/4') ? 'active' : '' }}"
+                    href="{{ route('user_filter', 4) }}">Auditor</a>
             </div>
         </div>
     </div>
@@ -76,10 +80,10 @@
                             @endif
                             <td>
                                 <a type="button" class="btn btn-outline-success btn-sm"
-                                    href="{{ route('change_user', $user->id) }}"><i class="fa fa-edit"></i> Ubah</a>
+                                    href="{{ route('change_user', $user->id) }}"><i class="fa fa-sm fa-edit"></i> Ubah</a>
                                 <a type="button" href="{{ route('delete_user', $user->id) }}"
                                     onclick="return confirm('Apakah Anda yakin ingin menghapus data?');"
-                                    class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Hapus</a>
+                                    class="btn btn-outline-danger btn-sm"><i class="fa fa-sm fa-trash"></i> Hapus</a>
                             </td>
                         </tr>
                     @endforeach

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Dokumen;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -64,6 +65,14 @@ class ManageKSTest extends TestCase
         $this->get('standar')->assertStatus(200);
     }
 
+    public function test_page_displays_a_list_of_datas()
+    {
+        $this->pjm_login();
+        $response = $this->get('standar');
+        $data = Dokumen::where('kategori', 'standar')->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
+    }
+
     public function test_ks_set_time_page_rendered()
     {
         $this->pjm_login();
@@ -74,7 +83,6 @@ class ManageKSTest extends TestCase
     {
         $this->pjm_login();
         $data = [
-            'id' => 1,
             'date' => '2023-10-01',
             'time' => '13:00',
         ];
@@ -85,9 +93,10 @@ class ManageKSTest extends TestCase
     public function test_ks_time_end()
     {
         $this->test_ks_set_time();
-        $this->get('standar/set_time/1')->assertStatus(302);
-        $this->assertDatabaseHas('k_s_deadlines', [
-            'id' => 1,
+        $this->get('standar/set_time/4')->assertStatus(302);
+        $this->assertDatabaseHas('deadlines', [
+            'id' => 4,
+            'kategori' => 'standar',
             'status' => 'finish',
         ]);
     }
@@ -109,7 +118,7 @@ class ManageKSTest extends TestCase
             'tahun' => 2023,
         ];
         $this->post('standar', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
-        $this->assertDatabaseHas('ketercapaian_standars', [
+        $this->assertDatabaseHas('dokumens', [
             'file_data' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'
         ]);
     }
@@ -117,13 +126,13 @@ class ManageKSTest extends TestCase
     public function test_ks_table_page_rendered()
     {
         $this->kajur_login();
-        $this->get('standar/table/1')->assertStatus(200);
+        $this->get('standar/table/17')->assertStatus(200);
     }
 
     public function test_ks_edit_page_rendered()
     {
         $this->kajur_login();
-        $this->get('standar/change/1')->assertStatus(200);
+        $this->get('standar/change/17')->assertStatus(200);
     }
 
     public function test_ks_edit_file()
@@ -131,13 +140,13 @@ class ManageKSTest extends TestCase
         $this->kajur_login();
         $file = $this->dummy_file();
         $data = [
-            'id_standar' => 1,
+            'id_standar' => 17,
             'file' => $file,
             'prodi' => 18,
             'tahun' => 2023,
         ];
         $this->post('standar/change', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
-        $this->assertDatabaseHas('ketercapaian_standars', [
+        $this->assertDatabaseHas('dokumens', [
             'file_data' => 'Files/Ketercapaian Standar_Bisnis Digital_2023.xlsx'
         ]);
     }
@@ -145,9 +154,10 @@ class ManageKSTest extends TestCase
     public function test_ks_delete()
     {
         $this->kajur_login();
-        $this->get('standar/delete/1')->assertRedirect('standar')->assertStatus(302);
-        $this->assertDatabaseMissing('ketercapaian_standars', [
+        $this->get('standar/delete/17')->assertRedirect('standar')->assertStatus(302);
+        $this->assertDatabaseMissing('dokumens', [
             'prodi_id' => 11,
+            'kategori' => 'standar',
             'tahun' => 2022
         ]);
     }
@@ -155,35 +165,21 @@ class ManageKSTest extends TestCase
     public function test_ks_confirm()
     {
         $this->auditor_login();
-        $this->get('standar/confirm/1')->assertRedirect('standar/table/1')->assertStatus(302)->assertSessionHas('success');
-        $this->assertDatabaseHas('ketercapaian_standars', [
-            'id' => 1,
-            'status' => 'disetujui'
+        $this->get('pasca/confirm/17')->assertStatus(302)->assertSessionHas('success');
+        $this->assertDatabaseHas('dokumens', [
+            'id' => 17,
+            'status_id' => 7
         ]);
     }
 
     public function test_ks_cancel_confirm()
     {
         $this->auditor_login();
-        $this->get('standar/confirm/1')->assertRedirect('standar/table/1')->assertStatus(302)->assertSessionHas('success');
-        $this->get('standar/cancel_confirm/1')->assertRedirect('standar/table/1')->assertStatus(302);
-        $this->assertDatabaseHas('ketercapaian_standars', [
-            'id' => 1,
-            'status' => 'ditinjau'
-        ]);
-    }
-
-    public function test_ks_feedback()
-    {
-        $this->auditor_login();
-        $data = [
-            'id_standar' => 1,
-            'feedback' => 'tes feedback'
-        ];
-        $this->post('standar/feedback', $data)->assertRedirect('standar/table/1')->assertStatus(302)->assertSessionHas('success');
-        $this->assertDatabaseHas('ketercapaian_standars', [
-            'id' => 1,
-            'keterangan' => 'tes feedback'
+        $this->get('pasca/confirm/17')->assertStatus(302)->assertSessionHas('success');
+        $this->get('pasca/cancel_confirm/17')->assertStatus(302);
+        $this->assertDatabaseHas('dokumens', [
+            'id' => 17,
+            'status_id' => 6
         ]);
     }
 
@@ -203,23 +199,5 @@ class ManageKSTest extends TestCase
         $files = ['Files/Ketercapaian Standar_Informatika_2023.xlsx', 'Files/Ketercapaian Standar_Sistem Informasi_2022.xlsx'];
         $request = ['data' => $files];
         $this->post('standar/export', $request)->assertStatus(200);
-    }
-
-    public function test_ks_filter_year()
-    {
-        $this->test_ks_import_file();
-        $this->get('standar/filter/year/2023')->assertStatus(200);
-    }
-
-    public function test_ks_filter_jurusan()
-    {
-        $this->pjm_login();
-        $this->get('standar/filter/jurusan/1')->assertStatus(200);
-    }
-
-    public function test_ks_filter_prodi()
-    {
-        $this->pjm_login();
-        $this->get('standar/filter/prodi/11')->assertStatus(200);
     }
 }

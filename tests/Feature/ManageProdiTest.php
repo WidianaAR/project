@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Prodi;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,6 +35,14 @@ class ManageProdiTest extends TestCase
     {
         $this->login_pjm();
         $this->get('prodis/create')->assertStatus(200);
+    }
+
+    public function test_page_displays_a_list_of_prodis()
+    {
+        $this->login_pjm();
+        $response = $this->get(route('prodis.index'));
+        $prodis = Prodi::with('jurusan')->paginate(8);
+        $response->assertViewIs('prodi.home')->assertViewHas('prodis', $prodis);
     }
 
     public function test_add_new_prodi()

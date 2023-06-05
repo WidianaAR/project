@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Prodi</title>
+@endsection
+
 @section('isi')
     @if (session('error_store'))
         <div class="alert alert-danger" role="alert" id="msg-box">
@@ -51,7 +56,7 @@
                     </div>
                 @enderror
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="d-md-flex justify-content-md-end">
                     <a class="btn btn-sm btn-secondary mr-2" type="button" value="Batal"
                         href="{{ route('prodis.index') }}">Batal</a>
                     <input class="btn btn-sm btn-primary" type="submit" value="Simpan perubahan">

@@ -11,16 +11,21 @@ class PengumumanController extends Controller
 {
     public function store(Request $request)
     {
-        Pengumuman::create($request->all());
+        $data = Pengumuman::create($request->all());
+        activity()
+            ->performedOn($data)
+            ->log(Auth::user()->name . ' membuat pengumuman');
         return redirect()->back();
     }
 
-    public function close($id)
+    public function close(Request $request)
     {
-        PengumumanUser::create([
-            'user_id' => Auth::user()->id,
-            'pengumuman_id' => $id
-        ]);
+        foreach ($request->pengumuman_id as $id) {
+            PengumumanUser::create([
+                'user_id' => Auth::user()->id,
+                'pengumuman_id' => $id
+            ]);
+        }
 
         return redirect()->back();
     }

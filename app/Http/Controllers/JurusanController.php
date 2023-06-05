@@ -9,7 +9,7 @@ class JurusanController extends Controller
 {
     public function index()
     {
-        return view('jurusan.home', ['jurusans' => Jurusan::paginate(8)]);
+        return view('jurusan.home', ['jurusans' => Jurusan::orderBy('kode_jurusan', 'asc')->paginate(8)]);
     }
 
     public function create()
@@ -20,9 +20,9 @@ class JurusanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'kode_jurusan' => 'required|unique:jurusans',
-            'nama_jurusan' => 'required|unique:jurusans',
-            'keterangan' => 'required|unique:jurusans'
+            'kode_jurusan' => 'unique:jurusans',
+            'nama_jurusan' => 'unique:jurusans',
+            'keterangan' => 'unique:jurusans'
         ], [
                 'kode_jurusan.unique' => 'Kode jurusan sudah terdaftar!',
                 'nama_jurusan.unique' => 'Singkatan jurusan sudah terdaftar!',
@@ -42,20 +42,16 @@ class JurusanController extends Controller
 
     public function update(Request $request, Jurusan $jurusan)
     {
-        $rules = [
-            'kode_jurusan' => 'required',
-            'nama_jurusan' => 'required',
-            'keterangan' => 'required'
-        ];
+        $rules = [];
 
         if ($request->kode_jurusan != $jurusan->kode_jurusan) {
-            $rules['kode_jurusan'] = 'required|unique:jurusans';
+            $rules['kode_jurusan'] = 'unique:jurusans';
         }
         if ($request->nama_jurusan != $jurusan->nama_jurusan) {
-            $rules['nama_jurusan'] = 'required|unique:jurusans';
+            $rules['nama_jurusan'] = 'unique:jurusans';
         }
         if ($request->keterangan != $jurusan->keterangan) {
-            $rules['keterangan'] = 'required|unique:jurusans';
+            $rules['keterangan'] = 'unique:jurusans';
         }
 
         $data = $request->validate($rules, [

@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>Deadline Ketercapaian Standar</title>
+@endsection
+
 @section('isi')
     @if ($errors->any())
         <div class="alert alert-danger" role="alert" id="msg-box">
@@ -16,7 +20,7 @@
                 Batas akhir upload file :
             </div>
             <div class="col text-left">
-                @include('ketercapaian_standar/countdown')
+                @include('layouts.countdown')
             </div>
         @else
             <div class="col">

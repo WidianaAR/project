@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <title>Dashboard Evaluasi Diri</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -12,24 +13,15 @@
         @cannot('koorprodi')
             @include('dashboard.files_card')
         @endcannot
-        {{-- 
-        @can('koorprodi')
-            <div class="container d-flex align-items-center">
-                tes
-                @if ($file)
-                    @include('layouts.tahap_breadcrumb')
-                @endif
-            </div>
-        @endcan --}}
 
-        <div class="container text-center p-0">
+        <div class="container text-center p-0 @cannot('koorprodi') mt-5 @endcannot">
             <form method="POST" action="{{ route('ed_chart_post') }}">
                 @csrf
                 <div class="row align-items-center mb-3">
                     <div class="col text-left">
                         @if ($param)
-                            <span class="text-muted">
-                                {{ $keterangan }}
+                            <span class="text-muted">Dashboard / Evaluasi diri /
+                                <a href="">{{ $keterangan }}</a>
                             </span>
                         @else
                             <span class="text-muted">Dashboard /
@@ -41,7 +33,7 @@
                         <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
                             Ketegori <i class='fa fa-angle-down fa-sm'></i>
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="moduleDropDown">
+                        <div class="dropdown-menu">
                             <a class="dropdown-item {{ Request::is('ed_chart') ? 'active' : '' }}"
                                 href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
                             <a class="dropdown-item {{ Request::is('ks_chart') ? 'active' : '' }}"
@@ -61,10 +53,10 @@
                     </div>
 
                     @can('pjm')
-                        <div class="col-auto p-0 box text-sm">
+                        <div class="col-auto p-0 box">
                             <select class="form-control form-control-sm select-jurusan" id="jurusan" name="jurusan"
                                 onchange="update()">
-                                <option value="all">Semua jurusan</option>
+                                <option value="">Semua jurusan</option>
                                 @foreach ($jurusans as $data)
                                     @foreach ($data as $jurusan)
                                         <option value="{{ $jurusan->prodi->jurusan->id }}">
@@ -80,9 +72,7 @@
                         <div class="col-auto p-0 box">
                             <select class="form-control form-control-sm @can('pjm') select-prodi @endcan" id="prodi"
                                 name="prodi">
-                                @cannot('auditor')
-                                    <option value="all">Semua program studi</option>
-                                @endcannot
+                                <option value="">Semua program studi</option>
                                 @cannot('pjm')
                                     @foreach ($prodis as $data)
                                         @foreach ($data as $prodi)
@@ -213,7 +203,7 @@
 
             function update() {
                 $('select.select-prodi').find('option').remove().end().append(
-                    '<option value="all">Semua program studi</option>');
+                    '<option value="">Semua program studi</option>');
                 var selected = $('select.select-jurusan').children("option:selected").val();
                 var prodis = {!! json_encode($prodis) !!}
                 $.each(prodis, function(i, data) {
@@ -239,7 +229,7 @@
                         <h5>Pengumuman</h5>
                         <div class="input-group my-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text text-sm" id="basic-addon1">Judul</span>
+                                <span class="input-group-text">Judul</span>
                             </div>
                             <input type="text" name="judul" class="form-control form-control-sm" required>
                         </div>
@@ -254,21 +244,28 @@
         </div>
     </div>
 
-    @if ($pengumuman)
+    @if ($pengumuman->count())
         <div class="modal fade" id="pengumumanModal" role="dialog" arialabelledby="modalLabel" area-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <h5>Pengumuman</h5>
-                        <b>{{ $pengumuman->judul }}</b>
-                        <p>{{ $pengumuman->isi }}</p>
+                <form action="{{ route('close_pengumuman') }}" method="post">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <h5>Pengumuman</h5>
+                            @foreach ($pengumuman as $data)
+                                <b>{{ $data->judul }}</b>
+                                <p>{{ $data->isi }}</p>
+                                <input type="text" name="pengumuman_id[]" value="{{ $data->id }}" hidden>
+                            @endforeach
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-sm btn-secondary" value="Tutup">
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <a href="{{ route('close_pengumuman', $pengumuman->id) }}" type="button"
-                            class="btn btn-sm btn-secondary">Tutup</a>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     @endif
 </body>
+
+</html>

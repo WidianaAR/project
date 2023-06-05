@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    @yield('title')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -74,18 +75,14 @@
                         <a href="{{ URL('standar') }}"> <i class="fa fa-file"></i> Ketercapaian Standar</a>
                     </li>
                 @endcannot
-                <li class="{{ Request::is(['tilik_auditor*', 'tilik*']) ? 'active' : '' }}">
-                    <a
-                        href="@if (Auth::user()->role_id == 4) {{ URL('tilik_auditor') }} @else {{ URL('tilik') }} @endif">
-                        <i class="fa-solid fa-table-list"></i>
-                        Daftar Tilik</a>
-                </li>
-                <li class="{{ Request::is(['pasca_auditor*', 'pasca*']) ? 'active' : '' }}">
-                    <a
-                        href="@if (Auth::user()->role_id == 4) {{ URL('pasca_auditor') }} @else {{ URL('pasca') }} @endif">
-                        <i class="fa fa-files-o"></i>
-                        Pasca Audit</a>
-                </li>
+                @can('auditor')
+                    <li class="{{ Request::is('tilik*') ? 'active' : '' }}">
+                        <a href="{{ URL('tilik') }}"><i class="fa-solid fa-table-list"></i> Daftar Tilik</a>
+                    </li>
+                    <li class="{{ Request::is('pasca*') ? 'active' : '' }}">
+                        <a href="{{ URL('pasca') }}"><i class="fa fa-files-o"></i> Pasca Audit</a>
+                    </li>
+                @endcan
                 @can('pjm')
                     <li class="{{ Request::is('logs*') ? 'active' : '' }}">
                         <a href="{{ URL('logs') }}"> <i class="fa fa-history"></i> Riwayat Aktivitas</a>

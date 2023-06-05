@@ -1,4 +1,9 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Panduan</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
@@ -18,7 +23,8 @@
                                 <p class="card-text">
                                     {{ strip_tags(\Illuminate\Support\Str::limit($panduan->keterangan, 100, '...')) }}</p>
                                 <div class="row">
-                                    <a class="col" href="{{ route('panduan_detail', $panduan->id) }}">Read more</a>
+                                    <a class="col-auto" href="{{ route('panduan_detail', $panduan->id) }}">Baca
+                                        selengkapnya</a>
                                     <div class="col"></div>
                                     <a href="{{ route('panduan_download', $panduan->id) }}" class="col-auto mr-1"><i
                                             class="fa-solid fa-download"></i></a>

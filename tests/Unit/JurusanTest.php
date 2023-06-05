@@ -3,19 +3,13 @@
 namespace Tests\Unit;
 
 use App\Models\Jurusan;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class JurusanTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function pjm_login()
-    {
-        $pjm = User::find(1);
-        $this->actingAs($pjm);
-    }
 
     // Model test
     public function test_jurusan_can_be_created()
@@ -32,11 +26,31 @@ class JurusanTest extends TestCase
     }
 
     // Controller test
-    public function test_page_displays_a_list_of_jurusans()
+    public function test_input_validation()
     {
-        $this->pjm_login();
-        $response = $this->get(route('jurusans.index'));
-        $jurusans = Jurusan::paginate(8);
-        $response->assertViewIs('jurusan.home')->assertViewHas('jurusans', $jurusans);
+        $data = [
+            'kode_jurusan' => '7',
+            'nama_jurusan' => 'JV',
+            'keterangan' => 'Jurusan Validasi'
+        ];
+        $data2 = [
+            'kode_jurusan' => '1',
+            'nama_jurusan' => 'JMTI',
+            'keterangan' => 'Jurusan Matematika dan Teknologi Informasi'
+        ];
+
+        $validator = Validator::make($data, [
+            'kode_jurusan' => 'unique:jurusans',
+            'nama_jurusan' => 'unique:jurusans',
+            'keterangan' => 'unique:jurusans'
+        ]);
+        $validator2 = Validator::make($data2, [
+            'kode_jurusan' => 'unique:jurusans',
+            'nama_jurusan' => 'unique:jurusans',
+            'keterangan' => 'unique:jurusans'
+        ]);
+
+        $this->assertTrue($validator->passes());
+        $this->assertFalse($validator2->passes());
     }
 }

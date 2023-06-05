@@ -1,79 +1,130 @@
-@extends('layouts.navbar')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('isi')
-    <div class="row align-items-center">
-        <div class="col">
-            <span class="text-muted">Daftar tilik / <a href="">{{ $keterangan }}</a></span>
-        </div>
-        <div class="col-auto text-left box @if (!$years) mr-3 @endif">
-            <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
-                Ketegori <i class='fa fa-angle-down fa-sm'></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
-                <a class="dropdown-item {{ Request::is(['tilik', 'tilik/semua*']) ? 'active' : '' }}"
-                    href="{{ route('tilik_home') }}">Semua data</a>
-                <a class="dropdown-item {{ Request::is('tilik/evaluasi*') ? 'active' : '' }}"
-                    href="{{ route('tilik_home', 'evaluasi') }}">Evaluasi diri</a>
-                <a class="dropdown-item {{ Request::is('tilik/standar*') ? 'active' : '' }}"
-                    href="{{ route('tilik_home', 'standar') }}">Ketercapaian standar</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pasca Audit</title>
+</head>
+
+<body>
+    @extends('layouts.navbar')
+
+    @section('isi')
+        <div class="row align-items-center">
+            <div class="col">
+                <span class="text-muted">Daftar pasca / <a href="">{{ $keterangan }}</a></span>
             </div>
-        </div>
-
-        @if ($years)
-            <div class="col-auto text-left box">
-                <button class="simple" type="button" data-toggle="dropdown" aria-expanded="false">
-                    Tahun <i class='fa fa-angle-down fa-sm'></i>
+            <div class="col-auto text-left pl-0">
+                <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseFilter"
+                    aria-expanded="false" aria-controls="collapseFilter">
+                    <i class="fa fa-sm fa-sm fa-filter"></i>
+                    Filter
                 </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="moduleDropDown">
-                    @foreach ($years as $year)
-                        <a class="dropdown-item {{ Request::is(['tilik/evaluasi/' . $year, 'tilik/standar/' . $year, 'tilik/semua/' . $year]) ? 'active' : '' }}"
-                            href="@if ($keterangan == 'Evaluasi diri') {{ route('tilik_year', ['evaluasi', $year]) }} @elseif ($keterangan == 'Ketercapaian standar') {{ route('tilik_year', ['standar', $year]) }} @else {{ route('tilik_year', ['semua', $year]) }} @endif">{{ $year }}</a>
-                    @endforeach
-                </div>
             </div>
-        @endif
-        <div class="col-auto text-left pl-2">
-            <form action="{{ route('ed_export_all') }}" method="POST">
-                @csrf
-                @foreach ($data as $file)
-                    <input name="data[]" type="hidden" value="{{ $file->file_data }}">
-                @endforeach
-                <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
-            </form>
         </div>
-    </div>
 
-    <div class="element pb-1">
-        @if ($data->count())
-            @foreach ($data as $file)
-                <a href="@if ($file->kategori == 'evaluasi') {{ route('tilik_ed_table', $file->id) }} @else {{ route('tilik_ks_table', $file->id) }} @endif"
-                    class="decoration-none">
-                    <div class="card file-list mb-2">
-                        <div class="card-text p-1">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <i class="fa-regular fa-file-lines fa-lg pl-2" style="color: #ababab;"></i>
-                                </div>
-                                <div class="col p-0">
-                                    @if ($file->kategori == 'evaluasi')
-                                        Evaluasi diri
-                                    @else
-                                        Ketercapaian standar
-                                    @endif
-                                    {{ $file->prodi->nama_prodi }} <br>
-                                    <small><span class="text-muted">{{ $file->tahun }} | Status :
-                                            {{ $file->status->keterangan }}</span></small>
-                                </div>
-                            </div>
+        <div class="collapse mt-2" id="collapseFilter">
+            <div class="card card-body py-2">
+                <form action="{{ route('pasca_filter') }}" method="POST">
+                    @csrf
+                    <div class="row align-items-end">
+                        <div class="col">
+                            <label class="mb-0" for="kategori">Kategori</label>
+                            <select class="form-control form-control-sm" name="kategori" id="kategori">
+                                <option value="">Semua</option>
+                                <option value="evaluasi">Evaluasi diri</option>
+                                <option value="standar">Ketercapaian standar</option>
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <label class="mb-0" for="tahun">Tahun</label>
+                            <select class="form-control form-control-sm" name="tahun" id="tahun">
+                                <option value="">Semua</option>
+                                @foreach ($years as $year)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <label class="mb-0" for="prodi">Program studi</label>
+                            <select class="form-control form-control-sm" name="prodi" id="prodi">
+                                <option value="">Semua</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-sm btn-primary" value="Terapkan">
                         </div>
                     </div>
-                </a>
-            @endforeach
-            <div class="d-flex justify-content-end">
-                {{ $data->links() }}
+                </form>
             </div>
-        @else
-            <h5 class="text-center">Data kosong</h5>
-        @endif
-    </div>
-@endsection
+        </div>
+
+        <div class="element pb-1 table-responsive">
+            @if ($data->count())
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Kategori</th>
+                            <th>Program Studi</th>
+                            <th>Tahun</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $file)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ strip_tags(\Illuminate\Support\Str::limit(basename($file->file_data), 20, '...')) }}
+                                </td>
+                                <td>{{ $file->kategori }}</td>
+                                <td>{{ $file->prodi->nama_prodi }}</td>
+                                <td>{{ $file->tahun }}</td>
+                                <td>
+                                    <a href="" data-toggle="modal"
+                                        data-target="#tahapModal{{ $loop->iteration }}">{{ $file->status->keterangan }}</a>
+                                </td>
+                                <td>
+                                    @if ($file->status_id != 7)
+                                        <a href="@if ($file->kategori == 'evaluasi') {{ route('pasca_ed_table', $file->id) }} @else {{ route('pasca_ks_table', $file->id) }} @endif"
+                                            class="btn btn-sm btn-outline-primary">Komentar/Nilai</a>
+                                    @else
+                                        <a href="@if ($file->kategori == 'evaluasi') {{ route('pasca_ed_table', $file->id) }} @else {{ route('pasca_ks_table', $file->id) }} @endif"
+                                            class="btn btn-sm btn-outline-success">Lihat</a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {{ $data->links() }}
+            @else
+                <h5>Data Kosong</h5>
+            @endif
+        </div>
+    @endsection
+
+    @foreach ($data as $file)
+        <div class="modal fade" id="tahapModal{{ $loop->iteration }}" role="dialog" arialabelledby="modalLabel"
+            area-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="row pl-5">
+                        @include('layouts.tahap_breadcrumb')
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</body>
+
+</html>

@@ -3,6 +3,8 @@
 <script>
     var date = {!! json_encode($deadline[0]) !!};
     var id = {!! json_encode($deadline[1]) !!};
+    var kategori = {!! json_encode($kategori) !!};
+
     if (date) {
         var countDownDate = new Date(date).getTime();
         var x = setInterval(function() {
@@ -19,7 +21,11 @@
 
             if (distance < 0) {
                 clearInterval(x);
-                var url = "{{ route('ed_set_time_action_end', ':id') }}";
+                if (kategori == 'evaluasi') {
+                    var url = "{{ route('ed_set_time_action_end', ':id') }}";
+                } else {
+                    var url = "{{ route('ks_set_time_action_end', ':id') }}";
+                }
                 url = url.replace(':id', id);
                 location.href = url;
             }

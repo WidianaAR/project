@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dokumen;
-use App\Models\KSDeadline;
+use App\Models\Deadline;
 use App\Models\Tahap;
 use App\Traits\CountdownTrait;
 use Illuminate\Http\Request;
@@ -14,8 +14,9 @@ class KSDeadlineController extends Controller
 
     public function set_time()
     {
-        $deadline = $this->KSCountdown();
-        return view('deadlines.ks_deadline', compact('deadline'));
+        $deadline = $this->Countdown('standar');
+        $kategori = 'standar';
+        return view('deadlines.ks_deadline', compact('deadline', 'kategori'));
     }
 
     public function set_time_action(Request $request)
@@ -25,9 +26,9 @@ class KSDeadlineController extends Controller
             'time' => 'required',
         ]);
         $datetime = $request->date . ' ' . $request->time;
-        $data = KSDeadline::updateOrCreate(
+        $data = Deadline::updateOrCreate(
             ['id' => $request->id],
-            ['batas_waktu' => $datetime, 'status' => 'on going']
+            ['kategori' => 'standar', 'batas_waktu' => $datetime, 'status' => 'on going']
         );
         activity()
             ->performedOn($data)
@@ -37,7 +38,7 @@ class KSDeadlineController extends Controller
 
     public function set_time_action_end($id)
     {
-        $data = KSDeadline::find($id);
+        $data = Deadline::find($id);
         $files = Dokumen::where(['kategori' => 'standar', 'status_id' => 1])->get();
 
         foreach ($files as $file) {

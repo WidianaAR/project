@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use App\Models\User;
 use Tests\TestCase;
 
-class MiddlewareTest extends TestCase
+class AuthorizationTest extends TestCase
 {
     public function test_allows_pjm_to_access_page_only_for_pjm()
     {
@@ -49,7 +49,7 @@ class MiddlewareTest extends TestCase
     public function test_allows_auditor_to_access_page_only_for_auditor()
     {
         $auditor = User::find(4);
-        $this->actingAs($auditor)->get('feedbacks')->assertStatus(200);
+        $this->actingAs($auditor)->get('tilik')->assertStatus(200);
     }
 
     public function test_does_not_allow_non_auditor_to_access_page_only_for_auditor()

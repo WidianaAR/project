@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>Logs Aplikasi</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
@@ -41,7 +45,7 @@
                 {{ $datas->links() }}
             </div>
         @else
-            <h5>Data kosong</h5>
+            <h6>Data kosong</h6>
         @endif
     </div>
 @endsection

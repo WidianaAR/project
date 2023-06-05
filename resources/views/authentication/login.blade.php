@@ -12,6 +12,12 @@
 </head>
 
 <body>
+    @if (Session::has('success'))
+        <div class="alert alert-success" role="alert" id="msg-box">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ Session::get('success') }}
+        </div>
+    @endif
     @if ($errors->any())
         <div class="alert alert-danger" role="alert" id="msg-box">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -25,31 +31,41 @@
             <div class="login-box pl-2 m-auto">
                 <div class="login-left">
                     <img src="/images/Logo ITK.png" width="50px" height="35px">
-                    <h2>Selamat Datang di</h2>
+                    <h4 class="mb-0 mt-2">Selamat Datang di</h4>
                     <p class="bold">Sistem Informasi Penjaminan Mutu Internal</p>
                     <p class="bold">Institut Teknologi Kalimantan</p>
                     <form action="{{ route('login_action') }}" method="POST">
                         @csrf
-                        <div class="mt-3 p-2 d-flex w-100 div-input align-items-center" style="border-radius: 0.75rem">
-                            <i class="icon fa fa-envelope" style="color: #b5b5b5"></i>
-                            <input class="form-control form-control-sm mx-2 input-field border-0" type="text"
-                                name="email" placeholder="Masukkan email" required>
+                        <label class="mb-0 mt-3"><b>Email</b></label>
+                        <div class="p-2 d-flex w-100 div-input align-items-center" style="border-radius: 0.75rem">
+                            <i class="icon fa fa-sm fa-envelope" style="color: #b5b5b5"></i>
+                            <input class="form-control form-control-sm mx-2 py-0 input-field border-0" type="text"
+                                name="email" required>
                         </div>
 
-                        <div class="mt-2 p-2 d-flex w-100 div-input align-items-center" style="border-radius: 0.75rem">
-                            <i class="icon fa fa-lock" style="color: #b5b5b5"></i>
-                            <input class="form-control form-control-sm mx-2 input-field border-0" type="password"
-                                name="password" id="password" placeholder="Masukkan password" minlength="8" required>
+                        <label class="mb-0 mt-2"><b>Password</b></label>
+                        <div class="p-2 d-flex w-100 div-input align-items-center" style="border-radius: 0.75rem">
+                            <i class="icon fa fa-sm fa-lock" style="color: #b5b5b5"></i>
+                            <input class="form-control form-control-sm mx-2 py-0 input-field border-0" type="password"
+                                name="password" id="password" minlength="8" required>
                             <div onclick="togglePassword()">
-                                <i id="icon-toggle" class="fa fa-eye" style="color: #b5b5b5"></i>
+                                <i id="icon-toggle" class="fa fa-sm fa-eye" style="color: #b5b5b5"></i>
                             </div>
                         </div>
 
-                        <input class="blue-button btn btn-primary btn-sm mt-2" type="submit" value="Login">
+                        <div class="row">
+                            <div class="col d-flex justify-content-end">
+                                <a class="d-flex text-right" href="{{ route('forget_password') }}"><small>Lupa
+                                        password?</small></a>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <input class="blue-button btn btn-primary btn-sm" type="submit" value="Login">
+                        </div>
                     </form>
                 </div>
                 <div class="login-right">
-                    <img src="{{ URL::asset('images/itk.jpg') }}" width="100%" height="100%">
+                    <img src="images/itk.jpg" width="100%" height="100%">
                 </div>
             </div>
         </div>

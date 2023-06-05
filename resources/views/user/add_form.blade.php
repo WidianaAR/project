@@ -1,5 +1,9 @@
 @extends('layouts.navbar')
 
+@section('title')
+    <title>User</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
@@ -118,7 +122,7 @@
                     </div>
                 @enderror
 
-                <div class="pt-2 d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="pt-2 d-md-flex justify-content-md-end">
                     <a class="btn btn-sm btn-secondary mr-2" type="button" value="Batal"
                         href="{{ route('user') }}">Batal</a>
                     <input class="btn btn-sm btn-primary" type="submit" value="Tambah pengguna">

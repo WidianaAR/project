@@ -1,11 +1,16 @@
 @extends('layouts.navbar')
+
+@section('title')
+    <title>Panduan</title>
+@endsection
+
 @section('isi')
     <div class="row m-0">
         <div class="col pl-1">
             <span class="text-muted">Panduan / <a href="">Detail</a></span>
         </div>
         <a href="@if (Auth::user()->role_id == 1) {{ route('panduans.index') }} @else {{ route('panduan_home') }} @endif"
-            type="button" class="btn btn-sm btn-secondary"><i class="fa fa-arrow-left" aria-hidden="true"></i>Kembali</a>
+            type="button" class="btn btn-sm btn-secondary"><i class="fa fa-sm fa-arrow-left" aria-hidden="true"></i>Kembali</a>
     </div>
 
     <div class="element">

@@ -63,7 +63,7 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1');
+        $this->get('pasca/confirm/17');
         $this->get('ks_chart')->assertStatus(200);
     }
 
@@ -72,14 +72,12 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1');
+        $this->get('pasca/confirm/17');
 
         $data = [
-            'prodi' => 'all',
-            'jurusan' => 'all',
             'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar semua jurusan tahun 2022');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Tahun 2022');
     }
 
 
@@ -87,14 +85,13 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1');
+        $this->get('pasca/confirm/17');
 
         $data = [
-            'prodi' => 'all',
             'jurusan' => 1,
             'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar JMTI tahun 2022');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('JMTI 2022');
     }
 
 
@@ -102,13 +99,13 @@ class ManageKSChartTest extends TestCase
     {
         $this->import_file();
         $this->auditor_login();
-        $this->get('standar/confirm/1');
+        $this->get('pasca/confirm/17');
 
         $data = [
             'prodi' => 11,
             'jurusan' => 1,
             'tahun' => 2022
         ];
-        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Ketercapaian standar program studi Informatika tahun 2022');
+        $this->post('ks_chart', $data)->assertStatus(200)->assertSeeText('Informatika 2022');
     }
 }

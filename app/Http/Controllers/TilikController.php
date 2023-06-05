@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dokumen;
+use App\Models\Prodi;
 use App\Models\Tahap;
 use App\Traits\FileTrait;
+use App\Traits\TableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -14,197 +16,91 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 class TilikController extends Controller
 {
     use FileTrait;
+    use TableTrait;
 
-    public function index_auditor($kategori = null)
+    public function index(Request $request)
     {
         $user = Auth::user()->user_access_file;
         $access_prodi = [];
-
         foreach ($user as $value) {
             array_push($access_prodi, $value->prodi_id);
         }
 
-        if ($kategori == 'evaluasi') {
-            $keterangan = "Evaluasi diri";
-            $data = Dokumen::where('kategori', 'evaluasi')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::where('kategori', 'evaluasi')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
-        } elseif ($kategori == 'standar') {
-            $keterangan = "Ketercapaian standar";
-            $data = Dokumen::where('kategori', 'standar')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::where('kategori', 'standar')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
-        } else {
-            $keterangan = "Semua data";
-            $data = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
+        $keterangan = 'Semua data';
+        $query = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3]);
+        $query_year = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3]);
+        $prodis = Prodi::whereIn('id', $access_prodi)->get();
+
+        if ($request->kategori) {
+            $query->where('kategori', $request->kategori);
+            $query_year->where('kategori', $request->kategori);
+            $keterangan = ($request->kategori == 'evaluasi') ? 'Evaluasi diri' : 'Ketercapaian standar';
         }
-        return view('tilik.home_auditor', compact('data', 'years', 'keterangan'));
+
+        if ($request->prodi) {
+            $query->where('prodi_id', $request->prodi);
+            $keterangan = $keterangan . ' ' . $request->prodi;
+        }
+
+        if ($request->tahun) {
+            $query->where('tahun', $request->tahun);
+            $keterangan = $keterangan . ' ' . $request->tahun;
+        }
+
+        $data = $query->with('prodi')->latest('tahun')->paginate(15);
+        $years = $query_year->latest('tahun')->distinct()->pluck('tahun')->toArray();
+
+        return view('tilik.home', compact('data', 'years', 'keterangan', 'prodis'));
     }
 
-    public function filter_year_auditor($kategori = null, $year)
+    public function change_action(Request $request)
     {
-        $user = Auth::user()->user_access_file;
-        $access_prodi = [];
+        if ($request->hasFile('file')) {
+            $request->validate([
+                'file' => 'mimes:xlsx',
+            ], [
+                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+                ]);
 
-        foreach ($user as $value) {
-            array_push($access_prodi, $value->prodi_id);
+            $kategori = ($request->kategori == 'evaluasi') ? 'Evaluasi Diri_' : 'Ketercapaian Standar_';
+            $data = Dokumen::find($request->id);
+            $this->DeleteFile($data->file_data);
+            $extension = $request->file('file')->extension();
+            $prodi = Prodi::find($request->prodi);
+            $path = $this->UploadFile($request->file('file'), $kategori . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
+            $data->update(
+                [
+                    'prodi_id' => $request->prodi,
+                    'status_id' => 2,
+                    'file_data' => $path,
+                ]
+            );
+            Tahap::where(['dokumen_id' => $data->id, 'status_id' => 2])->first()->touch();
+            activity()
+                ->performedOn($data)
+                ->log('Mengubah data evaluasi diri dengan id ' . $data->id);
+            return redirect()->back()->with('success', 'File berhasil diubah');
         }
-
-        if ($kategori == 'evaluasi') {
-            $keterangan = "Evaluasi diri";
-            $data = Dokumen::where(['kategori' => 'evaluasi', 'tahun' => $year])->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::where('kategori', 'evaluasi')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
-        } elseif ($kategori == 'standar') {
-            $keterangan = "Ketercapaian standar";
-            $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $year])->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::where('kategori', 'standar')->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
-        } else {
-            $keterangan = "Semua data";
-            $data = Dokumen::where('tahun', $year)->whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi')->latest('tahun')->paginate(15);
-            $years = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->latest('tahun')->distinct()->pluck('tahun')->toArray();
-        }
-        return view('tilik.home_auditor', compact('data', 'years', 'keterangan'));
+        return redirect()->back()->with('error', 'File gagal diubah');
     }
-
-
-    public function index($kategori = null)
-    {
-        $user = Auth::user();
-        if ($kategori == 'evaluasi') {
-            $keterangan = 'Evaluasi diri';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            }
-        } elseif ($kategori == 'standar') {
-            $keterangan = 'Ketercapaian standar';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['kategori' => 'standar', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            }
-        } else {
-            $keterangan = 'Semua data';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where('status_id', 3)->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where('status_id', 3)->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where('status_id', 3)->with('prodi')->paginate(15);
-                $years = Dokumen::where('status_id', 3)->distinct()->pluck('tahun')->toArray();
-            }
-        }
-        return view('tilik.home', compact('data', 'years', 'keterangan'));
-    }
-
-    public function filter_year($kategori = null, $year)
-    {
-        $user = Auth::user();
-        if ($kategori == 'evaluasi') {
-            $keterangan = 'Evaluasi diri';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'tahun' => $year, 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where(['kategori' => 'evaluasi', 'tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'evaluasi', 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            }
-        } elseif ($kategori == 'standar') {
-            $keterangan = 'Ketercapaian standar';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $year, 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['kategori' => 'standar', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where(['kategori' => 'standar', 'tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['kategori' => 'standar', 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            }
-        } else {
-            $keterangan = 'Semua data';
-            if ($user->role_id == 2) {
-                $data = Dokumen::where(['tahun' => $year, 'status_id' => 3])->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->with('prodi')->paginate(15);
-                $years = Dokumen::where('status_id', 3)->withWhereHas('prodi.jurusan', function ($query) use ($user) {
-                    $query->where('id', $user->user_access_file[0]->jurusan_id);
-                })->distinct()->pluck('tahun')->toArray();
-            } elseif ($user->role_id == 3) {
-                $data = Dokumen::where(['prodi_id' => $user->user_access_file[0]->prodi_id, 'tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where(['prodi_id' => $user->user_access_file[0]->prodi_id, 'status_id' => 3])->distinct()->pluck('tahun')->toArray();
-            } else {
-                $data = Dokumen::where(['tahun' => $year, 'status_id' => 3])->with('prodi')->paginate(15);
-                $years = Dokumen::where('status_id', 3)->distinct()->pluck('tahun')->toArray();
-            }
-        }
-        return view('tilik.home', compact('data', 'years', 'keterangan'));
-    }
-
 
     public function ed_table($id)
     {
-        $data = Dokumen::find($id);
+        $table = $this->EDTable($id);
+        $data = $table[0];
+        $sheetData = $table[1];
         $user = Auth::user();
 
-        if ($user->role_id == 3 && $data->prodi_id != $user->user_access_file[0]->prodi_id) {
+        $auditor_prodi = [];
+        foreach ($user->user_access_file as $value) {
+            array_push($auditor_prodi, $value->prodi_id);
+        }
+
+        if (!in_array($data->prodi_id, $auditor_prodi)) {
             activity()->log('Prohibited access | Mencoba akses data prodi lain');
-            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($user->role_id == 4) {
-            $auditor_prodi = [];
-            foreach ($user->user_access_file as $value) {
-                array_push($auditor_prodi, $value->prodi_id);
-            }
-            if (!in_array($data->prodi_id, $auditor_prodi)) {
-                activity()->log('Prohibited access | Mencoba akses data prodi lain');
-                return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-            }
-        } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
-            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($user->role_id != 4 && $data->status_id != 3) {
-            activity()->log('Prohibited access | Mencoba akses data evaluasi diri yang belum memiliki tilik');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
-        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
-        $maxCell = $file->getSheet(0)->getHighestRowAndColumn();
-        $sheetData = $file->getSheet(0)->rangeToArray('A1:' . $maxCell['column'] . $maxCell['row'] - 1);
         return view('tilik.evaluasi', compact('sheetData', 'data'));
     }
 
@@ -242,49 +138,28 @@ class TilikController extends Controller
         $writer->save(storage_path('app/public/' . $data->file_data));
 
         $data->update(['status_id' => 3]);
-        Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3]);
+        Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ed_table', $data->id)->with('success', 'Tilik berhasil disimpan');
     }
 
-
     public function ks_table($id)
     {
-        $headers = array();
-        $sheetData = array();
-
+        $table = $this->KSTable($id);
+        $data = $table[0];
+        $headers = $table[1];
+        $sheetCount = $table[2];
+        $sheetName = $table[3];
+        $sheetData = $table[4];
         $user = Auth::user();
-        $data = Dokumen::find($id);
 
-        if ($user->role_id == 3 && $data->prodi_id != $user->user_access_file[0]->prodi_id) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
-            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($user->role_id == 4) {
-            $auditor_prodi = [];
-            foreach ($user->user_access_file as $value) {
-                array_push($auditor_prodi, $value->prodi_id);
-            }
-            if (!in_array($data->prodi_id, $auditor_prodi)) {
-                activity()->log('Prohibited access | Mencoba akses data prodi lain');
-                return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-            }
-        } elseif ($user->role_id == 2 && $data->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
-            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
-        } elseif ($user->role_id != 4 && $data->status_id != 3) {
-            activity()->log('Prohibited access | Mencoba akses data ketercapaian standar yang belum memiliki tilik');
-            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
+        $auditor_prodi = [];
+        foreach ($user->user_access_file as $value) {
+            array_push($auditor_prodi, $value->prodi_id);
         }
-
-        $file = IOFactory::load(storage_path('app/public/' . $data->file_data));
-        $sheetCount = $file->getSheetCount();
-        $sheetName = $file->getSheetNames();
-        for ($i = 0; $i < $sheetCount - 2; $i++) {
-            $sheet = $file->getSheet($i)->toArray(null, true, true, true);
-            $header = array_shift($sheet);
-
-            array_push($sheetData, $sheet);
-            array_push($headers, $header);
+        if (!in_array($data->prodi_id, $auditor_prodi)) {
+            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
         return view('tilik.standar', compact('sheetData', 'sheetCount', 'headers', 'sheetName', 'data'));
@@ -324,7 +199,7 @@ class TilikController extends Controller
         $writer->save(storage_path('app/public/' . $data->file_data));
 
         $data->update(['status_id' => 3]);
-        Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3]);
+        Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ks_table', $data->id)->with('success', 'Tilik berhasil disimpan');
     }
