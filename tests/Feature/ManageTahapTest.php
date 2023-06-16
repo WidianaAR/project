@@ -20,7 +20,7 @@ class ManageTahapTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('evaluasi');
-        $tahaps = Dokumen::where('kategori', 'evaluasi')->with('prodi.jurusan', 'prodi', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $tahaps = Dokumen::where('kategori', 'evaluasi')->with('prodi.jurusan', 'prodi', 'status', 'tahap')->latest('updated_at')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $tahaps);
     }
 }

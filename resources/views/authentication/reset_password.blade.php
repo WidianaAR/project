@@ -12,10 +12,10 @@
 </head>
 
 <body>
-    @if ($errors->get('token_error'))
+    @if ($errors->has('token_error'))
         <div class="alert alert-danger" role="alert" id="msg-box">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ $errors->get('token_error') }}
+            {{ $errors->first('token_error') }}
         </div>
     @endif
     <div class="d-flex align-items-center flex-wrap text-center" id="login-bg">

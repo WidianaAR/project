@@ -5,6 +5,13 @@
 @endsection
 
 @section('isi')
+    @if (Session::has('error'))
+        <div class="alert alert-danger" role="alert" id="msg-box">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ Session::get('error') }}
+        </div>
+    @endif
+
     <div class="row m-0">
         <div class="col pl-1">
             <h5>User</h5>
@@ -22,7 +29,7 @@
                 <div class="input-group mb-3">
                     <select name='role_id' class="custom-select select-role" id="inputGroupSelect01" required>
                         @foreach ($roles as $role)
-                            <option value="{{ $role->id }}" @if (old('role_id') == $role->id || $user->role_id == $role->id) selected @endif>
+                            <option value="{{ $role->id }}" @if ($user->role_id == $role->id) selected @endif>
                                 {{ $role->role_name }}</option>
                         @endforeach
                     </select>
@@ -32,10 +39,9 @@
                     @if ($user->role_id != 2) hidden @endif>Jurusan</label>
                 <div class="input-group mb-3" id="jurusan_option" @if ($user->role_id != 2) hidden @endif>
                     <select name='jurusan_id' class="custom-select select-jurusan" id="inputGroupSelect02">
-                        <option value="" selected>Jurusan</option>
+                        <option value="" selected></option>
                         @foreach ($jurusans as $jurusan)
-                            <option value={{ $jurusan->id }} @if (old('jurusan_id') == $jurusan->id ||
-                                    (count($user->user_access_file) && $user->user_access_file[0]->jurusan_id == $jurusan->id)) selected @endif>
+                            <option value={{ $jurusan->id }} @if (count($user->user_access_file) && $user->user_access_file[0]->jurusan_id == $jurusan->id) selected @endif>
                                 {{ $jurusan->nama_jurusan }}</option>
                         @endforeach
                     </select>
@@ -44,11 +50,10 @@
                 <label class="mb-1" id="prodi_option_label" @if ($user->role_id != 3) hidden @endif>Program
                     studi</label>
                 <div class="input-group mb-3" id="prodi_option" @if ($user->role_id != 3) hidden @endif>
-                    <select name='prodi_id' class="custom-select select-prodi" id="inputGroupSelect03">
+                    <select name='prodi_id' class="custom-select select-prodi">
                         <option value='' selected></option>
                         @foreach ($prodis as $prodi)
-                            <option value={{ $prodi->id }} @if (old('prodi_id') == $prodi->id ||
-                                    (count($user->user_access_file) && $user->user_access_file[0]->prodi_id == $prodi->id)) selected @endif>
+                            <option value={{ $prodi->id }} @if (count($user->user_access_file) && $user->user_access_file[0]->prodi_id == $prodi->id) selected @endif>
                                 {{ $prodi->nama_prodi }}</option>
                         @endforeach
                     </select>
@@ -61,12 +66,11 @@
                         @if ($prodi_auditor)
                             @foreach ($prodi_auditor as $data)
                                 <div class="input-group mb-2">
-                                    <select name='prodi_id_auditor[]' class="custom-select select-prodi"
-                                        id="inputGroupSelect03">
+                                    <select name='prodi_id_auditor[]' class="custom-select select-prodi">
                                         <option value='' selected>-</option>
                                         @foreach ($prodis as $prodi)
-                                            <option value={{ $prodi->id }}
-                                                @if (old('prodi_id') == $prodi->id || $data == $prodi->id) selected @endif>
+                                            <option value="{{ $prodi->id }}"
+                                                @if ($data == $prodi->id) selected @endif>
                                                 {{ $prodi->nama_prodi }}</option>
                                         @endforeach
                                     </select>
@@ -74,8 +78,7 @@
                             @endforeach
                         @else
                             <div class="input-group mb-2">
-                                <select name='prodi_id_auditor[]' class="custom-select select-prodi"
-                                    id="inputGroupSelect03">
+                                <select name='prodi_id_auditor[]' class="custom-select select-prodi">
                                     <option value='' selected>-</option>
                                     @foreach ($prodis as $prodi)
                                         <option value={{ $prodi->id }}>{{ $prodi->nama_prodi }}</option>
@@ -143,7 +146,7 @@
         $("#add_prodi_btn").click(function() {
             var input = `
                 <div class="input-group mb-2">
-                    <select name="prodi_id_auditor[]" class="custom-select select-prodi" id="inputGroupSelect03">
+                    <select name="prodi_id_auditor[]" class="custom-select select-prodi">
                         <option value="" selected>-</option>
                         @foreach ($prodis as $prodi)
                             <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>

@@ -33,7 +33,7 @@ class KSController extends Controller
         if ($user->role_id == 2) {
             $query->withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->user_access_file[0]->jurusan_id);
-            })->with('prodi', 'status')->latest('tahun');
+            });
             $jurusans = null;
             $prodis = Prodi::where('jurusan_id', $user->user_access_file[0]->jurusan_id)->get();
             $years = Dokumen::where('kategori', 'standar')->withWhereHas('prodi.jurusan', function ($query) use ($user) {
@@ -47,7 +47,8 @@ class KSController extends Controller
             } else {
                 $years = ($ketercapaian_standar) ? Dokumen::where(['kategori' => 'standar', 'prodi_id' => $user->user_access_file[0]->prodi_id])->latest('tahun')->distinct()->pluck('tahun')->toArray() : null;
                 [$id_standar, $sheetData, $headers, $sheetName, $file] = null;
-                return view('ketercapaian_standar.table', compact('deadline', 'id_standar', 'sheetData', 'headers', 'sheetName', 'years', 'file'));
+                $kategori = 'standar';
+                return view('ketercapaian_standar.table', compact('deadline', 'id_standar', 'sheetData', 'headers', 'sheetName', 'years', 'file', 'kategori'));
             }
         } else {
             $jurusans = Jurusan::all();
@@ -73,7 +74,7 @@ class KSController extends Controller
             $keterangan = Prodi::find($request->prodi)->nama_prodi;
         }
 
-        $data = $query->with('prodi.jurusan', 'prodi', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $data = $query->with('prodi.jurusan', 'prodi', 'status', 'tahap')->latest('updated_at')->paginate(8);
         return view('ketercapaian_standar.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans', 'keterangan', 'statuses', 'kategori'));
     }
 
@@ -115,6 +116,7 @@ class KSController extends Controller
                     'file_data' => $path,
                 ]
             );
+            $ksdata->touch();
             Tahap::updateOrCreate(['dokumen_id' => $ksdata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($ksdata)
@@ -191,6 +193,13 @@ class KSController extends Controller
         $data = Dokumen::find($request->id_standar);
         $prodi = Prodi::find($request->prodi);
 
+        if ($request->prodi != $data->prodi_id) {
+            $exist = Dokumen::where(['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'standar'])->first();
+            if ($exist) {
+                return back()->with('error', 'File ketercapaian standar ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
+            }
+        }
+
         if ($request->hasFile('file')) {
             $request->validate([
                 'file' => 'required|mimes:xlsx',
@@ -224,6 +233,7 @@ class KSController extends Controller
             'kategori' => 'standar',
             'file_data' => $path,
         ]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 1]);
 
         activity()

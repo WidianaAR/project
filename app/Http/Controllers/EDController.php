@@ -33,21 +33,22 @@ class EDController extends Controller
         if ($user->role_id == 2) {
             $query->withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->user_access_file[0]->jurusan_id);
-            })->with('prodi', 'status')->latest('tahun');
+            });
             $jurusans = null;
             $prodis = Prodi::where('jurusan_id', $user->user_access_file[0]->jurusan_id)->get();
             $years = Dokumen::where('kategori', 'evaluasi')->withWhereHas('prodi.jurusan', function ($query) use ($user) {
                 $query->where('id', $user->user_access_file[0]->jurusan_id);
             })->latest('tahun')->distinct()->pluck('tahun')->toArray();
         } elseif ($user->role_id == 3) {
-            $evaluasi_diri = Dokumen::where('prodi_id', $user->user_access_file[0]->prodi_id)->latest('tahun')->first();
+            $evaluasi_diri = Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id])->latest('tahun')->first();
             if ($evaluasi_diri->tahun == date('Y')) {
                 $id_ed = $evaluasi_diri->id;
                 return redirect()->route('ed_table', $id_ed);
             } else {
-                $years = ($evaluasi_diri) ? Dokumen::where('prodi_id', $user->user_access_file[0]->prodi_id)->latest('tahun')->distinct()->pluck('tahun')->toArray() : null;
+                $years = ($evaluasi_diri) ? Dokumen::where(['kategori' => 'evaluasi', 'prodi_id' => $user->user_access_file[0]->prodi_id])->latest('tahun')->distinct()->pluck('tahun')->toArray() : null;
                 [$id_evaluasi, $sheetData, $file] = null;
-                return view('evaluasi_diri.table', compact('deadline', 'id_evaluasi', 'sheetData', 'years', 'file'));
+                $kategori = 'evaluasi';
+                return view('evaluasi_diri.table', compact('deadline', 'id_evaluasi', 'sheetData', 'years', 'file', 'kategori'));
             }
         } else {
             $jurusans = Jurusan::all();
@@ -73,7 +74,7 @@ class EDController extends Controller
             $keterangan = Prodi::find($request->prodi)->nama_prodi;
         }
 
-        $data = $query->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $data = $query->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('updated_at')->paginate(8);
         return view('evaluasi_diri.home', compact('deadline', 'years', 'prodis', 'data', 'jurusans', 'keterangan', 'statuses', 'kategori'));
     }
 
@@ -115,6 +116,7 @@ class EDController extends Controller
                     'file_data' => $path,
                 ]
             );
+            $eddata->touch();
             Tahap::updateOrCreate(['dokumen_id' => $eddata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($eddata)
@@ -170,6 +172,13 @@ class EDController extends Controller
         $data = Dokumen::find($request->id_evaluasi);
         $prodi = Prodi::find($request->prodi);
 
+        if ($request->prodi != $data->prodi_id) {
+            $exist = Dokumen::where(['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'evaluasi'])->first();
+            if ($exist) {
+                return back()->with('error', 'File evaluasi diri ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
+            }
+        }
+
         if ($request->hasFile('file')) {
             $request->validate([
                 'file' => 'required|mimes:xlsx',
@@ -204,6 +213,7 @@ class EDController extends Controller
             'kategori' => 'evaluasi',
             'file_data' => $path,
         ]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 1]);
 
         activity()

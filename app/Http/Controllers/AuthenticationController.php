@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ForgetPassword;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -91,7 +92,7 @@ class AuthenticationController extends Controller
     public function forget_pass_action(Request $request)
     {
         $request->validate([
-            'email' => 'email|exists:users|unique:forget_passwords'
+            'email' => 'email:dns|exists:users|unique:forget_passwords'
         ], [
                 'email.exists' => 'Email tidak terdaftar dalam sistem!',
                 'email.unique' => 'Tautan sudah dikirim, mohon periksa email Anda!'
@@ -136,14 +137,17 @@ class AuthenticationController extends Controller
         ])->first();
 
         if (!$updatePassword) {
-            return back()->withErrors(['token_error' => 'Invalid token!']);
+            return back()->withErrors(['token_error' => 'Token tidak valid, mohon memulai proses "Lupa Password" kembali.']);
+        } else {
+            $expired = Carbon::parse($updatePassword->created_at)->addDay();
+            if ($expired->isPast()) {
+                $updatePassword->delete();
+                return back()->withErrors(['token_error' => 'Token telah kedaluwarsa, mohon memulai proses "Lupa Password" kembali.']);
+            }
         }
 
         User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
-        ForgetPassword::where([
-            'email' => $request->email,
-            'token' => $request->token
-        ])->delete();
+        $updatePassword->delete();
         activity()->log('User merubah password akun ' . $request->email);
 
         return redirect('/login')->with('success', 'Password berhasil diubah');

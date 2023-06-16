@@ -59,7 +59,7 @@ class ManagePascaTest extends TestCase
         $this->auditor_login();
         $response = $this->post(route('pasca_filter'));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->with('prodi')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->with('prodi')->latest('updated_at')->paginate(15);
         $response->assertViewIs('pasca_audit.home')->assertViewHas('data', $datas);
     }
 
@@ -68,7 +68,7 @@ class ManagePascaTest extends TestCase
         $this->auditor_login();
         $response = $this->post(route('pasca_filter', ['kategori' => 'evaluasi']));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->where('kategori', 'evaluasi')->with('prodi')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->where('kategori', 'evaluasi')->with('prodi')->latest('updated_at')->paginate(15);
         $response->assertViewIs('pasca_audit.home')->assertViewHas('data', $datas);
     }
 
@@ -101,7 +101,7 @@ class ManagePascaTest extends TestCase
         $this->auditor_login();
         $response = $this->post(route('pasca_filter', ['kategori', 'standar']));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->where('kategori', 'standar')->with('prodi')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [3, 4, 5, 6, 7])->where('kategori', 'standar')->with('prodi')->latest('updated_at')->paginate(15);
         $response->assertViewIs('pasca_audit.home')->assertViewHas('data', $datas);
     }
 

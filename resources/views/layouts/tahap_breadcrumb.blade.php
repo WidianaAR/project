@@ -7,11 +7,22 @@
             </a>
         </li>
 
-        <li class="@if ($file->status_id == 2) active @elseif($file->status_id == 3 || $file->status_id == 6 || $file->status_id == 7) completed @endif">
+        <li class="@if ($file->status_id == 2) active @elseif(
+            $file->status_id == 3 ||
+                $file->status_id == 4 ||
+                $file->status_id == 5 ||
+                $file->status_id == 6 ||
+                $file->status_id == 7) completed @endif">
             <a href="@can('auditor') {{ route('tilik_home') }} @endcan">
                 <b>ditinjau</b><br>
                 <br> <small> <i>
-                        @if ($file->status_id == 2 || $file->status_id == 3 || $file->status_id == 6 || $file->status_id == 7)
+                        @if (
+                            $file->status_id == 2 ||
+                                $file->status_id == 3 ||
+                                $file->status_id == 4 ||
+                                $file->status_id == 5 ||
+                                $file->status_id == 6 ||
+                                $file->status_id == 7)
                             {{ date('d-m-Y', strtotime($file->tahap[1]->updated_at)) }}
                         @else
                             -
@@ -20,11 +31,16 @@
 
             </a>
         </li>
-        <li class="@if ($file->status_id == 3) active @elseif($file->status_id == 6 || $file->status_id == 7) completed @endif">
+        <li class="@if ($file->status_id == 3 || $file->status_id == 4 || $file->status_id == 5) active @elseif($file->status_id == 6 || $file->status_id == 7) completed @endif">
             <a href="@can('auditor') {{ route('tilik_home') }} @endcan">
                 <b>berisi tilik</b><br>
                 <br> <small> <i>
-                        @if ($file->status_id == 3 || $file->status_id == 6 || $file->status_id == 7)
+                        @if (
+                            $file->status_id == 3 ||
+                                $file->status_id == 4 ||
+                                $file->status_id == 5 ||
+                                $file->status_id == 6 ||
+                                $file->status_id == 7)
                             {{ date('d-m-Y', strtotime($file->tahap[2]->updated_at)) }}
                         @else
                             -

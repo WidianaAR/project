@@ -69,7 +69,7 @@ class ManageKSTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('standar');
-        $data = Dokumen::where('kategori', 'standar')->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $data = Dokumen::where('kategori', 'standar')->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('updated_at')->paginate(8);
         $response->assertViewIs('ketercapaian_standar.home')->assertViewHas('data', $data);
     }
 

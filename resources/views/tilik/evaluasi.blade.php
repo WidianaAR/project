@@ -11,6 +11,13 @@
     @extends('layouts.navbar')
 
     @section('isi')
+        @if (Session::has('error'))
+            <div class="alert alert-danger" role="alert" id="msg-box">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ Session::get('error') }}
+            </div>
+        @endif
+
         @if (Session::has('success'))
             <div class="alert alert-success" role="alert" id="msg-box">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>

@@ -41,6 +41,14 @@
                 <div class="col">
                     <input type="file" class="form-control form-control-sm @error('file_data') is-invalid mb-0 @enderror"
                         name="file_data" aria-describedby="file_data_error">
+                    @error('file_data')
+                        <div class="invalid-feedback mt-0 mb-2" id="file_data_error">
+                            {{ $message }}
+                        </div>
+                    @else
+                        <small class="text-danger"><i class="fa fa-circle-info"></i> Unggah file baru jika ingin merubah file
+                            panduan</small>
+                    @enderror
                 </div>
             </div>
 

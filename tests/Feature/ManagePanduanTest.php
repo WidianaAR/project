@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ManagePanduanTest extends TestCase
@@ -27,14 +27,7 @@ class ManagePanduanTest extends TestCase
 
     private function file()
     {
-        $path = public_path('files/panduan.pdf');
-        $file = new UploadedFile(
-            $path,
-            'test_file.pdf',
-            'pdf',
-            null,
-            true
-        );
+        $file = UploadedFile::fake()->create('panduan.pdf');
         return $file;
     }
 

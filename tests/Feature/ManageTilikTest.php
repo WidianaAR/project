@@ -47,7 +47,7 @@ class ManageTilikTest extends TestCase
         $this->auditor_login();
         $response = $this->get(route('tilik_home'));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi', 'status', 'tahap')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->with('prodi', 'status', 'tahap')->latest('updated_at')->paginate(15);
         $response->assertViewIs('tilik.home')->assertViewHas('data', $datas);
     }
 
@@ -56,7 +56,7 @@ class ManageTilikTest extends TestCase
         $this->auditor_login();
         $response = $this->post(route('tilik_filter', ['kategori' => 'evaluasi']));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->where('kategori', 'evaluasi')->with('prodi', 'status', 'tahap')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->where('kategori', 'evaluasi')->with('prodi', 'status', 'tahap')->latest('updated_at')->paginate(15);
         $response->assertViewIs('tilik.home')->assertViewHas('data', $datas);
     }
 
@@ -86,7 +86,7 @@ class ManageTilikTest extends TestCase
         $this->auditor_login();
         $response = $this->post(route('tilik_filter', ['kategori' => 'standar']));
         $access_prodi = $this->user_access();
-        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->where('kategori', 'standar')->with('prodi', 'status', 'tahap')->latest('tahun')->paginate(15);
+        $datas = Dokumen::whereIn('prodi_id', $access_prodi)->whereIn('status_id', [1, 2, 3])->where('kategori', 'standar')->with('prodi', 'status', 'tahap')->latest('updated_at')->paginate(15);
         $response->assertViewIs('tilik.home')->assertViewHas('data', $datas);
     }
 

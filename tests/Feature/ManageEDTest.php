@@ -69,7 +69,7 @@ class ManageEDTest extends TestCase
     {
         $this->pjm_login();
         $response = $this->get('evaluasi');
-        $data = Dokumen::where('kategori', 'evaluasi')->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('tahun')->paginate(8);
+        $data = Dokumen::where('kategori', 'evaluasi')->with('prodi', 'prodi.jurusan', 'status', 'tahap')->latest('updated_at')->paginate(8);
         $response->assertViewIs('evaluasi_diri.home')->assertViewHas('data', $data);
     }
 

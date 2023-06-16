@@ -28,6 +28,7 @@ class PanduanController extends Controller
     public function store(Request $request)
     {
         if ($request->file('file_data')) {
+            $request->validate(['file_data' => 'max:5120'], ['file_data' => 'Batas maksimal file yang diunggah adalah 5MB']);
             $extension = $request->file('file_data')->extension();
             $filename = $request->judul . '.' . $extension;
             $path = $this->UploadFilePanduan($request->file('file_data'), $filename);
@@ -59,6 +60,7 @@ class PanduanController extends Controller
     public function update(Request $request, Panduan $panduan)
     {
         if ($request->file('file_data')) {
+            $request->validate(['file_data' => 'max:5120'], ['file_data' => 'Batas maksimal file yang diunggah adalah 5MB']);
             $extension = $request->file('file_data')->extension();
             $filename = $request->judul . '.' . $extension;
             if ($panduan->file_data) {

@@ -47,7 +47,7 @@ class PascaAuditController extends Controller
             $keterangan = $keterangan . ' ' . $request->tahun;
         }
 
-        $data = $query->with('prodi')->latest('tahun')->paginate(15);
+        $data = $query->with('prodi')->latest('updated_at')->paginate(15);
         $years = $query_year->latest('tahun')->distinct()->pluck('tahun')->toArray();
 
         return view('pasca_audit.home', compact('data', 'years', 'keterangan', 'prodis'));
@@ -103,7 +103,7 @@ class PascaAuditController extends Controller
                 if ($sheet[3] && $sheet[1]) {
                     if ($request->input('komentar')) {
                         $komentar = $request->input('komentar');
-                        $worksheet->setCellValue('K' . ($key + 1), $komentar[$komentarKey]);
+                        $worksheet->setCellValue('K' . ($key + 1), $komentar[$komentarKey] ?? ' ');
                         $komentarKey++;
                     }
 
@@ -122,19 +122,23 @@ class PascaAuditController extends Controller
 
         if ($request->input('komentar') && $request->input('nilai')) {
             $data->update(['status_id' => 6]);
+            $data->touch();
             Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
             activity()->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
         } else {
             if ($request->input('nilai') && $data->status_id != 6 && $data->status_id != 4) {
                 $data->update(['status_id' => 5]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 5])->touch();
                 activity()->log('Menambahkan nilai pada ' . basename($data->file_data));
             } elseif ($request->input('komentar') && $data->status_id != 6 && $data->status_id != 5) {
                 $data->update(['status_id' => 4]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 4])->touch();
                 activity()->log('Menambahkan komentar pada ' . basename($data->file_data));
             } else {
                 $data->update(['status_id' => 6]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
                 activity()->log('Mengubah data pada ' . basename($data->file_data));
             }
@@ -239,19 +243,23 @@ class PascaAuditController extends Controller
 
         if ($request->input('kategori') == 'komentarnilai' || $request->input('kategori') == 'nilaikomentar') {
             $data->update(['status_id' => 6]);
+            $data->touch();
             Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
             activity()->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
         } else {
             if ($request->input('kategori') == 'nilai' && $data->status_id != 6 && $data->status_id != 4) {
                 $data->update(['status_id' => 5]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 5])->touch();
                 activity()->log('Menambahkan nilai pada ' . basename($data->file_data));
             } elseif ($request->input('kategori') == 'komentar' && $data->status_id != 6 && $data->status_id != 5) {
                 $data->update(['status_id' => 4]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 4])->touch();
                 activity()->log('Menambahkan komentar pada ' . basename($data->file_data));
             } else {
                 $data->update(['status_id' => 6]);
+                $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
                 activity()->log('Mengubah data pada ' . basename($data->file_data));
             }
@@ -265,6 +273,7 @@ class PascaAuditController extends Controller
     {
         $data = Dokumen::find($id);
         $data->update(['status_id' => 7]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 7])->touch();
         activity()
             ->performedOn($data)
@@ -276,6 +285,7 @@ class PascaAuditController extends Controller
     {
         $data = Dokumen::find($id);
         $data->update(['status_id' => 6]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
         activity()
             ->performedOn($data)

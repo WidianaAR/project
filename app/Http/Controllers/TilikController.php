@@ -47,7 +47,7 @@ class TilikController extends Controller
             $keterangan = $keterangan . ' ' . $request->tahun;
         }
 
-        $data = $query->with('prodi')->latest('tahun')->paginate(15);
+        $data = $query->with('prodi')->latest('updated_at')->paginate(15);
         $years = $query_year->latest('tahun')->distinct()->pluck('tahun')->toArray();
 
         return view('tilik.home', compact('data', 'years', 'keterangan', 'prodis'));
@@ -62,6 +62,34 @@ class TilikController extends Controller
                     'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
                 ]);
 
+            $spreadsheet = IOFactory::load($request->file('file'));
+            $sheet = $spreadsheet->getSheet(0);
+            $fileColumns = [];
+
+            if ($request->kategori == 'evaluasi') {
+                $columns = ['Standar', 'Kriteria', 'Nilai capaian', 'Sebutan', 'Bobot', 'Nilai Tertimbang', 'Link Bukti'];
+                for ($column = 'C'; $column <= 'I'; $column++) {
+                    $cellValue = $sheet->getCell($column . 2)->getValue();
+                    array_push($fileColumns, $cellValue);
+                }
+
+                $missingColumns = array_diff($columns, $fileColumns);
+                if (count($missingColumns) > 0) {
+                    return back()->with('error', 'Mohon periksa kembali file yang Anda unggah! Kolom yang diperlukan tidak ditemukan: ' . join(', ', $missingColumns));
+                }
+            } else {
+                $columns = ['Standar', 'NO', 'PERNYATAAN ISI STANDAR ', 'INDIKATOR ', '', '', 'Satuan'];
+                for ($column = 'A'; $column <= 'G'; $column++) {
+                    $cellValue = $sheet->getCell($column . 1)->getValue();
+                    array_push($fileColumns, $cellValue);
+                }
+                $missingColumns = array_diff($columns, $fileColumns);
+                if (count($missingColumns) > 0) {
+                    return back()->with('error', 'Mohon periksa kembali file yang Anda unggah! Kolom yang diperlukan tidak ditemukan: ' . join(', ', $missingColumns));
+                }
+            }
+
+
             $kategori = ($request->kategori == 'evaluasi') ? 'Evaluasi Diri_' : 'Ketercapaian Standar_';
             $data = Dokumen::find($request->id);
             $this->DeleteFile($data->file_data);
@@ -75,6 +103,7 @@ class TilikController extends Controller
                     'file_data' => $path,
                 ]
             );
+            $data->touch();
             Tahap::where(['dokumen_id' => $data->id, 'status_id' => 2])->first()->touch();
             activity()
                 ->performedOn($data)
@@ -127,7 +156,7 @@ class TilikController extends Controller
                 $worksheet->getStyle('J' . ($key + 1))->applyFromArray($boldCenter);
             } else {
                 if ($sheet[3] && $sheet[1]) {
-                    $worksheet->setCellValue('J' . ($key + 1), $tilik[$tilikKey]);
+                    $worksheet->setCellValue('J' . ($key + 1), $tilik[$tilikKey] ?? ' ');
                     $tilikKey++;
                 }
             }
@@ -138,6 +167,7 @@ class TilikController extends Controller
         $writer->save(storage_path('app/public/' . $data->file_data));
 
         $data->update(['status_id' => 3]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ed_table', $data->id)->with('success', 'Tilik berhasil disimpan');
@@ -199,6 +229,7 @@ class TilikController extends Controller
         $writer->save(storage_path('app/public/' . $data->file_data));
 
         $data->update(['status_id' => 3]);
+        $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ks_table', $data->id)->with('success', 'Tilik berhasil disimpan');
