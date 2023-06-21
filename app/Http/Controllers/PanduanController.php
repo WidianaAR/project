@@ -43,6 +43,7 @@ class PanduanController extends Controller
         ]);
         activity()
             ->performedOn($panduan)
+            ->event('Manajemen data panduan')
             ->log('Menambahkan data panduan ' . $panduan->judul);
         return redirect()->route('panduans.index')->with('success', 'Data panduan berhasil disimpan');
     }
@@ -80,6 +81,7 @@ class PanduanController extends Controller
         ]);
         activity()
             ->performedOn($panduan)
+            ->event('Manajemen data panduan')
             ->log('Mengubah data panduan dengan id ' . $panduan->id);
         return redirect()->route('panduans.index')->with('success', 'Data panduan berhasil diubah');
     }
@@ -92,6 +94,7 @@ class PanduanController extends Controller
         }
         activity()
             ->performedOn($panduan)
+            ->event('Manajemen data panduan')
             ->log('Menghapus data panduan ' . $panduan->judul);
         $panduan->delete();
         return back()->with('success', 'Data panduan berhasil dihapus');
@@ -100,7 +103,9 @@ class PanduanController extends Controller
     public function download($id)
     {
         $data = Panduan::find($id)->file_data;
-        activity()->log('Download file panduan ' . basename($data));
+        activity()
+            ->event('Manajemen data panduan')
+            ->log('Download file panduan ' . basename($data));
         return response()->download(storage_path('app/public/' . $data));
     }
 }

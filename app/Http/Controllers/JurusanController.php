@@ -31,6 +31,7 @@ class JurusanController extends Controller
         $jurusan = Jurusan::create($data);
         activity()
             ->performedOn($jurusan)
+            ->event('Manajemen data jurusan')
             ->log('Menambahkan data jurusan ' . $jurusan->nama_jurusan);
         return redirect('jurusans')->with('success', 'Data jurusan berhasil ditambahkan');
     }
@@ -62,6 +63,7 @@ class JurusanController extends Controller
         Jurusan::find($jurusan->id)->update($data);
         activity()
             ->performedOn($jurusan)
+            ->event('Manajemen data jurusan')
             ->log('Mengubah data jurusan dengan id ' . $jurusan->id);
         return redirect('jurusans')->with('success', 'Data jurusan berhasil diubah');
     }
@@ -74,6 +76,7 @@ class JurusanController extends Controller
         }
         activity()
             ->performedOn($data)
+            ->event('Manajemen data jurusan')
             ->log('Menghapus data jurusan ' . $data->nama_jurusan);
         $data->delete();
         return back()->with('success', 'Data jurusan berhasil dihapus');

@@ -40,16 +40,23 @@
                 </div>
             @endif
 
-            <div class="col-auto text-left">
+            <div class="col-auto text-left pr-1">
                 <form action="{{ route('ks_export_all') }}" method="POST">
                     @csrf
                     @foreach ($data as $file)
                         <input name="data[]" type="hidden" value="{{ $file->file_data }}">
                     @endforeach
-                    <input type="submit" class="btn btn-sm btn-primary" value="Export Semua File">
+                    <input type="submit" class="btn btn-sm btn-primary" value="Export semua file">
                 </form>
             </div>
-            <div class="col-auto text-left pl-0">
+            @can('pjm')
+                <div class="col-auto text-left px-0">
+                    <a href="{{ route('ks_set_time') }}" type="button" class="btn btn-success btn-sm"><i
+                            class="fa fa-clock-o fa-sm"></i> Atur
+                        deadline</a>
+                </div>
+            @endcan
+            <div class="col-auto text-left pl-1">
                 <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseFilter"
                     aria-expanded="false" aria-controls="collapseFilter">
                     <i class="fa fa-sm fa-filter"></i>
@@ -165,13 +172,6 @@
                 <h6>Maaf data tidak ditemukan</h6>
             @endif
         </div>
-
-        @can('pjm')
-            <div class="floating-action-button">
-                <a type="button" href="{{ route('ks_set_time') }}" class="btn"><i class='fa fa-clock fa-2x'
-                        style='color: #0D64AC'></i></a>
-            </div>
-        @endcan
 
         @can('kajur')
             @if ($deadline[0])

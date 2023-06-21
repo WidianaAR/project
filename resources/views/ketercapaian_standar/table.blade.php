@@ -82,7 +82,7 @@
             @endcan
 
             @cannot('koorprodi')
-                <div class="@if ($file) col-auto text-left @else ml-3 @endif">
+                <div class="col-auto text-left pl-1">
                     <a type="button" class="btn btn-sm btn-secondary" href="{{ route('ks_home') }}">
                         <i class="fa fa-sm fa-arrow-left" aria-hidden="true"></i> Kembali
                     </a>
@@ -126,9 +126,13 @@
                                             <td> {{ $sheet[$v] }} </td>
                                         @endforeach
                                         <td>
-                                            <a href="{{ $sheet['J'] }}">
-                                                {{ strip_tags(\Illuminate\Support\Str::limit($sheet['J'], 15, '...')) }}
-                                            </a>
+                                            @if (\Illuminate\Support\Facades\URL::isValidUrl($sheet['J']))
+                                                <a href="{{ $sheet['J'] }}" target="_blank">
+                                                    {{ strip_tags(\Illuminate\Support\Str::limit($sheet['J'], 15, '...')) }}
+                                                </a>
+                                            @else
+                                                {{ $sheet['J'] }}
+                                            @endif
                                         </td>
                                         @if (array_key_exists('K', $sheet))
                                             <td>
@@ -158,13 +162,6 @@
             </div>
         @endif
         </div>
-
-        @can('pjm')
-            <div class="floating-action-button">
-                <a type="button" href="{{ route('ks_set_time') }}" class="btn"><i class='fa fa-clock fa-2x'
-                        style='color: #0D64AC'></i></a>
-            </div>
-        @endcan
     @endsection
 
     @can('koorprodi')

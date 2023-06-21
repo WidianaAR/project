@@ -138,7 +138,7 @@
                     type: 'line'
                 },
                 title: {
-                    text: 'Line Chart'
+                    text: 'Diagram evaluasi diri'
                 },
                 xAxis: {
                     categories: param
@@ -170,7 +170,7 @@
                     polar: true,
                 },
                 title: {
-                    text: 'Radar Chart'
+                    text: 'Diagram evaluasi diri'
                 },
                 xAxis: {
                     categories: param,

@@ -66,7 +66,9 @@ class PascaAuditController extends Controller
         }
 
         if (!in_array($data->prodi_id, $auditor_prodi)) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Evaluasi diri')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
@@ -124,23 +126,31 @@ class PascaAuditController extends Controller
             $data->update(['status_id' => 6]);
             $data->touch();
             Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
-            activity()->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
+            activity()
+                ->event('Evaluasi diri')
+                ->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
         } else {
             if ($request->input('nilai') && $data->status_id != 6 && $data->status_id != 4) {
                 $data->update(['status_id' => 5]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 5])->touch();
-                activity()->log('Menambahkan nilai pada ' . basename($data->file_data));
+                activity()
+                    ->event('Evaluasi diri')
+                    ->log('Menambahkan nilai pada ' . basename($data->file_data));
             } elseif ($request->input('komentar') && $data->status_id != 6 && $data->status_id != 5) {
                 $data->update(['status_id' => 4]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 4])->touch();
-                activity()->log('Menambahkan komentar pada ' . basename($data->file_data));
+                activity()
+                    ->event('Evaluasi diri')
+                    ->log('Menambahkan komentar pada ' . basename($data->file_data));
             } else {
                 $data->update(['status_id' => 6]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
-                activity()->log('Mengubah data pada ' . basename($data->file_data));
+                activity()
+                    ->event('Evaluasi diri')
+                    ->log('Mengubah data pada ' . basename($data->file_data));
             }
         }
 
@@ -163,7 +173,9 @@ class PascaAuditController extends Controller
             array_push($auditor_prodi, $value->prodi_id);
         }
         if (!in_array($data->prodi_id, $auditor_prodi)) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Ketercapaian standar')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
@@ -245,23 +257,31 @@ class PascaAuditController extends Controller
             $data->update(['status_id' => 6]);
             $data->touch();
             Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
-            activity()->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
+            activity()
+                ->event('Ketercapaian standar')
+                ->log('Menambahkan komentar dan nilai pada ' . basename($data->file_data));
         } else {
             if ($request->input('kategori') == 'nilai' && $data->status_id != 6 && $data->status_id != 4) {
                 $data->update(['status_id' => 5]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 5])->touch();
-                activity()->log('Menambahkan nilai pada ' . basename($data->file_data));
+                activity()
+                    ->event('Ketercapaian standar')
+                    ->log('Menambahkan nilai pada ' . basename($data->file_data));
             } elseif ($request->input('kategori') == 'komentar' && $data->status_id != 6 && $data->status_id != 5) {
                 $data->update(['status_id' => 4]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 4])->touch();
-                activity()->log('Menambahkan komentar pada ' . basename($data->file_data));
+                activity()
+                    ->event('Ketercapaian standar')
+                    ->log('Menambahkan komentar pada ' . basename($data->file_data));
             } else {
                 $data->update(['status_id' => 6]);
                 $data->touch();
                 Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
-                activity()->log('Mengubah data pada ' . basename($data->file_data));
+                activity()
+                    ->event('Ketercapaian standar')
+                    ->log('Mengubah data pada ' . basename($data->file_data));
             }
         }
 
@@ -275,9 +295,17 @@ class PascaAuditController extends Controller
         $data->update(['status_id' => 7]);
         $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 7])->touch();
-        activity()
-            ->performedOn($data)
-            ->log('Konfirmasi ' . basename($data->file_data));
+        if ($data->kategori == 'evaluasi') {
+            activity()
+                ->performedOn($data)
+                ->event('Evaluasi diri')
+                ->log('Konfirmasi ' . basename($data->file_data));
+        } else {
+            activity()
+                ->performedOn($data)
+                ->event('Ketercapaian standar')
+                ->log('Konfirmasi ' . basename($data->file_data));
+        }
         return redirect()->route('pasca_ed_table', $id)->with('success', 'Data disetujui');
     }
 
@@ -287,9 +315,17 @@ class PascaAuditController extends Controller
         $data->update(['status_id' => 6]);
         $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 6])->touch();
-        activity()
-            ->performedOn($data)
-            ->log('Membatalkan konfirmasi ' . basename($data->file_data));
+        if ($data->kategori == 'evaluasi') {
+            activity()
+                ->performedOn($data)
+                ->event('Evaluasi diri')
+                ->log('Membatalkan konfirmasi ' . basename($data->file_data));
+        } else {
+            activity()
+                ->performedOn($data)
+                ->event('Ketercapaian standar')
+                ->log('Membatalkan konfirmasi ' . basename($data->file_data));
+        }
         return redirect()->route('pasca_ed_table', $id);
     }
 }

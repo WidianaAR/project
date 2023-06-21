@@ -32,6 +32,7 @@ class EDDeadlineController extends Controller
         );
         activity()
             ->performedOn($data)
+            ->event('Evaluasi diri')
             ->log('Mengatur waktu pengisian evaluasi diri');
         return redirect()->route('ed_home')->with('success', 'Set deadline pengisian evaluasi diri berhasil');
     }
@@ -52,6 +53,7 @@ class EDDeadlineController extends Controller
         activity()
             ->causedByAnonymous()
             ->performedOn($data)
+            ->event('Evaluasi diri')
             ->log('Waktu pengisian evaluasi diri selesai');
         $data->update(['status' => 'finish']);
         return redirect()->route('ed_home');

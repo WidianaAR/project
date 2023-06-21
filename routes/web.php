@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Spatie\Activitylog\Models\Activity;
 
 Route::redirect('/', '/login');
 
@@ -51,11 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('panduans', 'App\Http\Controllers\PanduanController');
 
             // Riwayat Aktivitas
-            Route::get('logs', function () {
-                $perPage = request()->query('per_page', 5);
-                $datas = Activity::with('causer')->latest()->paginate($perPage)->withQueryString();
-                return view('log', compact('datas'));
-            })->name('logs');
+            Route::get('logs', 'App\Http\Controllers\LogController@index')->name('logs');
 
             // Pengumuman
             Route::post('pengumuman', 'App\Http\Controllers\PengumumanController@store')->name('add_pengumuman');
@@ -186,4 +181,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Logout
     Route::get('logout', 'App\Http\Controllers\AuthenticationController@logout')->name('logout');
+
+
 });
+
+Route::get('tes', function () {
+    return view('tes');
+})->name('tes');

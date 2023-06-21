@@ -71,7 +71,7 @@
             </table>
             {{ $prodis->links() }}
         @else
-            <h5>Data kosong</h5>
+            <h6>Maaf data tidak ditemukan</h6>
         @endif
     </div>
 

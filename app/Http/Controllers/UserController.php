@@ -33,6 +33,7 @@ class UserController extends Controller
 
         activity()
             ->performedOn($user)
+            ->event('Manajemen data pengguna')
             ->log('Menghapus data user ' . $user->name);
         $user->delete();
         return redirect('user')->with('success', 'Data user berhasil dihapus');
@@ -104,6 +105,7 @@ class UserController extends Controller
 
         activity()
             ->performedOn($user)
+            ->event('Manajemen data pengguna')
             ->log('Menambahkan data user ' . $user->name);
         return redirect('user')->with('success', 'Data user berhasil ditambahkan');
     }
@@ -264,6 +266,7 @@ class UserController extends Controller
         $user->touch();
         activity()
             ->performedOn($user)
+            ->event('Manajemen data pengguna')
             ->log('Mengubah data user dengan id ' . $user->id);
 
         return redirect('user')->with('success', 'Data user berhasil diubah');

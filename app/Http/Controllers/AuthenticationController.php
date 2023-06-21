@@ -28,16 +28,24 @@ class AuthenticationController extends Controller
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->role_id == 1) {
-                activity()->log('PJM login');
+                activity()
+                    ->event('Autentikasi')
+                    ->log('PJM login');
                 return redirect()->intended('pjm');
             } elseif ($user->role_id == 2) {
-                activity()->log('Kajur login');
+                activity()
+                    ->event('Autentikasi')
+                    ->log('Kajur login');
                 return redirect()->intended('kajur');
             } elseif ($user->role_id == 3) {
-                activity()->log('Koorprodi login');
+                activity()
+                    ->event('Autentikasi')
+                    ->log('Koorprodi login');
                 return redirect()->intended('koorprodi');
             } elseif ($user->role_id == 4) {
-                activity()->log('Auditor login');
+                activity()
+                    ->event('Autentikasi')
+                    ->log('Auditor login');
                 return redirect()->intended('auditor');
             }
             return redirect('login');
@@ -47,7 +55,9 @@ class AuthenticationController extends Controller
 
     public function logout(Request $request)
     {
-        activity()->log('User logout');
+        activity()
+            ->event('Autentikasi')
+            ->log('User logout');
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -80,6 +90,7 @@ class AuthenticationController extends Controller
         $data->update(['password' => Hash::make($request->password)]);
         activity()
             ->performedOn($data)
+            ->event('Autentikasi')
             ->log('User mengubah password');
         return redirect()->route('ed_chart')->with('success', 'Password akun berhasil diubah.');
     }
@@ -110,7 +121,9 @@ class AuthenticationController extends Controller
             $message->subject('Reset password akun Simjamu ITK');
         });
 
-        activity()->log('User mengirim tautan reset password ke ' . $request->email);
+        activity()
+            ->event('Autentikasi')
+            ->log('User mengirim tautan reset password ke ' . $request->email);
         return back()->with('success', 'Tautan untuk reset password sudah dikirim ke email anda!');
     }
 
@@ -148,7 +161,9 @@ class AuthenticationController extends Controller
 
         User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
         $updatePassword->delete();
-        activity()->log('User merubah password akun ' . $request->email);
+        activity()
+            ->event('Autentikasi')
+            ->log('User merubah password akun ' . $request->email);
 
         return redirect('/login')->with('success', 'Password berhasil diubah');
     }

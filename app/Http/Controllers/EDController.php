@@ -120,6 +120,7 @@ class EDController extends Controller
             Tahap::updateOrCreate(['dokumen_id' => $eddata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($eddata)
+                ->event('Evaluasi diri')
                 ->log('Menambahkan data ' . basename($eddata->file_data));
             return redirect()->route('ed_home')->with('success', 'File berhasil ditambahkan');
         }
@@ -136,10 +137,14 @@ class EDController extends Controller
         $deadline = $this->Countdown('evaluasi');
 
         if (($user->role_id == 3 && $file->prodi_id != $user->user_access_file[0]->prodi_id)) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Evaluasi diri')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         } elseif ($user->role_id == 2 && $file->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Evaluasi diri')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
 
@@ -159,6 +164,7 @@ class EDController extends Controller
             $this->DeleteFile($file->file_data);
             activity()
                 ->performedOn($file)
+                ->event('Evaluasi diri')
                 ->log('Menghapus data ' . basename($file->file_data));
             $file->delete();
         } else {
@@ -218,6 +224,7 @@ class EDController extends Controller
 
         activity()
             ->performedOn($data)
+            ->event('Evaluasi diri')
             ->log('Mengubah data evaluasi diri dengan id ' . $data->id);
         return redirect()->route('ed_home')->with('success', 'File berhasil diubah');
     }
@@ -256,7 +263,9 @@ class EDController extends Controller
             } else {
                 $this->ExportZip($zipname, $request->data);
             }
-            activity()->log('Export evaluasi diri files to zip');
+            activity()
+                ->event('Evaluasi diri')
+                ->log('Export evaluasi diri files to zip');
             return response()->download(storage_path('app/public/' . $zipname));
         }
         return back()->with('error', 'Tidak ada data yang dipilih');
@@ -264,7 +273,9 @@ class EDController extends Controller
 
     public function export_file(Request $request)
     {
-        activity()->log('Export evaluasi diri file ' . basename($request->filename));
+        activity()
+            ->event('Evaluasi diri')
+            ->log('Export evaluasi diri file ' . basename($request->filename));
         return response()->download(storage_path('app/public/' . $request->filename));
     }
 }

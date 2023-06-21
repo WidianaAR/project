@@ -32,9 +32,9 @@
                 <a class="dropdown-item {{ Request::is('user/filter/1') ? 'active' : '' }}"
                     href="{{ route('user_filter', 1) }}">PJM</a>
                 <a class="dropdown-item {{ Request::is('user/filter/2') ? 'active' : '' }}"
-                    href="{{ route('user_filter', 2) }}">Ketua Jurusan</a>
+                    href="{{ route('user_filter', 2) }}">Ketua jurusan</a>
                 <a class="dropdown-item {{ Request::is('user/filter/3') ? 'active' : '' }}"
-                    href="{{ route('user_filter', 3) }}">Koordinator Program Studi</a>
+                    href="{{ route('user_filter', 3) }}">Koordinator program studi</a>
                 <a class="dropdown-item {{ Request::is('user/filter/4') ? 'active' : '' }}"
                     href="{{ route('user_filter', 4) }}">Auditor</a>
             </div>
@@ -91,7 +91,7 @@
             </table>
             {{ $users->links() }}
         @else
-            <h5>Data kosong</h5>
+            <h6>Maaf data tidak ditemukan</h6>
         @endif
     </div>
 

@@ -32,6 +32,7 @@ class KSDeadlineController extends Controller
         );
         activity()
             ->performedOn($data)
+            ->event('Ketercapaian standar')
             ->log('Mengatur waktu pengisian ketercapaian standar');
         return redirect()->route('ks_home')->with('success', 'Set deadline pengisian ketercapaian standar berhasil');
     }
@@ -53,6 +54,7 @@ class KSDeadlineController extends Controller
         activity()
             ->causedByAnonymous()
             ->performedOn($data)
+            ->event('Ketercapaian standar')
             ->log('Waktu pengisian ketercapaian standar selesai');
         $data->update(['status' => 'finish']);
         return redirect()->route('ks_home');

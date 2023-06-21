@@ -108,7 +108,7 @@
                 </table>
                 {{ $data->links() }}
             @else
-                <h5>Data Kosong</h5>
+                <h6>Maaf data tidak ditemukan</h6>
             @endif
         </div>
     @endsection

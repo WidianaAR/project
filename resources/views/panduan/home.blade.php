@@ -38,7 +38,7 @@
                 {{ $panduans->links() }}
             </div>
         @else
-            <h5 class="text-center">Data kosong</h5>
+            <h6>Maaf data tidak ditemukan</h6>
         @endif
     </div>
 @endsection

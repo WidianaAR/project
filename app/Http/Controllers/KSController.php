@@ -120,6 +120,7 @@ class KSController extends Controller
             Tahap::updateOrCreate(['dokumen_id' => $ksdata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($ksdata)
+                ->event('Ketercapaian standar')
                 ->log('Menambahkan data ' . basename($ksdata->file_data));
             return redirect()->route('ks_home')->with('success', 'File berhasil ditambahkan');
         }
@@ -133,6 +134,7 @@ class KSController extends Controller
             $this->DeleteFile($file->file_data);
             activity()
                 ->performedOn($file)
+                ->event('Ketercapaian standar')
                 ->log('Menghapus data ' . basename($file->file_data));
             $file->delete();
         } else {
@@ -155,10 +157,14 @@ class KSController extends Controller
         $deadline = $this->Countdown('standar');
 
         if (($user->role_id == 3 && $file->prodi_id != $user->user_access_file[0]->prodi_id)) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Ketercapaian standar')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         } elseif ($user->role_id == 2 && $file->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
-            activity()->log('Prohibited access | Mencoba akses data prodi lain');
+            activity()
+                ->event('Ketercapaian standar')
+                ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
         return view('ketercapaian_standar.table', compact('deadline', 'id_standar', 'sheetData', 'headers', 'sheetName', 'years', 'file', 'kategori'));
@@ -238,6 +244,7 @@ class KSController extends Controller
 
         activity()
             ->performedOn($data)
+            ->event('Ketercapaian standar')
             ->log('Mengubah data ketercapaian standar dengan id ' . $data->id);
         return redirect()->route('ks_home')->with('success', 'File berhasil diubah');
     }
@@ -252,7 +259,9 @@ class KSController extends Controller
             } else {
                 $this->ExportZip($zipname, $request->data);
             }
-            activity()->log('Export ketercapaian standar files to zip');
+            activity()
+                ->event('Ketercapaian standar')
+                ->log('Export ketercapaian standar files to zip');
             return response()->download(storage_path('app/public/' . $zipname));
         }
         return back()->with('error', 'Tidak ada file yang dipilih');
@@ -260,7 +269,9 @@ class KSController extends Controller
 
     public function export_file(Request $request)
     {
-        activity()->log('Export ketercapaian standar file ' . basename($request->filename));
+        activity()
+            ->event('Ketercapaian standar')
+            ->log('Export ketercapaian standar file ' . basename($request->filename));
         return response()->download(storage_path('app/public/' . $request->filename));
     }
 }

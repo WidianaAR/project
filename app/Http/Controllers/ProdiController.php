@@ -31,6 +31,7 @@ class ProdiController extends Controller
         $prodi = Prodi::create($request->all());
         activity()
             ->performedOn($prodi)
+            ->event('Manajemen data program studi')
             ->log('Menambah data prodi ' . $prodi->nama_prodi);
         return redirect('prodis')->with('success', 'Data prodi berhasil ditambahkan');
     }
@@ -62,6 +63,7 @@ class ProdiController extends Controller
         Prodi::find($prodi->id)->update($request->all());
         activity()
             ->performedOn($prodi)
+            ->event('Manajemen data program studi')
             ->log('Mengubah data prodi dengan id ' . $prodi->id);
         return redirect('prodis')->with('success', 'Data prodi berhasil diubah');
     }
@@ -75,6 +77,7 @@ class ProdiController extends Controller
 
         activity()
             ->performedOn($data)
+            ->event('Manajemen data program studi')
             ->log('Menghapus data prodi ' . $data->nama_prodi);
         $data->delete();
         return back()->with('success', 'Data prodi berhasil dihapus');

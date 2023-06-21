@@ -82,7 +82,7 @@
             @endcan
 
             @cannot('koorprodi')
-                <div class="@if ($file) col-auto text-left @else ml-3 @endif">
+                <div class="col-auto text-left pl-1">
                     <a type="button" class="btn btn-sm btn-secondary" href="{{ route('ed_home') }}">
                         <i class="fa fa-sm fa-arrow-left" aria-hidden="true"></i> Kembali
                     </a>
@@ -111,7 +111,7 @@
                             @endforeach
                             <td>
                                 @if (\Illuminate\Support\Facades\URL::isValidUrl($sheet[8]))
-                                    <a href="{{ $sheet[8] }}">
+                                    <a href="{{ $sheet[8] }}" target="_blank">
                                         {{ strip_tags(\Illuminate\Support\Str::limit($sheet[8], 20, '...')) }}
                                     </a>
                                 @else
@@ -138,13 +138,6 @@
         </div>
     @endif
     </div>
-
-    @can('pjm')
-        <div class="floating-action-button">
-            <a type="button" href="{{ route('ed_set_time') }}" class="btn"><i class='fa fa-clock fa-2x'
-                    style='color: #0D64AC'></i></a>
-        </div>
-    @endcan
 @endsection
 
 @can('koorprodi')
