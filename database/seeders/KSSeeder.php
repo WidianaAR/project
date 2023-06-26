@@ -23,7 +23,7 @@ class KSSeeder extends Seeder
         );
 
         // Data tahun 2022
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Informatika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Informatika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 11,
@@ -34,7 +34,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Sistem Informasi_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Sistem Informasi_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 10,
@@ -45,7 +45,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Fisika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Fisika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 1,
@@ -56,7 +56,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Matematika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Matematika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 2,
@@ -67,7 +67,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Mesin_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Mesin_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 3,
@@ -78,7 +78,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Elektro_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Elektro_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 4,
@@ -89,7 +89,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Kimia_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Kimia_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 5,
@@ -100,7 +100,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Sipil_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Sipil_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 7,
@@ -113,7 +113,7 @@ class KSSeeder extends Seeder
 
 
         // Data tahun 2021
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Informatika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Informatika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 11,
@@ -124,7 +124,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Sistem Informasi_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Sistem Informasi_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 10,
@@ -135,7 +135,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Fisika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Fisika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 1,
@@ -146,7 +146,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Matematika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Matematika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 2,
@@ -157,7 +157,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Mesin_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Mesin_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 3,
@@ -168,7 +168,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Elektro_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Elektro_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 4,
@@ -179,7 +179,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Kimia_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Kimia_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 5,
@@ -190,7 +190,7 @@ class KSSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Ketercapaian Standar_Teknik Sipil_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Audit Mutu Internal_Teknik Sipil_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 7,

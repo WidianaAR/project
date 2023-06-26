@@ -84,8 +84,8 @@ class EDController extends Controller
             $request->validate([
                 'file' => 'required|mimes:xlsx',
             ], [
-                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
-                ]);
+                'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+            ]);
 
             $spreadsheet = IOFactory::load($request->file('file'));
             $sheet = $spreadsheet->getSheet(0);
@@ -108,7 +108,7 @@ class EDController extends Controller
             } else {
                 $prodi = Prodi::find($request->prodi);
             }
-            $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
+            $path = $this->UploadFile($request->file('file'), "Instrumen Simulasi Akreditasi_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
             $eddata = Dokumen::updateOrCreate(
                 ['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'evaluasi'],
                 [
@@ -120,7 +120,7 @@ class EDController extends Controller
             Tahap::updateOrCreate(['dokumen_id' => $eddata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($eddata)
-                ->event('Evaluasi diri')
+                ->event('Simulasi akreditasi')
                 ->log('Menambahkan data ' . basename($eddata->file_data));
             return redirect()->route('ed_home')->with('success', 'File berhasil ditambahkan');
         }
@@ -138,12 +138,12 @@ class EDController extends Controller
 
         if (($user->role_id == 3 && $file->prodi_id != $user->user_access_file[0]->prodi_id)) {
             activity()
-                ->event('Evaluasi diri')
+                ->event('Simulasi akreditasi')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         } elseif ($user->role_id == 2 && $file->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
             activity()
-                ->event('Evaluasi diri')
+                ->event('Simulasi akreditasi')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
@@ -164,7 +164,7 @@ class EDController extends Controller
             $this->DeleteFile($file->file_data);
             activity()
                 ->performedOn($file)
-                ->event('Evaluasi diri')
+                ->event('Simulasi akreditasi')
                 ->log('Menghapus data ' . basename($file->file_data));
             $file->delete();
         } else {
@@ -181,7 +181,7 @@ class EDController extends Controller
         if ($request->prodi != $data->prodi_id) {
             $exist = Dokumen::where(['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'evaluasi'])->first();
             if ($exist) {
-                return back()->with('error', 'File evaluasi diri ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
+                return back()->with('error', 'Instrumen simulasi akreditasi ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
             }
         }
 
@@ -189,8 +189,8 @@ class EDController extends Controller
             $request->validate([
                 'file' => 'required|mimes:xlsx',
             ], [
-                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
-                ]);
+                'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+            ]);
 
             $spreadsheet = IOFactory::load($request->file('file'));
             $sheet = $spreadsheet->getSheet(0);
@@ -207,9 +207,9 @@ class EDController extends Controller
             }
 
             $this->DeleteFile($data->file_data);
-            $path = $this->UploadFile($request->file('file'), "Evaluasi Diri_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
+            $path = $this->UploadFile($request->file('file'), "Instrumen Simulasi Akreditasi_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
         } else {
-            $path = "Files/Evaluasi Diri_" . $prodi->nama_prodi . "_" . $data->tahun . ".xlsx";
+            $path = "Files/Instrumen Simulasi Akreditasi_" . $prodi->nama_prodi . "_" . $data->tahun . ".xlsx";
             $this->ChangeFileName($data->file_data, $path);
         }
 
@@ -224,8 +224,8 @@ class EDController extends Controller
 
         activity()
             ->performedOn($data)
-            ->event('Evaluasi diri')
-            ->log('Mengubah data evaluasi diri dengan id ' . $data->id);
+            ->event('Simulasi akreditasi')
+            ->log('Mengubah instrumen simulasi akreditasi dengan id ' . $data->id);
         return redirect()->route('ed_home')->with('success', 'File berhasil diubah');
     }
 
@@ -256,7 +256,7 @@ class EDController extends Controller
     public function export_all(Request $request)
     {
         if ($request->data) {
-            $zipname = 'Files/Evaluasi Diri.zip';
+            $zipname = 'Files/Instrumen Simulasi Akreditasi.zip';
             if (Storage::disk('public')->exists($zipname)) {
                 $this->DeleteZip($zipname);
                 $this->ExportZip($zipname, $request->data);
@@ -264,8 +264,8 @@ class EDController extends Controller
                 $this->ExportZip($zipname, $request->data);
             }
             activity()
-                ->event('Evaluasi diri')
-                ->log('Export evaluasi diri files to zip');
+                ->event('Simulasi akreditasi')
+                ->log('Export instrumen simulasi akreditasi files to zip');
             return response()->download(storage_path('app/public/' . $zipname));
         }
         return back()->with('error', 'Tidak ada data yang dipilih');
@@ -274,8 +274,8 @@ class EDController extends Controller
     public function export_file(Request $request)
     {
         activity()
-            ->event('Evaluasi diri')
-            ->log('Export evaluasi diri file ' . basename($request->filename));
+            ->event('Simulasi akreditasi')
+            ->log('Export instrumen simulasi akreditasi file ' . basename($request->filename));
         return response()->download(storage_path('app/public/' . $request->filename));
     }
 }

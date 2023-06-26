@@ -119,7 +119,7 @@ class ManageEDTest extends TestCase
         ];
         $this->post('evaluasi', $data)->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('dokumens', [
-            'file_data' => 'Files/Evaluasi Diri_Informatika_2023.xlsx'
+            'file_data' => 'Files/Instrumen Simulasi Akreditasi_Informatika_2023.xlsx'
         ]);
     }
 
@@ -147,7 +147,7 @@ class ManageEDTest extends TestCase
         ];
         $this->post('evaluasi/change', $data)->assertRedirect('evaluasi')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('dokumens', [
-            'file_data' => 'Files/Evaluasi Diri_Bisnis Digital_2023.xlsx'
+            'file_data' => 'Files/Instrumen Simulasi Akreditasi_Bisnis Digital_2023.xlsx'
         ]);
     }
 
@@ -188,7 +188,7 @@ class ManageEDTest extends TestCase
     {
         $this->test_ed_import_file();
         $this->pjm_login();
-        $data = ['filename' => 'Files/Evaluasi Diri_Informatika_2023.xlsx'];
+        $data = ['filename' => 'Files/Instrumen Simulasi Akreditasi_Informatika_2023.xlsx'];
         $this->post('evaluasi/export/file', $data)->assertStatus(200);
     }
 
@@ -197,7 +197,7 @@ class ManageEDTest extends TestCase
         $this->test_ed_import_file();
         $this->pjm_login();
 
-        $files = ['Files/Evaluasi Diri_Informatika_2023.xlsx', 'Files/Evaluasi Diri_Sistem Informasi_2022.xlsx'];
+        $files = ['Files/Instrumen Simulasi Akreditasi_Informatika_2023.xlsx', 'Files/Instrumen Simulasi Akreditasi_Sistem Informasi_2022.xlsx'];
         $request = ['data' => $files];
         $this->post('evaluasi/export', $request)->assertStatus(200);
     }

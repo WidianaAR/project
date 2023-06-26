@@ -27,7 +27,8 @@
 
         <div class="row m-0 align-items-center">
             <div class="col pl-1">
-                <span class="text-muted">Daftar tilik / Standar / <a href="">{{ $data->prodi->nama_prodi }}
+                <span class="text-muted">Daftar tilik / Audit mutu internal / <a
+                        href="">{{ $data->prodi->nama_prodi }}
                         {{ $data->tahun }}</a></span>
             </div>
             <button id="tambah" type="button" class="btn btn-sm btn-primary mr-2" onclick="showTilik()">

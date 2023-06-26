@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ketercapaian Standar</title>
+    <title>Audit Mutu Internal</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 
@@ -35,7 +35,7 @@
                 </div>
             @else
                 <div class="col">
-                    <h5>Ketercapaian standar</h5>
+                    <h5>Audit mutu internal</h5>
                 </div>
             @endif
 
@@ -158,7 +158,7 @@
             @endfor
         @else
             <div class="my-3 text-center element">
-                <h5>Koorprodi belum mengunggah file ketercapaian standar tahun {{ date('Y') }}</h5>
+                <h5>Koorprodi belum mengunggah instrumen audit mutu internal tahun {{ date('Y') }}</h5>
             </div>
         @endif
         </div>
@@ -171,7 +171,7 @@
                     <form action="{{ route('ks_import_action') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body">
-                            <h5 class="pb-3">Silahkan unggah file ketercapaian standar tahun {{ date('Y') }}</h5>
+                            <h5 class="pb-3">Silahkan unggah instrumen audit mutu internal tahun {{ date('Y') }}</h5>
                             <input class="form-control form-control-sm" type="file" name="file">
                             <input type="text" name="prodi" value="{{ Auth::user()->user_access_file[0]->prodi_id }}"
                                 hidden>

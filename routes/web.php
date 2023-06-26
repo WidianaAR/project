@@ -184,7 +184,3 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 });
-
-Route::get('tes', function () {
-    return view('tes');
-})->name('tes');

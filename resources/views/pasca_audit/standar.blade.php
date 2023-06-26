@@ -14,7 +14,7 @@
 
     <div class="row m-0 align-items-center">
         <div class="col pl-1">
-            <span class="text-muted">Daftar komentar / Standar / <a href="">{{ $data->prodi->nama_prodi }}
+            <span class="text-muted">Daftar komentar / Audit mutu internal / <a href="">{{ $data->prodi->nama_prodi }}
                     {{ $data->tahun }}</a></span>
         </div>
         @if ($data->status_id != 7)

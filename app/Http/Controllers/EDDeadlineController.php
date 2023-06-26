@@ -32,9 +32,9 @@ class EDDeadlineController extends Controller
         );
         activity()
             ->performedOn($data)
-            ->event('Evaluasi diri')
-            ->log('Mengatur waktu pengisian evaluasi diri');
-        return redirect()->route('ed_home')->with('success', 'Set deadline pengisian evaluasi diri berhasil');
+            ->event('Simulasi akreditasi')
+            ->log('Mengatur waktu pengisian instrumen simulasi akreditasi');
+        return redirect()->route('ed_home')->with('success', 'Set deadline pengisian instrumen simulasi akreditasi berhasil');
     }
 
     public function set_time_action_end($id)
@@ -53,8 +53,8 @@ class EDDeadlineController extends Controller
         activity()
             ->causedByAnonymous()
             ->performedOn($data)
-            ->event('Evaluasi diri')
-            ->log('Waktu pengisian evaluasi diri selesai');
+            ->event('Simulasi akreditasi')
+            ->log('Waktu pengisian instrumen simulasi akreditasi selesai');
         $data->update(['status' => 'finish']);
         return redirect()->route('ed_home');
     }

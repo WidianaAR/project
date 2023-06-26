@@ -84,8 +84,8 @@ class KSController extends Controller
             $request->validate([
                 'file' => 'required|mimes:xlsx',
             ], [
-                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
-                ]);
+                'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+            ]);
 
             $spreadsheet = IOFactory::load($request->file('file'));
             $sheet = $spreadsheet->getSheet(0);
@@ -108,7 +108,7 @@ class KSController extends Controller
                 $prodi = Prodi::find($request->prodi);
             }
             $extension = $request->file('file')->extension();
-            $path = $this->UploadFile($request->file('file'), "Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
+            $path = $this->UploadFile($request->file('file'), "Instrumen Audit Mutu Internal_" . $prodi->nama_prodi . "_" . $request->tahun . "." . $extension);
             $ksdata = Dokumen::updateOrCreate(
                 ['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'standar'],
                 [
@@ -120,7 +120,7 @@ class KSController extends Controller
             Tahap::updateOrCreate(['dokumen_id' => $ksdata->id, 'status_id' => 1]);
             activity()
                 ->performedOn($ksdata)
-                ->event('Ketercapaian standar')
+                ->event('Audit mutu internal')
                 ->log('Menambahkan data ' . basename($ksdata->file_data));
             return redirect()->route('ks_home')->with('success', 'File berhasil ditambahkan');
         }
@@ -134,7 +134,7 @@ class KSController extends Controller
             $this->DeleteFile($file->file_data);
             activity()
                 ->performedOn($file)
-                ->event('Ketercapaian standar')
+                ->event('Audit mutu internal')
                 ->log('Menghapus data ' . basename($file->file_data));
             $file->delete();
         } else {
@@ -158,12 +158,12 @@ class KSController extends Controller
 
         if (($user->role_id == 3 && $file->prodi_id != $user->user_access_file[0]->prodi_id)) {
             activity()
-                ->event('Ketercapaian standar')
+                ->event('Audit mutu internal')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         } elseif ($user->role_id == 2 && $file->prodi->jurusan->id != $user->user_access_file[0]->jurusan_id) {
             activity()
-                ->event('Ketercapaian standar')
+                ->event('Audit mutu internal')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
@@ -202,7 +202,7 @@ class KSController extends Controller
         if ($request->prodi != $data->prodi_id) {
             $exist = Dokumen::where(['prodi_id' => $request->prodi, 'tahun' => $request->tahun, 'kategori' => 'standar'])->first();
             if ($exist) {
-                return back()->with('error', 'File ketercapaian standar ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
+                return back()->with('error', 'Instrumen audit mutu internal ' . $prodi->nama_prodi . ' ' . $request->tahun . ' sudah ada');
             }
         }
 
@@ -210,8 +210,8 @@ class KSController extends Controller
             $request->validate([
                 'file' => 'required|mimes:xlsx',
             ], [
-                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
-                ]);
+                'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+            ]);
 
             $spreadsheet = IOFactory::load($request->file('file'));
             $sheet = $spreadsheet->getSheet(0);
@@ -227,9 +227,9 @@ class KSController extends Controller
             }
 
             $this->DeleteFile($data->file_data);
-            $path = $this->UploadFile($request->file('file'), "Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
+            $path = $this->UploadFile($request->file('file'), "Instrumen Audit Mutu Internal_" . $prodi->nama_prodi . "_" . $request->tahun . ".xlsx");
         } else {
-            $path = "Files/Ketercapaian Standar_" . $prodi->nama_prodi . "_" . $data->tahun . ".xlsx";
+            $path = "Files/Instrumen Audit Mutu Internal_" . $prodi->nama_prodi . "_" . $data->tahun . ".xlsx";
             $this->ChangeFileName($data->file_data, $path);
         }
 
@@ -244,15 +244,15 @@ class KSController extends Controller
 
         activity()
             ->performedOn($data)
-            ->event('Ketercapaian standar')
-            ->log('Mengubah data ketercapaian standar dengan id ' . $data->id);
+            ->event('Audit mutu internal')
+            ->log('Mengubah instrumen audit mutu internal dengan id ' . $data->id);
         return redirect()->route('ks_home')->with('success', 'File berhasil diubah');
     }
 
     public function export_all(Request $request)
     {
         if ($request->data) {
-            $zipname = 'Files/Ketercapaian Standar.zip';
+            $zipname = 'Files/Instrumen Audit Mutu Internal.zip';
             if (Storage::disk('public')->exists($zipname)) {
                 $this->DeleteZip($zipname);
                 $this->ExportZip($zipname, $request->data);
@@ -260,8 +260,8 @@ class KSController extends Controller
                 $this->ExportZip($zipname, $request->data);
             }
             activity()
-                ->event('Ketercapaian standar')
-                ->log('Export ketercapaian standar files to zip');
+                ->event('Audit mutu internal')
+                ->log('Export instrumen audit mutu internal files to zip');
             return response()->download(storage_path('app/public/' . $zipname));
         }
         return back()->with('error', 'Tidak ada file yang dipilih');
@@ -270,8 +270,8 @@ class KSController extends Controller
     public function export_file(Request $request)
     {
         activity()
-            ->event('Ketercapaian standar')
-            ->log('Export ketercapaian standar file ' . basename($request->filename));
+            ->event('Audit mutu internal')
+            ->log('Export instrumen audit mutu internal file ' . basename($request->filename));
         return response()->download(storage_path('app/public/' . $request->filename));
     }
 }

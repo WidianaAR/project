@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ketercapaian Standar</title>
+    <title>Audit Mutu Internal</title>
 </head>
 
 <body>
@@ -36,7 +36,7 @@
                 </div>
             @else
                 <div class="col">
-                    <h5>Ketercapaian standar<span class="text-muted"> / {{ $keterangan }}</span></h5>
+                    <h5>Audit mutu internal<span class="text-muted"> / {{ $keterangan }}</span></h5>
                 </div>
             @endif
 

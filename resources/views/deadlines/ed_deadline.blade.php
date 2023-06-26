@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Deadline Evaluasi Diri</title>
+    <title>Deadline Simulasi Akreditasi</title>
 @endsection
 
 @section('isi')
@@ -24,11 +24,11 @@
             </div>
         @else
             <div class="col">
-                <h5>Evaluasi Diri</h5>
+                <h5>Simulasi Akreditasi</h5>
             </div>
         @endif
         <div class="col text-right">
-            <span class="text-muted">Evaluasi diri / <a href="">Atur deadline</a></span>
+            <span class="text-muted">Simulasi Akreditasi / <a href="">Atur deadline</a></span>
         </div>
     </div>
 

@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Ketercapaian Standar</title>
+    <title>Audit Mutu Internal</title>
 @endsection
 
 @section('isi')
@@ -22,11 +22,11 @@
             </div>
         @else
             <div class="col">
-                <h5>Ketercapaian standar</h5>
+                <h5>Audit mutu internal</h5>
             </div>
         @endif
         <div class="col text-right">
-            <span class="text-muted">Ketercapaian standar / <a href="">Ubah data</a></span>
+            <span class="text-muted">Audit mutu internal / <a href="">Ubah data</a></span>
         </div>
     </div>
 
@@ -36,7 +36,7 @@
                 @csrf
                 <input type="text" name="id_standar" value="{{ $data->id }}" hidden>
 
-                <label class="mb-1">File ketercapaian standar</label>
+                <label class="mb-1">Instrumen audit mutu internal</label>
                 <input type="file" name="file"
                     class="form-control form-control-sm m-0 @error('file') is-invalid @enderror"
                     aria-describedby="file-error">
@@ -45,8 +45,8 @@
                         {{ $message }}
                     </div>
                 @else
-                    <p><small class="text-danger"> <i class="fa fa-circle-info"></i> Isi jika ingin merubah file excel
-                            ketercapaian standar prodi</small></p>
+                    <p><small class="text-danger"> <i class="fa fa-circle-info"></i> Isi jika ingin merubah file excel instrumen
+                            audit mutu internal prodi</small></p>
                 @enderror
 
                 <label class="mb-1">Program studi</label>

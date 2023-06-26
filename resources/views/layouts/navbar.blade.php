@@ -26,7 +26,6 @@
 
 <body>
     <div class="wrapper">
-        <!-- Sidebar  -->
         <nav id="sidebar">
             <div class="sidebar-header p-3">
                 <table>
@@ -69,10 +68,10 @@
                 </li>
                 @cannot('auditor')
                     <li class="{{ Request::is('evaluasi*') ? 'active' : '' }}">
-                        <a href="{{ URL('evaluasi') }}"> <i class="fa fa-file"></i> Evaluasi Diri</a>
+                        <a href="{{ URL('evaluasi') }}"> <i class="fa fa-file"></i> Simulasi Akreditasi</a>
                     </li>
                     <li class="{{ Request::is('standar*') ? 'active' : '' }}">
-                        <a href="{{ URL('standar') }}"> <i class="fa fa-file"></i> Ketercapaian Standar</a>
+                        <a href="{{ URL('standar') }}"> <i class="fa fa-file"></i> Audit Mutu Internal</a>
                     </li>
                 @endcannot
                 @can('auditor')
@@ -91,7 +90,6 @@
             </ul>
         </nav>
 
-        <!-- Navbar -->
         <div class="container-fluid" id="top-navbar">
             <nav class="navbar navbar-expand-md navbar-light mx-4 mt-3" id="navbar">
                 <div class="collapse navbar-collapse align-items-middle">
@@ -102,10 +100,10 @@
                                 <i class="fas fa-bars fa-sm" style="color:#808080"></i>
                             </a>
                             <div class="dropdown-menu" id="dropdown-nav">
-                                <a class="dropdown-item" href="{{ URL('ed_chart') }}">Chart Evaluasi Diri</a>
-                                <a class="dropdown-item" href="{{ URL('ks_chart') }}">Chart Ketercapaian Standar</a>
-                                <a class="dropdown-item" href="{{ URL('evaluasi') }}">Evaluasi Diri</a>
-                                <a class="dropdown-item" href="{{ URL('standar') }}">Ketercapaian Standar</a>
+                                <a class="dropdown-item" href="{{ URL('ed_chart') }}">Chart Simulasi Akreditasi</a>
+                                <a class="dropdown-item" href="{{ URL('ks_chart') }}">Chart Audit Mutu Internal</a>
+                                <a class="dropdown-item" href="{{ URL('evaluasi') }}">Simulasi Akreditasi</a>
+                                <a class="dropdown-item" href="{{ URL('standar') }}">Audit Mutu Internal</a>
                                 <a class="dropdown-item"
                                     href="@if (Auth::user()->role_id == 1) {{ URL('panduans') }} @else {{ URL('panduan') }} @endif">Panduan</a>
                                 @can('pjm')
@@ -141,7 +139,6 @@
             </nav>
         </div>
 
-        <!-- Content -->
         <div id="content">
             <div class="container-fluid row justify-content-center p-0 m-0">
                 <div class="col mx-4">

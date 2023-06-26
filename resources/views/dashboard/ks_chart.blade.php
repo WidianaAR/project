@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Dashboard Ketercapaian Standar</title>
+    <title>Dashboard Audit Mutu Internal</title>
 @endsection
 
 @section('isi')
@@ -15,12 +15,12 @@
             <div class="row align-items-center mb-3">
                 <div class="col text-left">
                     @if ($param)
-                        <span class="text-muted">Dashboard / Ketercapaian standar /
+                        <span class="text-muted">Dashboard / Audit Mutu Internal /
                             <a href="">{{ $keterangan }}</a>
                         </span>
                     @else
                         <span class="text-muted">Dashboard /
-                            <a href="">Ketercapaian standar</a>
+                            <a href="">Audit Mutu Internal</a>
                         </span>
                     @endif
                 </div>
@@ -30,9 +30,9 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="moduleDropDown">
                         <a class="dropdown-item {{ Request::is('ed_chart') ? 'active' : '' }}"
-                            href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
+                            href="{{ URL('ed_chart') }}">Simulasi Akreditasi</a>
                         <a class="dropdown-item {{ Request::is('ks_chart') ? 'active' : '' }}"
-                            href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
+                            href="{{ URL('ks_chart') }}">Audit Mutu Internal</a>
                     </div>
                 </div>
                 <div class="col-auto p-0 box">
@@ -110,7 +110,7 @@
         @else
             <div class="element row mt-4">
                 <div class="col">
-                    <h5>Data ketercapaian standar masih ditinjau oleh Auditor</h5>
+                    <h5>Instrumen AMI masih ditinjau oleh Auditor</h5>
                 </div>
             </div>
         @endif
@@ -125,7 +125,7 @@
                 polar: true,
             },
             title: {
-                text: 'Radar Chart'
+                text: 'Diagram Instrumen Audit Mutu Internal'
             },
             xAxis: {
                 categories: param,
@@ -160,7 +160,7 @@
                 type: 'column'
             },
             title: {
-                text: 'Column Chart'
+                text: 'Diagram Instrumen Audit Mutu Internal'
             },
             xAxis: {
                 categories: param

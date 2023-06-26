@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Deadline Ketercapaian Standar</title>
+    <title>Deadline Audit Mutu Internal</title>
 @endsection
 
 @section('isi')
@@ -24,11 +24,11 @@
             </div>
         @else
             <div class="col">
-                <h5>Ketercapaian standar</h5>
+                <h5>Audit Mutu Internal</h5>
             </div>
         @endif
         <div class="col text-right">
-            <span class="text-muted">Ketercapaian standar / <a href="">Atur deadline</a></span>
+            <span class="text-muted">Audit Mutu Internal / <a href="">Atur deadline</a></span>
         </div>
     </div>
 

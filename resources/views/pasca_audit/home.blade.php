@@ -34,8 +34,8 @@
                             <label class="mb-0" for="kategori">Kategori</label>
                             <select class="form-control form-control-sm" name="kategori" id="kategori">
                                 <option value="">Semua</option>
-                                <option value="evaluasi">Evaluasi diri</option>
-                                <option value="standar">Ketercapaian standar</option>
+                                <option value="evaluasi">Simulasi akreditasi</option>
+                                <option value="standar">Audit mutu internal</option>
                             </select>
                         </div>
 

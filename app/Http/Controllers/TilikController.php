@@ -59,8 +59,8 @@ class TilikController extends Controller
             $request->validate([
                 'file' => 'mimes:xlsx',
             ], [
-                    'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
-                ]);
+                'file.mimes' => 'File yang diunggah harus berupa file XLSX.',
+            ]);
 
             $spreadsheet = IOFactory::load($request->file('file'));
             $sheet = $spreadsheet->getSheet(0);
@@ -109,13 +109,13 @@ class TilikController extends Controller
             if ($request->kategori == 'evaluasi') {
                 activity()
                     ->performedOn($data)
-                    ->event('Evaluasi diri')
-                    ->log('Mengubah data evaluasi diri dengan id ' . $data->id);
+                    ->event('Simulasi akreditasi')
+                    ->log('Mengubah instrumen simulasi akreditasi dengan id ' . $data->id);
             } else {
                 activity()
                     ->performedOn($data)
-                    ->event('Ketercapaian standar')
-                    ->log('Mengubah data ketercapaian standar dengan id ' . $data->id);
+                    ->event('Audit mutu internal')
+                    ->log('Mengubah instrumen audit mutu internal dengan id ' . $data->id);
             }
             return redirect()->back()->with('success', 'File berhasil diubah');
         }
@@ -136,7 +136,7 @@ class TilikController extends Controller
 
         if (!in_array($data->prodi_id, $auditor_prodi)) {
             activity()
-                ->event('Evaluasi diri')
+                ->event('Simulasi akreditasi')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
@@ -181,7 +181,7 @@ class TilikController extends Controller
         $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()
-            ->event('Evaluasi diri')
+            ->event('Simulasi akreditasi')
             ->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ed_table', $data->id)->with('success', 'Tilik berhasil disimpan');
     }
@@ -202,7 +202,7 @@ class TilikController extends Controller
         }
         if (!in_array($data->prodi_id, $auditor_prodi)) {
             activity()
-                ->event('Ketercapaian standar')
+                ->event('Audit mutu internal')
                 ->log('Prohibited access | Mencoba akses data prodi lain');
             return redirect()->route('login')->withErrors(['login_gagal' => 'Anda tidak memiliki akses!']);
         }
@@ -247,7 +247,7 @@ class TilikController extends Controller
         $data->touch();
         Tahap::updateOrCreate(['dokumen_id' => $data->id, 'status_id' => 3])->touch();
         activity()
-            ->event('Ketercapaian standar')
+            ->event('Audit mutu internal')
             ->log('Menambahkan tilik pada ' . basename($data->file_data));
         return redirect()->route('tilik_ks_table', $data->id)->with('success', 'Tilik berhasil disimpan');
     }

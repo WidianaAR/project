@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Evaluasi Diri</title>
+    <title>Simulasi Akreditasi</title>
 </head>
 
 <body>
@@ -36,7 +36,7 @@
                 </div>
             @else
                 <div class="col">
-                    <h5>Evaluasi Diri<span class="text-muted"> / {{ $keterangan }}</span></h5>
+                    <h5>Simulasi Akreditasi<span class="text-muted"> / {{ $keterangan }}</span></h5>
                 </div>
             @endif
 

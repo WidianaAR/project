@@ -2,7 +2,7 @@
     <div class="col px-3 py-2 text-left border border-primary rounded bg-white">
         <a href="@cannot('auditor') {{ route('ed_home') }} @else {{ route('tilik_home') }} @endcannot"
             class="decoration-none">
-            <h6 class="text-secondary">Evaluasi diri ({{ date('Y') }})</h6>
+            <h6 class="text-secondary">Instrumen simulasi akreditasi ({{ date('Y') }})</h6>
             <h4 class="text-primary"><b>{{ $file_ed }}</b> File</h4>
         </a>
     </div>
@@ -10,7 +10,7 @@
     <div class="col ml-2 px-3 py-2 text-left rounded bg-white border border-primary">
         <a href="@cannot('auditor') {{ route('ks_home') }} @else {{ route('tilik_home') }} @endcannot"
             class="decoration-none">
-            <h6 class="text-secondary">Ketercapaian standar ({{ date('Y') }})</h6>
+            <h6 class="text-secondary">Instrumen AMI ({{ date('Y') }})</h6>
             <h4 class="text-primary"><b>{{ $file_ks }}</b> File</h4>
         </a>
     </div>

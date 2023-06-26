@@ -24,7 +24,7 @@ class EDSeeder extends Seeder
 
 
         // Data tahun 2022
-        $path = $this->UploadFile($file, "Evaluasi Diri_Informatika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Informatika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 11,
@@ -35,7 +35,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Sistem Informasi_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Sistem Informasi_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 10,
@@ -46,7 +46,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Fisika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Fisika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 1,
@@ -57,7 +57,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Matematika_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Matematika_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 2,
@@ -68,7 +68,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Mesin_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Mesin_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 3,
@@ -79,7 +79,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Elektro_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Elektro_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 4,
@@ -90,7 +90,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Kimia_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Kimia_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 5,
@@ -101,7 +101,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Sipil_2022.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Sipil_2022.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 7,
@@ -114,7 +114,7 @@ class EDSeeder extends Seeder
 
 
         // Data tahun 2021
-        $path = $this->UploadFile($file, "Evaluasi Diri_Informatika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Informatika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 11,
@@ -125,7 +125,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Sistem Informasi_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Sistem Informasi_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 10,
@@ -136,7 +136,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Fisika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Fisika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 1,
@@ -147,7 +147,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Matematika_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Matematika_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 2,
@@ -158,7 +158,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Mesin_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Mesin_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 3,
@@ -169,7 +169,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Elektro_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Elektro_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 4,
@@ -180,7 +180,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Kimia_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Kimia_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 5,
@@ -191,7 +191,7 @@ class EDSeeder extends Seeder
             ]
         );
 
-        $path = $this->UploadFile($file, "Evaluasi Diri_Teknik Sipil_2021.xlsx");
+        $path = $this->UploadFile($file, "Instrumen Simulasi Akreditasi_Teknik Sipil_2021.xlsx");
         Dokumen::create(
             [
                 'prodi_id' => 7,

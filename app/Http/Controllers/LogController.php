@@ -16,8 +16,8 @@ class LogController extends Controller
             'Manajemen data program studi',
             'Manajemen data pengguna',
             'Manajemen data panduan',
-            'Evaluasi diri',
-            'Ketercapaian standar'
+            'Simulasi akreditasi',
+            'Audit mutu internal'
         ];
 
         $query = Activity::with('causer');

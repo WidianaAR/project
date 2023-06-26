@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Dashboard Evaluasi Diri</title>
+    <title>Dashboard Simulasi Akreditasi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -20,12 +20,12 @@
                 <div class="row align-items-center mb-3">
                     <div class="col text-left">
                         @if ($param)
-                            <span class="text-muted">Dashboard / Evaluasi diri /
+                            <span class="text-muted">Dashboard / Simulasi Akreditasi /
                                 <a href="">{{ $keterangan }}</a>
                             </span>
                         @else
                             <span class="text-muted">Dashboard /
-                                <a href="">Evaluasi diri</a>
+                                <a href="">Simulasi Akreditasi</a>
                             </span>
                         @endif
                     </div>
@@ -35,9 +35,9 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item {{ Request::is('ed_chart') ? 'active' : '' }}"
-                                href="{{ URL('ed_chart') }}">Evaluasi Diri</a>
+                                href="{{ URL('ed_chart') }}">Simulasi Akreditasi</a>
                             <a class="dropdown-item {{ Request::is('ks_chart') ? 'active' : '' }}"
-                                href="{{ URL('ks_chart') }}">Ketercapaian Standar</a>
+                                href="{{ URL('ks_chart') }}">Audit Mutu Internal</a>
                         </div>
                     </div>
                     <div class="col-auto text-right p-0 box">
@@ -115,7 +115,7 @@
             @else
                 <div class="element row mt-4">
                     <div class="col">
-                        <h5>Data evaluasi diri masih ditinjau oleh Auditor</h5>
+                        <h5>Instrumen simulasi akreditasi masih ditinjau oleh Auditor</h5>
                     </div>
                 </div>
             @endif
@@ -138,7 +138,7 @@
                     type: 'line'
                 },
                 title: {
-                    text: 'Diagram evaluasi diri'
+                    text: 'Diagram Instrumen Simulasi Akreditasi'
                 },
                 xAxis: {
                     categories: param
@@ -170,7 +170,7 @@
                     polar: true,
                 },
                 title: {
-                    text: 'Diagram evaluasi diri'
+                    text: 'Diagram Instrumen Simulasi Akreditasi'
                 },
                 xAxis: {
                     categories: param,

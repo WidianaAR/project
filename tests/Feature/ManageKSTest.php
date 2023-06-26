@@ -119,7 +119,7 @@ class ManageKSTest extends TestCase
         ];
         $this->post('standar', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('dokumens', [
-            'file_data' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'
+            'file_data' => 'Files/Instrumen Audit Mutu Internal_Informatika_2023.xlsx'
         ]);
     }
 
@@ -147,7 +147,7 @@ class ManageKSTest extends TestCase
         ];
         $this->post('standar/change', $data)->assertRedirect('standar')->assertStatus(302)->assertSessionHas('success');
         $this->assertDatabaseHas('dokumens', [
-            'file_data' => 'Files/Ketercapaian Standar_Bisnis Digital_2023.xlsx'
+            'file_data' => 'Files/Instrumen Audit Mutu Internal_Bisnis Digital_2023.xlsx'
         ]);
     }
 
@@ -187,7 +187,7 @@ class ManageKSTest extends TestCase
     {
         $this->test_ks_import_file();
         $this->pjm_login();
-        $data = ['filename' => 'Files/Ketercapaian Standar_Informatika_2023.xlsx'];
+        $data = ['filename' => 'Files/Instrumen Audit Mutu Internal_Informatika_2023.xlsx'];
         $this->post('standar/export/file', $data)->assertStatus(200);
     }
 
@@ -196,7 +196,7 @@ class ManageKSTest extends TestCase
         $this->test_ks_import_file();
         $this->pjm_login();
 
-        $files = ['Files/Ketercapaian Standar_Informatika_2023.xlsx', 'Files/Ketercapaian Standar_Sistem Informasi_2022.xlsx'];
+        $files = ['Files/Instrumen Audit Mutu Internal_Informatika_2023.xlsx', 'Files/Instrumen Audit Mutu Internal_Sistem Informasi_2022.xlsx'];
         $request = ['data' => $files];
         $this->post('standar/export', $request)->assertStatus(200);
     }

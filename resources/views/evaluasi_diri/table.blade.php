@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluasi Diri</title>
+    <title>Simulasi Akreditasi</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 
@@ -35,7 +35,7 @@
                 </div>
             @else
                 <div class="col">
-                    <h5>Evaluasi Diri</h5>
+                    <h5>Simulasi Akreditasi</h5>
                 </div>
             @endif
 
@@ -134,7 +134,7 @@
         </div>
     @else
         <div class="my-3 text-center element">
-            <h5>Koorprodi belum mengunggah file evaluasi diri tahun {{ date('Y') }}</h5>
+            <h5>Koorprodi belum mengunggah instrumen Simulasi Akreditasi tahun {{ date('Y') }}</h5>
         </div>
     @endif
     </div>
@@ -147,7 +147,7 @@
                 <form action="{{ route('ed_import_action') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <h5 class="pb-3">Silahkan unggah file evaluasi diri tahun {{ date('Y') }}</h5>
+                        <h5 class="pb-3">Silahkan unggah instrumen Simulasi Akreditasi tahun {{ date('Y') }}</h5>
                         <input class="form-control form-control-sm" type="file" name="file">
                         <input type="text" name="prodi" value="{{ Auth::user()->user_access_file[0]->prodi_id }}"
                             hidden>

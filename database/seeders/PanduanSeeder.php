@@ -20,33 +20,99 @@ class PanduanSeeder extends Seeder
         $ed_path = public_path("files/ED_Template.xlsx");
         $ed_file = new UploadedFile(
             $ed_path,
-            'ED_Template.xlsx',
+            'Template instrumen simulasi akreditasi.xlsx',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             null,
             true
         );
-        $ed_file = $this->UploadFilePanduan($ed_file, 'ED_Template.xlsx');
+        $ed_file = $this->UploadFilePanduan($ed_file, 'Template instrumen simulasi akreditasi.xlsx');
 
         $ks_path = public_path("files/KS_Template.xlsx");
         $ks_file = new UploadedFile(
             $ks_path,
-            'ED_Template.xlsx',
+            'Template instrumen audit mutu internal.xlsx',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             null,
             true
         );
-        $ks_file = $this->UploadFilePanduan($ks_file, 'KS_Template.xlsx');
+        $ks_file = $this->UploadFilePanduan($ks_file, 'Template instrumen audit mutu internal.xlsx');
+
+        $pjm_path = public_path("files/User Manual PJM.pdf");
+        $pjm_file = new UploadedFile(
+            $pjm_path,
+            'User Manual PJM.pdf',
+            'pdf',
+            null,
+            true
+        );
+        $pjm_file = $this->UploadFilePanduan($pjm_file, 'User Manual Kajur.pdf');
+
+        $kajur_path = public_path("files/User Manual Kajur.pdf");
+        $kajur_file = new UploadedFile(
+            $kajur_path,
+            'User Manual Kajur.pdf',
+            'pdf',
+            null,
+            true
+        );
+        $kajur_file = $this->UploadFilePanduan($kajur_file, 'User Manual Kajur.pdf');
+
+        $koorprodi_path = public_path("files/User Manual Koorprodi.pdf");
+        $koorprodi_file = new UploadedFile(
+            $koorprodi_path,
+            'User Manual Koorprodi.pdf',
+            'pdf',
+            null,
+            true
+        );
+        $koorprodi_file = $this->UploadFilePanduan($koorprodi_file, 'User Manual Koorprodi.pdf');
+
+        $auditor_path = public_path("files/User Manual Auditor.pdf");
+        $auditor_file = new UploadedFile(
+            $auditor_path,
+            'User Manual Auditor.pdf',
+            'pdf',
+            null,
+            true
+        );
+        $auditor_file = $this->UploadFilePanduan($auditor_file, 'User Manual Auditor.pdf');
+
+
 
         Panduan::create([
-            'judul' => 'Pengisian Evaluasi Diri Prorgram Studi',
-            'keterangan' => '<div>Cara pengisian evaluasi diri :</div><ul><li>Unduh file template evaluasi diri yang tersedia di bawah</li><li>Buka file dan isi kolom nilai capaian dan link bukti</li><li>Simpan dan upload kembali file pada menu Evaluasi Diri</li></ul><div><br><em>Upload file hanya dapat dilakukan selama masa pengisian evaluasi diri berlangsung. Jika deadline pengisian evaluasi diri sudah habis maka file tidak dapat di-upload.</em></div>',
+            'judul' => 'Pengisian Instrumen Simulasi Akreditasi Program Studi',
+            'keterangan' => '<div>Cara pengisian instrumen simulasi akreditasi :</div><ul><li>Unduh file template instrumen simulasi akreditasi yang tersedia di bawah</li><li>Buka file dan isi kolom nilai capaian dan link bukti</li><li>Simpan dan upload kembali file instrumen pada menu Simulasi Akreditasi</li></ul><div><br><em>Upload file hanya dapat dilakukan selama masa pengisian instrumen simulasi akreditasi berlangsung. Jika deadline pengisian sudah berakhir maka file tidak dapat diunggah.</em></div>',
             'file_data' => $ed_file
         ]);
 
         Panduan::create([
-            'judul' => 'Pengisian Ketercapaian Standar Prorgram Studi',
-            'keterangan' => '<div>Cara pengisian ketercapaian standar :</div><ul><li>Unduh file template ketercapaian standar yang tersedia di bawah</li><li>Buka file dan isi kolom yang berwarna oranye atau kolom capaian serta kolom link bukti di setiap sheet</li><li>Simpan dan upload kembali file pada menu Ketercapaian Standar</li></ul><div><br><em>Upload file hanya dapat dilakukan selama masa pengisian ketercapaian standar berlangsung. Jika deadline pengisian ketercapaian standar sudah habis maka file tidak dapat di-upload.</em></div>',
+            'judul' => 'Pengisian Instrumen Audit Mutu Internal Program Studi',
+            'keterangan' => '<div>Cara pengisian instrumen audit mutu internal :</div><ul><li>Unduh file template instrumen audit mutu internal yang tersedia di bawah</li><li>Buka file dan isi kolom berwarna oranye atau kolom capaian serta kolom link bukti di setiap sheet</li><li>Simpan dan upload kembali file instrumen pada menu Audit Mutu Internal</li></ul><div><br><em>Upload file hanya dapat dilakukan selama masa pengisian instrumen audit mutu internal berlangsung. Jika deadline pengisian sudah berakhir maka file tidak dapat diunggah.</em></div>',
             'file_data' => $ks_file
+        ]);
+
+        Panduan::create([
+            'judul' => 'Panduan Penggunaan Aplikasi untuk PJM',
+            'keterangan' => '<div>User manual atau petunjuk penggunaan aplikasi untuk pengguna dengan role PJM dapat diunduh pada tautan di bawah ini.</div>',
+            'file_data' => $pjm_file
+        ]);
+
+        Panduan::create([
+            'judul' => 'Panduan Penggunaan Aplikasi untuk Ketua Jurusan',
+            'keterangan' => '<div>User manual atau petunjuk penggunaan aplikasi untuk pengguna dengan role Ketua Jurusan dapat diunduh pada tautan di bawah ini.</div>',
+            'file_data' => $kajur_file
+        ]);
+
+        Panduan::create([
+            'judul' => 'Panduan Penggunaan Aplikasi untuk Koordinator Program Studi',
+            'keterangan' => '<div>User manual atau petunjuk penggunaan aplikasi untuk pengguna dengan role Koordinator Program Studi dapat diunduh pada tautan di bawah ini.</div>',
+            'file_data' => $koorprodi_file
+        ]);
+
+        Panduan::create([
+            'judul' => 'Panduan Penggunaan Aplikasi untuk Auditor',
+            'keterangan' => '<div>User manual atau petunjuk penggunaan aplikasi untuk pengguna dengan role Auditor dapat diunduh pada tautan di bawah ini.</div>',
+            'file_data' => $auditor_file
         ]);
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Evaluasi Diri</title>
+    <title>Simulasi Akreditasi</title>
 @endsection
 
 @section('isi')
@@ -22,17 +22,17 @@
             </div>
         @else
             <div class="col">
-                <h5>Evaluasi Diri</h5>
+                <h5>Simulasi Akreditasi</h5>
             </div>
         @endif
         <div class="col text-right">
-            <span class="text-muted">Evaluasi diri / <a href="">Upload file</a></span>
+            <span class="text-muted">Simulasi akreditasi / <a href="">Upload file excel</a></span>
         </div>
     </div>
 
     <div class="element row justify-content-center">
         <div class="add-form col-6">
-            <label class="mb-1">File evaluasi diri</label>
+            <label class="mb-1">Instrumen simulasi akreditasi</label>
             <form action="{{ route('ed_import_action') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="file" name="file"

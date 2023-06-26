@@ -1,7 +1,7 @@
 @extends('layouts.navbar')
 
 @section('title')
-    <title>Ketercapaian Standar</title>
+    <title>Audit Mutu Internal</title>
 @endsection
 
 @section('isi')
@@ -22,11 +22,11 @@
             </div>
         @else
             <div class="col">
-                <h5>Ketercapaian standar</h5>
+                <h5>Audit mutu internal</h5>
             </div>
         @endif
         <div class="col text-right">
-            <span class="text-muted">Ketercapaian standar / <a href="">Upload file</a></span>
+            <span class="text-muted">Audit mutu internal / <a href="">Upload file</a></span>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
         <div class="add-form col-6">
             <form action="{{ route('ks_import_action') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <label class="mb-1">File ketercapaian standar</label>
+                <label class="mb-1">Instrumen audit mutu internal</label>
                 <input type="file" name="file"
                     class="form-control form-control-sm @error('file') m-0 is-invalid @enderror"
                     aria-describedby="file-error" required>

@@ -32,9 +32,9 @@ class KSDeadlineController extends Controller
         );
         activity()
             ->performedOn($data)
-            ->event('Ketercapaian standar')
-            ->log('Mengatur waktu pengisian ketercapaian standar');
-        return redirect()->route('ks_home')->with('success', 'Set deadline pengisian ketercapaian standar berhasil');
+            ->event('Audit mutu internal')
+            ->log('Mengatur waktu pengisian instrumen audit mutu internal');
+        return redirect()->route('ks_home')->with('success', 'Set deadline pengisian instrumen audit mutu internal berhasil');
     }
 
     public function set_time_action_end($id)
@@ -54,8 +54,8 @@ class KSDeadlineController extends Controller
         activity()
             ->causedByAnonymous()
             ->performedOn($data)
-            ->event('Ketercapaian standar')
-            ->log('Waktu pengisian ketercapaian standar selesai');
+            ->event('Audit mutu internal')
+            ->log('Waktu pengisian instrumen audit mutu internal selesai');
         $data->update(['status' => 'finish']);
         return redirect()->route('ks_home');
     }
